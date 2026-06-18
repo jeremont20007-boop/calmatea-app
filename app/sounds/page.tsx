@@ -7,13 +7,17 @@ import { VolumeSlider } from '@/components/sounds/VolumeSlider'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { useAudio } from '@/lib/hooks/useAudio'
 import { useProfile } from '@/lib/hooks/useProfile'
+import { useToast } from '@/components/ui/Toast'
 import { SOUNDS } from '@/lib/sounds'
 import { createClient } from '@/lib/supabase/client'
+import { Crown } from 'lucide-react'
+import Link from 'next/link'
 import type { SoundCategory } from '@/types'
 
 export default function SoundsPage() {
   const { isPlaying, currentSound, volume, play, pause, stop, setVolume } = useAudio()
   const { profile } = useProfile()
+  const { toast } = useToast()
   const isPremium = profile?.plan === 'premium'
   const [sessionStart, setSessionStart] = useState<number | null>(null)
 
@@ -29,13 +33,18 @@ export default function SoundsPage() {
   }
 
   const handlePlay = useCallback(async (sound: typeof SOUNDS[0]) => {
+    if (sound.is_premium && !isPremium) {
+      toast('Este sonido es Premium. ¡Mejora tu plan!', 'info')
+      return
+    }
     if (currentSound && currentSound !== sound.id) {
       const elapsed = stop()
       await logSession(currentSound, elapsed)
     }
     await play(sound.file_url, sound.id)
     setSessionStart(Date.now())
-  }, [currentSound, play, stop])
+    toast(`▶ Reproduciendo ${sound.name}`, 'success')
+  }, [currentSound, play, stop, isPremium, toast])
 
   const handlePause = useCallback(async () => {
     if (currentSound && sessionStart) {
@@ -74,12 +83,15 @@ export default function SoundsPage() {
           </div>
 
           {!isPremium && (
-            <div className="bg-sunshine/20 rounded-2xl p-4 text-center border border-sunshine/40">
-              <p className="font-bold text-calm-700">🔒 Bosque y Ruido Marrón son Premium</p>
-              <a href="/subscription" className="text-sm text-calm-500 underline mt-1 block">
-                Ver planes →
-              </a>
-            </div>
+            <Link href="/subscription">
+              <div className="bg-gradient-to-r from-sunshine/30 to-coral/20 rounded-2xl p-4 flex items-center gap-3 border border-sunshine/40">
+                <Crown size={22} className="text-amber-500 shrink-0" />
+                <div>
+                  <p className="font-bold text-calm-700 text-sm">Bosque y Ruido Marrón son Premium</p>
+                  <p className="text-xs text-calm-400 mt-0.5">Ver planes →</p>
+                </div>
+              </div>
+            </Link>
           )}
         </div>
       </main>

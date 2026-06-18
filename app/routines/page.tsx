@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { RoutineStepCard } from '@/components/routines/RoutineStepCard'
 import { useProfile } from '@/lib/hooks/useProfile'
+import { useToast } from '@/components/ui/Toast'
 import { ROUTINES } from '@/lib/routines'
 import { createClient } from '@/lib/supabase/client'
 import { Lock, RotateCcw, CheckCircle2 } from 'lucide-react'
@@ -15,6 +16,7 @@ import type { Routine, RoutineType } from '@/types'
 
 export default function RoutinesPage() {
   const { profile } = useProfile()
+  const { toast } = useToast()
   const isPremium = profile?.plan === 'premium'
   const [selected, setSelected] = useState<Routine | null>(null)
   const [completed, setCompleted] = useState<number[]>([])
@@ -37,6 +39,7 @@ export default function RoutinesPage() {
   async function finishRoutine() {
     if (!profile || !selected) return
     const supabase = createClient()
+    toast('¡Rutina completada! 🎉', 'success')
     await supabase.from('routine_progress').insert({
       child_id: profile.id,
       routine_type: selected.type as RoutineType,

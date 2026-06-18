@@ -8,6 +8,7 @@ import { BottomNav } from '@/components/layout/BottomNav'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card, CardTitle } from '@/components/ui/Card'
+import { useToast } from '@/components/ui/Toast'
 import { SOUNDS } from '@/lib/sounds'
 import type { SoundCategory } from '@/types'
 
@@ -15,6 +16,7 @@ export default function SettingsPage() {
   const router = useRouter()
   const [fullName, setFullName] = useState('')
   const [favoriteSound, setFavoriteSound] = useState<SoundCategory>('rain')
+  const { toast } = useToast()
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
@@ -41,6 +43,7 @@ export default function SettingsPage() {
     await supabase.from('profiles').update({ full_name: fullName, favorite_sound: favoriteSound }).eq('user_id', user.id)
     setSaving(false)
     setSaved(true)
+    toast('Cambios guardados ✅', 'success')
     setTimeout(() => setSaved(false), 2000)
   }
 

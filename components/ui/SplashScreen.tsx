@@ -25,17 +25,12 @@ export function SplashScreen() {
         <p className="text-calm-100 font-semibold text-lg">Calma y rutinas</p>
       </div>
 
-      {/* Barra de carga */}
       <div className="absolute bottom-16 w-40 h-1.5 bg-white/20 rounded-full overflow-hidden">
-        <div className="h-full bg-white rounded-full animate-[loading_1.8s_ease-out_forwards]" />
+        <div
+          className="h-full bg-white rounded-full"
+          style={{ animation: 'loading 1.8s ease-out forwards' }}
+        />
       </div>
-
-      <style jsx>{`
-        @keyframes loading {
-          from { width: 0% }
-          to { width: 100% }
-        }
-      `}</style>
     </div>
   )
 }

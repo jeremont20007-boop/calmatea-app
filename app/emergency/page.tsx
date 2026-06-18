@@ -7,6 +7,7 @@ import { useProfile } from '@/lib/hooks/useProfile'
 import { SOUNDS, getSoundById } from '@/lib/sounds'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
+import { useToast } from '@/components/ui/Toast'
 import { X, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { SoundCategory } from '@/types'
@@ -16,6 +17,7 @@ const DEFAULT_SOUND = 'rain'
 export default function EmergencyPage() {
   const router = useRouter()
   const { profile } = useProfile()
+  const { toast } = useToast()
   const { isPlaying, play, stop } = useAudio()
   const [phase, setPhase] = useState<'idle' | 'active' | 'breathe'>('idle')
   const [breathStep, setBreathStep] = useState<'in' | 'hold' | 'out'>('in')
@@ -30,6 +32,7 @@ export default function EmergencyPage() {
 
   const startCalm = useCallback(async () => {
     setPhase('active')
+    toast('Modo calma activado 🌊', 'success')
     const sound = getSoundById(selectedSound)
     if (sound) {
       const isPremium = profile?.plan === 'premium'

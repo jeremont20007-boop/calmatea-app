@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { TopBar } from '@/components/layout/TopBar'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { CheckoutButton } from './CheckoutButton'
+import { SuccessBanner } from './SuccessBanner'
 import { Check, Crown } from 'lucide-react'
 
 const FREE_FEATURES = [
@@ -40,6 +41,7 @@ export default async function SubscriptionPage() {
       <main className="flex-1 pb-24">
         <TopBar title="Planes" showBack backHref="/parents" />
 
+        <SuccessBanner />
         <div className="p-4 space-y-4">
           <div className="text-center py-4">
             <div className="text-5xl mb-2">🌊</div>
