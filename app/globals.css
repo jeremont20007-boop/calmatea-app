@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-nunito: var(--font-nunito);
+
+  --color-calm-50: #EEF4FB;
+  --color-calm-100: #D6E8F5;
+  --color-calm-200: #ADCFEB;
+  --color-calm-300: #85B6E1;
+  --color-calm-400: #6BA3BE;
+  --color-calm-500: #4A87A8;
+  --color-calm-600: #3A6D8E;
+  --color-calm-700: #2B5470;
+  --color-calm-800: #1D3A52;
+  --color-calm-900: #0E1E2A;
+
+  --color-ocean: #4A90D9;
+  --color-forest: #4A7C59;
+  --color-sand: #F5E6CC;
+  --color-lavender: #B8A9D9;
+  --color-sunshine: #FFD166;
+  --color-coral: #EF8C6E;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-nunito), 'Nunito', system-ui, sans-serif;
+  background-color: #EEF4FB;
+  color: #1D3A52;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #EEF4FB;
+}
+::-webkit-scrollbar-thumb {
+  background: #ADCFEB;
+  border-radius: 3px;
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 3px solid #6BA3BE;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* PWA safe areas */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Animations */
+@keyframes pulse-calm {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes wave {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.animate-pulse-calm {
+  animation: pulse-calm 2s ease-in-out infinite;
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* Big touch targets for children */
+.touch-target {
+  min-height: 64px;
+  min-width: 64px;
+}
