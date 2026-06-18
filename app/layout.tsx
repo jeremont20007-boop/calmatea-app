@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Nunito } from 'next/font/google'
 import './globals.css'
+import { SplashScreen } from '@/components/ui/SplashScreen'
+import { ServiceWorkerRegister } from '@/components/ui/ServiceWorkerRegister'
 
 const nunito = Nunito({
   subsets: ['latin'],
@@ -33,6 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body className="font-nunito bg-calm-50 min-h-screen antialiased">
+        <ServiceWorkerRegister />
+        <SplashScreen />
         {children}
       </body>
     </html>
