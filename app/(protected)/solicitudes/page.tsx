@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
 import { type Application, type Vehicle, type Profile, PLATFORM_LABELS, SCHEDULE_LABELS, DAYS_OF_WEEK } from '@/types'
@@ -38,12 +39,12 @@ export default async function SolicitudesPage() {
       .select('*, vehicle:vehicles(id, make, model, year, city, revenue_split, platforms), driver:profiles!driver_id(id, full_name, city, phone, license_number, experience_years, bio)')
       .in('vehicle_id', vehicleIds)
       .order('created_at', { ascending: false })
-    // Note: driver_offered_split, driver_available_days, driver_schedule are included via the * selector
 
     return (
       <PropietarioApplications
         applications={(applications ?? []) as unknown as Application[]}
         vehicles={(myVehicles ?? []) as unknown as Vehicle[]}
+        ownerId={profile.id}
       />
     )
   }
@@ -51,7 +52,7 @@ export default async function SolicitudesPage() {
   // Conductor view
   const { data: applications } = await supabase
     .from('applications')
-    .select('*, vehicle:vehicles(id, make, model, year, city, revenue_split, platforms, schedule)')
+    .select('*, vehicle:vehicles(id, make, model, year, city, revenue_split, platforms, schedule, owner_id, owner:profiles!owner_id(id))')
     .eq('driver_id', profile.id)
     .order('created_at', { ascending: false })
 
@@ -84,9 +85,11 @@ function EmptyState({ role }: { role: 'conductor' | 'propietario' }) {
 function PropietarioApplications({
   applications,
   vehicles,
+  ownerId,
 }: {
   applications: Application[]
   vehicles: Vehicle[]
+  ownerId: string
 }) {
   const pending = applications.filter(a => a.status === 'pendiente')
   const resolved = applications.filter(a => a.status !== 'pendiente')
@@ -343,6 +346,28 @@ function ApplicationCard({
         {/* Withdraw for conductor */}
         {!isPropietario && application.status === 'pendiente' && (
           <WithdrawButton applicationId={application.id} />
+        )}
+
+        {/* Calificar for accepted applications */}
+        {application.status === 'aceptada' && (
+          <div className="border-t border-calm-100 pt-3">
+            {isPropietario && driver?.id && (
+              <Link
+                href={`/calificar/${driver.id}?vehicleId=${application.vehicle_id}`}
+                className="block w-full text-center bg-calm-500 hover:bg-calm-600 text-white font-bold py-2.5 rounded-xl text-sm transition-colors"
+              >
+                ⭐ Calificar conductor
+              </Link>
+            )}
+            {!isPropietario && vehicle && (vehicle as unknown as { owner?: { id: string } }).owner?.id && (
+              <Link
+                href={`/calificar/${(vehicle as unknown as { owner: { id: string } }).owner.id}?vehicleId=${application.vehicle_id}`}
+                className="block w-full text-center bg-calm-500 hover:bg-calm-600 text-white font-bold py-2.5 rounded-xl text-sm transition-colors"
+              >
+                ⭐ Calificar propietario
+              </Link>
+            )}
+          </div>
         )}
       </div>
     </Card>

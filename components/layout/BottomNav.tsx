@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, Car, FileText, User, Search } from 'lucide-react'
+import { LayoutDashboard, Car, FileText, User, Search, HeadphonesIcon } from 'lucide-react'
 import type { UserRole } from '@/types'
 
 interface BottomNavProps {
@@ -14,6 +14,7 @@ const CONDUCTOR_NAV = [
   { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard },
   { href: '/vehiculos', label: 'Buscar', icon: Search },
   { href: '/solicitudes', label: 'Solicitudes', icon: FileText },
+  { href: '/soporte', label: 'Soporte', icon: HeadphonesIcon },
   { href: '/perfil', label: 'Perfil', icon: User },
 ]
 
@@ -21,6 +22,7 @@ const PROPIETARIO_NAV = [
   { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard },
   { href: '/mis-vehiculos', label: 'Mis Autos', icon: Car },
   { href: '/solicitudes', label: 'Solicitudes', icon: FileText },
+  { href: '/soporte', label: 'Soporte', icon: HeadphonesIcon },
   { href: '/perfil', label: 'Perfil', icon: User },
 ]
 

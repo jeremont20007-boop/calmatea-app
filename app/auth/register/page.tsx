@@ -12,7 +12,7 @@ import type { UserRole } from '@/types'
 function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [role, setRole] = useState<UserRole>('conductor')
+  const [role, setRole] = useState<'conductor' | 'propietario'>('conductor')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

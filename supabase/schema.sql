@@ -274,6 +274,75 @@ create trigger vehicles_updated_at before update on vehicles
 create trigger applications_updated_at before update on applications
   for each row execute procedure update_updated_at();
 
+-- ─── ADMIN ROLE ──────────────────────────────────────────────────────────────
+-- Run in Supabase SQL editor to expand the role constraint:
+-- alter table profiles drop constraint if exists profiles_role_check;
+-- alter table profiles add constraint profiles_role_check
+--   check (role in ('conductor', 'propietario', 'admin'));
+
+-- ─── SUPPORT TICKETS ─────────────────────────────────────────────────────────
+
+create table if not exists support_tickets (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references profiles(id) on delete cascade not null,
+  subject text not null,
+  message text not null,
+  category text not null default 'otro'
+    check (category in ('falla_tecnica', 'cambio_datos', 'disputa', 'pago', 'otro')),
+  status text not null default 'abierto'
+    check (status in ('abierto', 'en_revision', 'resuelto', 'cerrado')),
+  admin_response text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+alter table support_tickets enable row level security;
+
+create policy "Users can manage own tickets" on support_tickets
+  for all using (user_id = (select id from profiles where user_id = auth.uid()));
+
+create policy "Admins can view all tickets" on support_tickets
+  for select using (
+    exists (select 1 from profiles where user_id = auth.uid() and role = 'admin')
+  );
+
+create policy "Admins can update any ticket" on support_tickets
+  for update using (
+    exists (select 1 from profiles where user_id = auth.uid() and role = 'admin')
+  );
+
+create trigger support_tickets_updated_at before update on support_tickets
+  for each row execute procedure update_updated_at();
+
+-- ─── RATINGS ─────────────────────────────────────────────────────────────────
+
+create table if not exists ratings (
+  id uuid primary key default uuid_generate_v4(),
+  from_user_id uuid references profiles(id) on delete cascade not null,
+  to_user_id uuid references profiles(id) on delete cascade not null,
+  rating integer not null check (rating between 1 and 7),
+  comment text,
+  vehicle_id uuid references vehicles(id) on delete set null,
+  created_at timestamptz default now(),
+  constraint no_self_rating check (from_user_id != to_user_id),
+  unique(from_user_id, to_user_id, vehicle_id)
+);
+
+alter table ratings enable row level security;
+
+create policy "Anyone logged in can view ratings" on ratings
+  for select using (auth.uid() is not null);
+
+create policy "Users can insert own ratings" on ratings
+  for insert with check (
+    from_user_id = (select id from profiles where user_id = auth.uid())
+  );
+
+create policy "Users can update own ratings" on ratings
+  for update using (
+    from_user_id = (select id from profiles where user_id = auth.uid())
+  );
+
 -- ─── STORAGE ─────────────────────────────────────────────────────────────────
 -- Run these in the Supabase Storage dashboard or via API:
 -- 1. Create a bucket named "documents" (private)

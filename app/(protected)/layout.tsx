@@ -17,6 +17,8 @@ export default async function ProtectedLayout({ children }: { children: React.Re
 
   const role: UserRole = (profile?.role as UserRole) || 'conductor'
 
+  if (role === 'admin') redirect('/admin/dashboard')
+
   return (
     <div className="flex flex-col min-h-screen max-w-lg mx-auto">
       <main className="flex-1 pb-24">

@@ -1,4 +1,4 @@
-export type UserRole = 'conductor' | 'propietario'
+export type UserRole = 'conductor' | 'propietario' | 'admin'
 export type PlanType = 'free' | 'premium'
 export type VehicleStatus = 'disponible' | 'ocupado' | 'pausado'
 export type ApplicationStatus = 'pendiente' | 'aceptada' | 'rechazada' | 'retirada'
@@ -220,6 +220,50 @@ export const DAYS_OF_WEEK = [
   { value: 'sabado', label: 'Sáb' },
   { value: 'domingo', label: 'Dom' },
 ]
+
+export type TicketCategory = 'falla_tecnica' | 'cambio_datos' | 'disputa' | 'pago' | 'otro'
+export type TicketStatus = 'abierto' | 'en_revision' | 'resuelto' | 'cerrado'
+
+export interface SupportTicket {
+  id: string
+  user_id: string
+  subject: string
+  message: string
+  category: TicketCategory
+  status: TicketStatus
+  admin_response?: string
+  created_at: string
+  updated_at: string
+  user?: Profile
+}
+
+export interface Rating {
+  id: string
+  from_user_id: string
+  to_user_id: string
+  rating: number
+  comment?: string
+  vehicle_id?: string
+  created_at: string
+  from_user?: Profile
+  to_user?: Profile
+  vehicle?: Vehicle
+}
+
+export const TICKET_CATEGORY_LABELS: Record<TicketCategory, string> = {
+  falla_tecnica: 'Falla técnica',
+  cambio_datos: 'Cambio de datos',
+  disputa: 'Disputa',
+  pago: 'Pagos y suscripción',
+  otro: 'Otro',
+}
+
+export const TICKET_STATUS_LABELS: Record<TicketStatus, string> = {
+  abierto: 'Abierto',
+  en_revision: 'En revisión',
+  resuelto: 'Resuelto',
+  cerrado: 'Cerrado',
+}
 
 export const LEGAL_DISCLAIMER = `ACUERDO DE ALQUILER DE VEHÍCULO — CLÁUSULA DE NO RELACIÓN LABORAL
 

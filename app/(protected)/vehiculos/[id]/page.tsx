@@ -14,7 +14,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, role')
+    .select('id, role, plan')
     .eq('user_id', user.id)
     .single()
 
@@ -29,14 +29,23 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
   const v = vehicle as unknown as Vehicle
 
   let existingApplication: Application | null = null
+  let atFreemiumLimit = false
   if (profile?.role === 'conductor') {
-    const { data: app } = await supabase
-      .from('applications')
-      .select('id, status, message')
-      .eq('vehicle_id', id)
-      .eq('driver_id', profile.id)
-      .single()
+    const [{ data: app }, { count: activeApps }] = await Promise.all([
+      supabase
+        .from('applications')
+        .select('id, status, message')
+        .eq('vehicle_id', id)
+        .eq('driver_id', profile.id)
+        .single(),
+      supabase
+        .from('applications')
+        .select('id', { count: 'exact', head: true })
+        .eq('driver_id', profile.id)
+        .not('status', 'in', '("retirada","rechazada")'),
+    ])
     existingApplication = (app as unknown as Application) ?? null
+    atFreemiumLimit = profile.plan !== 'premium' && (activeApps ?? 0) >= 3
   }
 
   const isOwner = profile?.role === 'propietario' && v.owner_id === profile?.id
@@ -196,6 +205,19 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                     ¡El propietario aceptó tu solicitud! Revisa tus datos de contacto en tu perfil y coordina los detalles.
                   </p>
                 )}
+              </Card>
+            ) : atFreemiumLimit ? (
+              <Card className="bg-amber-50 border-amber-200 text-center space-y-3">
+                <p className="font-extrabold text-amber-800">Límite del plan gratuito</p>
+                <p className="text-sm text-amber-700">
+                  Ya tenés 3 solicitudes activas. Con Premium podés enviar solicitudes ilimitadas.
+                </p>
+                <a
+                  href="/subscription"
+                  className="inline-block bg-amber-500 hover:bg-amber-600 text-white font-extrabold px-6 py-3 rounded-2xl text-sm transition-colors"
+                >
+                  Ver Plan Premium →
+                </a>
               </Card>
             ) : v.status === 'disponible' ? (
               <ApplyButton vehicleId={id} driverId={profile.id} ownerSplit={v.revenue_split} />
