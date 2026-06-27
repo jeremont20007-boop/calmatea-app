@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
 import { Search } from 'lucide-react'
-import { PLATFORM_LABELS, SCHEDULE_LABELS, type Vehicle } from '@/types'
+import { PLATFORM_LABELS, SCHEDULE_LABELS, VEHICLE_TYPE_LABELS, type Vehicle } from '@/types'
 
 export default async function VehiculosPage() {
   const supabase = await createClient()
@@ -14,7 +14,7 @@ export default async function VehiculosPage() {
 
   const { data: vehicles, error } = await supabase
     .from('vehicles')
-    .select('id, make, model, year, color, city, revenue_split, platforms, schedule, status, description')
+    .select('id, make, model, year, color, city, revenue_split, platforms, schedule, status, description, vehicle_type, neuquen_only')
     .eq('status', 'disponible')
     .order('created_at', { ascending: false })
 
@@ -59,8 +59,22 @@ export default async function VehiculosPage() {
                     <p className="text-calm-500 text-sm font-semibold">{v.year} · {v.color}</p>
                     <p className="text-calm-400 text-sm mt-1">📍 {v.city}</p>
 
-                    {/* Platforms */}
+                    {/* Type + platforms */}
                     <div className="flex flex-wrap gap-1 mt-3">
+                      {v.vehicle_type && v.vehicle_type !== 'plataforma' && (
+                        <span className={`text-xs font-extrabold px-2.5 py-1 rounded-full ${
+                          v.vehicle_type === 'remis'
+                            ? 'bg-purple-100 text-purple-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {VEHICLE_TYPE_LABELS[v.vehicle_type]}
+                        </span>
+                      )}
+                      {v.neuquen_only && (
+                        <span className="text-xs font-bold bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">
+                          Solo Neuquén
+                        </span>
+                      )}
                       {(v.platforms || []).map(p => (
                         <span key={p} className="text-xs font-bold bg-calm-100 text-calm-700 px-2.5 py-1 rounded-full">
                           {PLATFORM_LABELS[p] || p}

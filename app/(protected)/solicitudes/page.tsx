@@ -4,6 +4,7 @@ import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
 import { type Application, type Vehicle, type Profile, PLATFORM_LABELS, SCHEDULE_LABELS, DAYS_OF_WEEK } from '@/types'
 import { ApplicationActions } from './ApplicationActions'
+import { WithdrawButton } from './WithdrawButton'
 
 export default async function SolicitudesPage() {
   const supabase = await createClient()
@@ -337,6 +338,11 @@ function ApplicationCard({
         {/* Accept/Reject actions for owner */}
         {showActions && isPropietario && application.status === 'pendiente' && (
           <ApplicationActions applicationId={application.id} />
+        )}
+
+        {/* Withdraw for conductor */}
+        {!isPropietario && application.status === 'pendiente' && (
+          <WithdrawButton applicationId={application.id} />
         )}
       </div>
     </Card>
