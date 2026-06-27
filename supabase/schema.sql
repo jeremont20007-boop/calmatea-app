@@ -422,3 +422,25 @@ create policy "Admins can manage ads" on ads
   for all using (
     exists (select 1 from profiles where user_id = auth.uid() and role = 'admin')
   );
+
+-- ─── ADS — image + pricing columns ──────────────────────────────────────────
+
+alter table ads add column if not exists mobile_image_url text;
+alter table ads add column if not exists desktop_image_url text;
+alter table ads add column if not exists duration_days integer;
+alter table ads add column if not exists total_price numeric(10,2);
+alter table ads add column if not exists payment_status text not null default 'pending'
+  check (payment_status in ('pending', 'paid', 'free'));
+
+-- ─── STORAGE — ads-media bucket ──────────────────────────────────────────────
+-- Create a PUBLIC bucket named "ads-media" in the Supabase Storage dashboard.
+-- Then apply these policies via the dashboard or SQL:
+--
+-- INSERT policy (authenticated advertisers):
+--   auth.uid() is not null AND
+--   (storage.foldername(name))[1] IN (
+--     SELECT id::text FROM advertisers WHERE user_id = auth.uid()
+--   )
+--
+-- SELECT policy (public):
+--   true  (everyone can read ad images)

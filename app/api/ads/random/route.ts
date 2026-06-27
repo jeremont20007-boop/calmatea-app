@@ -7,7 +7,7 @@ export async function GET() {
 
   const { data: ads } = await supabase
     .from('ads')
-    .select('id, title, description, image_url, target_url, cta_text, current_impressions, max_impressions, advertiser:advertisers(company_name)')
+    .select('id, title, description, mobile_image_url, desktop_image_url, target_url, cta_text, current_impressions, max_impressions, advertiser:advertisers(company_name)')
     .eq('status', 'active')
     .or(`starts_at.is.null,starts_at.lte.${now}`)
     .or(`ends_at.is.null,ends_at.gte.${now}`)
@@ -33,7 +33,8 @@ export async function GET() {
       id: picked.id,
       title: picked.title,
       description: picked.description,
-      image_url: picked.image_url,
+      mobile_image_url: picked.mobile_image_url,
+      desktop_image_url: picked.desktop_image_url,
       target_url: picked.target_url,
       cta_text: picked.cta_text,
       advertiser_name: advertiser?.company_name,

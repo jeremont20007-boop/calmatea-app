@@ -109,13 +109,29 @@ function AdCard({ ad, showHistory = false }: { ad: AdWithAdvertiser; showHistory
       </div>
 
       {/* Stats + link */}
-      <div className="flex items-center gap-4 mt-3 text-xs text-calm-500">
+      <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-calm-500">
         <span className="flex items-center gap-1">
           <Eye size={12} />
           {ad.current_impressions} imp.
-          {ad.max_impressions && ` / ${ad.max_impressions}`}
         </span>
-        {ad.image_url && <span className="text-calm-400">📷 Con imagen</span>}
+        {ad.duration_days && (
+          <span className="font-semibold">{ad.duration_days} días</span>
+        )}
+        {ad.total_price && (
+          <span className="font-bold text-calm-700">
+            ${ad.total_price.toLocaleString('es-AR')} ARS
+          </span>
+        )}
+        <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] ${
+          ad.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+          ad.payment_status === 'free' ? 'bg-blue-100 text-blue-600' :
+          'bg-yellow-100 text-yellow-700'
+        }`}>
+          {ad.payment_status === 'paid' ? 'Pagado' : ad.payment_status === 'free' ? 'Gratuito' : 'Pago pendiente'}
+        </span>
+        {(ad.mobile_image_url || ad.desktop_image_url) && (
+          <span className="text-calm-400">📷</span>
+        )}
         <a
           href={ad.target_url}
           target="_blank"
@@ -126,6 +142,14 @@ function AdCard({ ad, showHistory = false }: { ad: AdWithAdvertiser; showHistory
           Destino
         </a>
       </div>
+      {ad.mobile_image_url && (
+        <img
+          src={ad.mobile_image_url}
+          alt="Mobile preview"
+          className="mt-2 w-full rounded-xl object-cover border border-calm-100"
+          style={{ aspectRatio: '750/300' }}
+        />
+      )}
 
       {!showHistory && (
         <AdApprovalActions

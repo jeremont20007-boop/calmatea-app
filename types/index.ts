@@ -286,10 +286,16 @@ export interface Ad {
   advertiser_id: string
   title: string
   description?: string
+  /** @deprecated use mobile_image_url / desktop_image_url */
   image_url?: string
+  mobile_image_url?: string
+  desktop_image_url?: string
   target_url: string
   cta_text: string
   status: AdStatus
+  duration_days?: number
+  total_price?: number
+  payment_status?: 'pending' | 'paid' | 'free'
   starts_at?: string
   ends_at?: string
   max_impressions?: number
@@ -297,6 +303,24 @@ export interface Ad {
   created_at: string
   updated_at: string
   advertiser?: Advertiser
+}
+
+// ─── Ad pricing ──────────────────────────────────────────────────────────────
+
+export const AD_PRICE_PER_DAY_ARS = 500
+
+export const AD_DURATION_OPTIONS = [
+  { days: 7,  label: '7 días',   discount: 0    },
+  { days: 14, label: '14 días',  discount: 0.05 },
+  { days: 30, label: '30 días',  discount: 0.10 },
+  { days: 60, label: '60 días',  discount: 0.15 },
+  { days: 90, label: '90 días',  discount: 0.20 },
+]
+
+export function calcAdPrice(days: number): number {
+  const opt = AD_DURATION_OPTIONS.find(o => o.days === days)
+  const pricePerDay = AD_PRICE_PER_DAY_ARS * (1 - (opt?.discount ?? 0))
+  return Math.round(pricePerDay * days)
 }
 
 export const AD_STATUS_LABELS: Record<AdStatus, string> = {
