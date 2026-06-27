@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
-import { Plus, Users } from 'lucide-react'
+import { Plus, Users, FileText } from 'lucide-react'
 import { PLATFORM_LABELS, SCHEDULE_LABELS, STATUS_LABELS, type Vehicle } from '@/types'
 import { VehicleStatusToggle } from './VehicleStatusToggle'
 
@@ -122,6 +122,14 @@ export default async function MisVehiculosPage() {
                         {pendingApps}
                       </span>
                     )}
+                  </Link>
+
+                  <Link
+                    href={`/mis-vehiculos/documentos/${v.id}`}
+                    className="flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors"
+                  >
+                    <FileText size={16} />
+                    Documentos
                   </Link>
                 </div>
               </div>

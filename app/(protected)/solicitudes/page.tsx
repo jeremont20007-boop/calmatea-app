@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
-import { type Application, type Vehicle, type Profile, PLATFORM_LABELS } from '@/types'
+import { type Application, type Vehicle, type Profile, PLATFORM_LABELS, SCHEDULE_LABELS, DAYS_OF_WEEK } from '@/types'
 import { ApplicationActions } from './ApplicationActions'
 
 export default async function SolicitudesPage() {
@@ -37,6 +37,7 @@ export default async function SolicitudesPage() {
       .select('*, vehicle:vehicles(id, make, model, year, city, revenue_split, platforms), driver:profiles!driver_id(id, full_name, city, phone, license_number, experience_years, bio)')
       .in('vehicle_id', vehicleIds)
       .order('created_at', { ascending: false })
+    // Note: driver_offered_split, driver_available_days, driver_schedule are included via the * selector
 
     return (
       <PropietarioApplications
@@ -246,7 +247,7 @@ function ApplicationCard({
 
         {/* Driver info (for owners) */}
         {isPropietario && driver && (
-          <div className="bg-calm-50 rounded-2xl p-3 space-y-1">
+          <div className="bg-calm-50 rounded-2xl p-3 space-y-1.5">
             <p className="font-bold text-calm-800 text-sm">Conductor: {driver.full_name}</p>
             {driver.city && <p className="text-xs text-calm-400">📍 {driver.city}</p>}
             {driver.experience_years && (
@@ -257,6 +258,44 @@ function ApplicationCard({
             )}
             {driver.phone && application.status === 'aceptada' && (
               <p className="text-xs text-calm-600 font-semibold">📞 {driver.phone}</p>
+            )}
+          </div>
+        )}
+
+        {/* Driver's bid & schedule offer */}
+        {(application.driver_offered_split || application.driver_schedule) && (
+          <div className="bg-calm-50 rounded-2xl p-3 space-y-1.5">
+            <p className="text-xs font-extrabold text-calm-600 mb-1">Oferta del conductor</p>
+            {application.driver_offered_split && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-calm-500 font-semibold">Porcentaje ofrecido</span>
+                <span className="font-extrabold text-forest">{application.driver_offered_split}% para el conductor</span>
+              </div>
+            )}
+            {application.driver_schedule && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-calm-500 font-semibold">Modalidad</span>
+                <span className="text-xs font-bold text-calm-800">{SCHEDULE_LABELS[application.driver_schedule]}</span>
+              </div>
+            )}
+            {application.driver_available_days && application.driver_available_days.length > 0 && (
+              <div>
+                <p className="text-xs text-calm-500 font-semibold mb-1">Días disponibles</p>
+                <div className="flex gap-1 flex-wrap">
+                  {DAYS_OF_WEEK.map(d => (
+                    <span
+                      key={d.value}
+                      className={`text-xs font-bold px-1.5 py-0.5 rounded-lg ${
+                        application.driver_available_days!.includes(d.value)
+                          ? 'bg-calm-500 text-white'
+                          : 'bg-calm-100 text-calm-300'
+                      }`}
+                    >
+                      {d.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         )}
@@ -278,10 +317,20 @@ function ApplicationCard({
         )}
 
         {/* Revenue split for conductor view */}
-        {!isPropietario && vehicle?.revenue_split && (
-          <div className="flex items-center justify-between border-t border-calm-100 pt-2">
-            <span className="text-xs text-calm-400 font-semibold">Tu porcentaje</span>
-            <span className="font-extrabold text-forest">{vehicle.revenue_split}%</span>
+        {!isPropietario && (vehicle?.revenue_split || application.driver_offered_split) && (
+          <div className="border-t border-calm-100 pt-2 space-y-1">
+            {application.driver_offered_split && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-calm-400 font-semibold">Tu oferta</span>
+                <span className="font-extrabold text-calm-700">{application.driver_offered_split}%</span>
+              </div>
+            )}
+            {vehicle?.revenue_split && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-calm-400 font-semibold">Oferta del propietario</span>
+                <span className="font-extrabold text-forest">{vehicle.revenue_split}%</span>
+              </div>
+            )}
           </div>
         )}
 

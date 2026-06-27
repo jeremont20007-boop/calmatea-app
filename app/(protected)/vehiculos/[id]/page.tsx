@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
-import { PLATFORM_LABELS, SCHEDULE_LABELS, APPLICATION_STATUS_LABELS, type Vehicle, type Application } from '@/types'
+import { PLATFORM_LABELS, SCHEDULE_LABELS, VEHICLE_TYPE_LABELS, DAYS_OF_WEEK, APPLICATION_STATUS_LABELS, type Vehicle, type Application } from '@/types'
 import { ApplyButton } from './ApplyButton'
 
 export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -83,14 +83,62 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
           </div>
         </Card>
 
+        {/* Vehicle type & classification */}
+        <Card>
+          <h2 className="font-extrabold text-calm-700 mb-3">Tipo de vehículo</h2>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center py-2 border-b border-calm-100">
+              <span className="text-calm-500 text-sm font-semibold">Clasificación</span>
+              <span className="font-bold text-calm-800">{VEHICLE_TYPE_LABELS[v.vehicle_type]}</span>
+            </div>
+            {v.is_in_remis_base && (
+              <div className="flex justify-between items-center py-2 border-b border-calm-100">
+                <span className="text-calm-500 text-sm font-semibold">Base de remis</span>
+                <span className="font-bold text-calm-800">{v.remis_base_name || 'Sí'}</span>
+              </div>
+            )}
+            {v.neuquen_only && (
+              <div className="flex justify-between items-center py-2">
+                <span className="text-calm-500 text-sm font-semibold">Habilitación</span>
+                <span className="font-bold text-calm-800">Solo Neuquén</span>
+              </div>
+            )}
+          </div>
+        </Card>
+
         {/* Schedule & Terms */}
         <Card>
           <h2 className="font-extrabold text-calm-700 mb-3">Condiciones</h2>
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2 border-b border-calm-100">
-              <span className="text-calm-500 text-sm font-semibold">Horario</span>
+              <span className="text-calm-500 text-sm font-semibold">Horario disponible</span>
               <span className="font-bold text-calm-800">{SCHEDULE_LABELS[v.schedule]}</span>
             </div>
+            {v.available_days && v.available_days.length > 0 && (
+              <div className="py-2 border-b border-calm-100">
+                <p className="text-calm-500 text-sm font-semibold mb-1.5">Días para alquilar</p>
+                <div className="flex gap-1.5 flex-wrap">
+                  {DAYS_OF_WEEK.map(d => (
+                    <span
+                      key={d.value}
+                      className={`text-xs font-bold px-2 py-1 rounded-lg ${
+                        v.available_days!.includes(d.value)
+                          ? 'bg-calm-500 text-white'
+                          : 'bg-calm-50 text-calm-300'
+                      }`}
+                    >
+                      {d.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {v.available_hours && (
+              <div className="flex justify-between items-center py-2 border-b border-calm-100">
+                <span className="text-calm-500 text-sm font-semibold">Horario de alquiler</span>
+                <span className="font-bold text-calm-800">{v.available_hours}</span>
+              </div>
+            )}
             <div className="flex justify-between items-center py-2 border-b border-calm-100">
               <span className="text-calm-500 text-sm font-semibold">Porcentaje para conductor</span>
               <span className="font-extrabold text-forest text-lg">{v.revenue_split}%</span>
@@ -150,7 +198,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                 )}
               </Card>
             ) : v.status === 'disponible' ? (
-              <ApplyButton vehicleId={id} driverId={profile.id} />
+              <ApplyButton vehicleId={id} driverId={profile.id} ownerSplit={v.revenue_split} />
             ) : (
               <Card className="text-center bg-gray-50 border-gray-200">
                 <p className="font-bold text-calm-500">Este vehículo no está disponible actualmente</p>

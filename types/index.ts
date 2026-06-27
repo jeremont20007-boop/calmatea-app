@@ -4,6 +4,24 @@ export type VehicleStatus = 'disponible' | 'ocupado' | 'pausado'
 export type ApplicationStatus = 'pendiente' | 'aceptada' | 'rechazada' | 'retirada'
 export type PlatformType = 'uber' | 'cabify' | 'beat' | 'indrive' | 'didi' | 'otra'
 export type ScheduleType = 'completo' | 'parcial' | 'fines_de_semana'
+export type VehicleType = 'remis' | 'taxi' | 'plataforma'
+export type DocumentStatus = 'pendiente' | 'aprobado' | 'rechazado'
+
+export type DriverDocType =
+  | 'licencia_conducir'
+  | 'dni_frente'
+  | 'dni_dorso'
+  | 'credencial_remis'
+  | 'antecedentes_nacionales'
+  | 'antecedentes_provinciales'
+  | 'seguro_excedentes'
+
+export type VehicleDocType =
+  | 'titulo_propiedad'
+  | 'cedula_verde'
+  | 'seguro_vehiculo'
+  | 'habilitacion_remis'
+  | 'habilitacion_taxi'
 
 export interface Profile {
   id: string
@@ -17,6 +35,8 @@ export interface Profile {
   license_number?: string
   experience_years?: number
   bio?: string
+  available_days?: string[]
+  preferred_schedule?: ScheduleType
   stripe_customer_id?: string
   stripe_subscription_id?: string
   subscription_status?: string
@@ -38,6 +58,12 @@ export interface Vehicle {
   schedule: ScheduleType
   description?: string
   status: VehicleStatus
+  vehicle_type: VehicleType
+  is_in_remis_base: boolean
+  remis_base_name?: string
+  neuquen_only: boolean
+  available_days?: string[]
+  available_hours?: string
   created_at: string
   updated_at: string
   owner?: Profile
@@ -51,11 +77,39 @@ export interface Application {
   status: ApplicationStatus
   message?: string
   owner_response?: string
+  driver_offered_split?: number
+  driver_available_days?: string[]
+  driver_schedule?: ScheduleType
+  accepted_legal_disclaimer: boolean
   created_at: string
   updated_at: string
   vehicle?: Vehicle
   driver?: Profile
 }
+
+export interface DriverDocument {
+  id: string
+  driver_id: string
+  doc_type: DriverDocType
+  file_url?: string
+  status: DocumentStatus
+  expires_at?: string
+  notes?: string
+  uploaded_at: string
+}
+
+export interface VehicleDocument {
+  id: string
+  vehicle_id: string
+  doc_type: VehicleDocType
+  file_url?: string
+  status: DocumentStatus
+  expires_at?: string
+  notes?: string
+  uploaded_at: string
+}
+
+// ─── Labels & constants ─────────────────────────────────────────────────────
 
 export const PLATFORM_LABELS: Record<PlatformType, string> = {
   uber: 'Uber',
@@ -66,19 +120,16 @@ export const PLATFORM_LABELS: Record<PlatformType, string> = {
   otra: 'Otra',
 }
 
-export const PLATFORM_COLORS: Record<PlatformType, string> = {
-  uber: 'bg-black text-white',
-  cabify: 'bg-purple-600 text-white',
-  beat: 'bg-green-600 text-white',
-  indrive: 'bg-blue-600 text-white',
-  didi: 'bg-orange-500 text-white',
-  otra: 'bg-gray-500 text-white',
-}
-
 export const SCHEDULE_LABELS: Record<ScheduleType, string> = {
   completo: 'Tiempo completo',
   parcial: 'Tiempo parcial',
   fines_de_semana: 'Fines de semana',
+}
+
+export const VEHICLE_TYPE_LABELS: Record<VehicleType, string> = {
+  remis: 'Remis',
+  taxi: 'Taxi',
+  plataforma: 'Solo plataforma digital',
 }
 
 export const STATUS_LABELS: Record<VehicleStatus, string> = {
@@ -93,3 +144,95 @@ export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
   rechazada: 'Rechazada',
   retirada: 'Retirada',
 }
+
+export const DRIVER_DOC_LABELS: Record<DriverDocType, { label: string; description: string; required: boolean }> = {
+  licencia_conducir: {
+    label: 'Licencia de conducir',
+    description: 'Categoría habilitante para transporte de personas',
+    required: true,
+  },
+  dni_frente: {
+    label: 'DNI (frente)',
+    description: 'Documento Nacional de Identidad — anverso',
+    required: true,
+  },
+  dni_dorso: {
+    label: 'DNI (dorso)',
+    description: 'Documento Nacional de Identidad — reverso',
+    required: true,
+  },
+  credencial_remis: {
+    label: 'Credencial de remis',
+    description: 'Credencial habilitante para conducir remis',
+    required: false,
+  },
+  antecedentes_nacionales: {
+    label: 'Antecedentes penales nacionales',
+    description: 'Certificado del Registro Nacional de Reincidencia',
+    required: true,
+  },
+  antecedentes_provinciales: {
+    label: 'Antecedentes penales provinciales',
+    description: 'Certificado de la provincia correspondiente',
+    required: true,
+  },
+  seguro_excedentes: {
+    label: 'Seguro de excedentes personales',
+    description: 'Seguro para actividad de transporte de personas',
+    required: true,
+  },
+}
+
+export const VEHICLE_DOC_LABELS: Record<VehicleDocType, { label: string; description: string; required: boolean }> = {
+  titulo_propiedad: {
+    label: 'Título de propiedad',
+    description: 'Escritura de titularidad del vehículo',
+    required: true,
+  },
+  cedula_verde: {
+    label: 'Cédula verde',
+    description: 'Cédula de identificación del vehículo',
+    required: true,
+  },
+  seguro_vehiculo: {
+    label: 'Seguro del vehículo',
+    description: 'Póliza de seguro vigente',
+    required: true,
+  },
+  habilitacion_remis: {
+    label: 'Habilitación remis',
+    description: 'Habilitación municipal/provincial para servicio de remis',
+    required: false,
+  },
+  habilitacion_taxi: {
+    label: 'Habilitación taxi / licencia',
+    description: 'Licencia de taxi o habilitación correspondiente',
+    required: false,
+  },
+}
+
+export const DAYS_OF_WEEK = [
+  { value: 'lunes', label: 'Lun' },
+  { value: 'martes', label: 'Mar' },
+  { value: 'miercoles', label: 'Mié' },
+  { value: 'jueves', label: 'Jue' },
+  { value: 'viernes', label: 'Vie' },
+  { value: 'sabado', label: 'Sáb' },
+  { value: 'domingo', label: 'Dom' },
+]
+
+export const LEGAL_DISCLAIMER = `ACUERDO DE ALQUILER DE VEHÍCULO — CLÁUSULA DE NO RELACIÓN LABORAL
+
+El presente acuerdo constituye exclusivamente un contrato de alquiler de vehículo entre el PROPIETARIO y el CONDUCTOR (en adelante "las partes"). Las partes declaran expresamente que:
+
+1. No existe entre ellas relación laboral, de dependencia, ni vínculo societario de ningún tipo.
+
+2. El conductor actúa como trabajador autónomo e independiente, siendo responsable del pago de sus propios impuestos, aportes y contribuciones previsionales.
+
+3. El propietario no imparte órdenes ni instrucciones sobre la forma en que el conductor presta el servicio a través de las plataformas digitales.
+
+4. El conductor asume la total responsabilidad por el uso del vehículo alquilado, incluyendo infracciones de tránsito, multas y daños a terceros no cubiertos por el seguro.
+
+5. El pago pactado constituye el canon de alquiler del vehículo, no una remuneración laboral.
+
+Al aceptar este acuerdo, ambas partes confirman haber leído, entendido y aceptado estas condiciones de manera voluntaria.`

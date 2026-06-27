@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { TopBar } from '@/components/layout/TopBar'
-import type { Profile } from '@/types'
+import { DAYS_OF_WEEK, SCHEDULE_LABELS, type Profile, type ScheduleType } from '@/types'
+import { FileText, ChevronRight } from 'lucide-react'
 
 export default function PerfilPage() {
   const router = useRouter()
@@ -22,6 +24,8 @@ export default function PerfilPage() {
   const [licenseNumber, setLicenseNumber] = useState('')
   const [experienceYears, setExperienceYears] = useState('')
   const [bio, setBio] = useState('')
+  const [availableDays, setAvailableDays] = useState<string[]>([])
+  const [preferredSchedule, setPreferredSchedule] = useState<ScheduleType>('completo')
 
   useEffect(() => {
     async function load() {
@@ -43,11 +47,19 @@ export default function PerfilPage() {
         setLicenseNumber(data.license_number || '')
         setExperienceYears(data.experience_years?.toString() || '')
         setBio(data.bio || '')
+        setAvailableDays(data.available_days || [])
+        setPreferredSchedule((data.preferred_schedule as ScheduleType) || 'completo')
       }
       setLoading(false)
     }
     load()
   }, [router])
+
+  function toggleDay(day: string) {
+    setAvailableDays(prev =>
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
+    )
+  }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -69,6 +81,8 @@ export default function PerfilPage() {
     if (profile?.role === 'conductor') {
       updates.license_number = licenseNumber.trim() || null
       updates.experience_years = experienceYears ? parseInt(experienceYears) : null
+      updates.available_days = availableDays
+      updates.preferred_schedule = preferredSchedule
     }
 
     const { error: updateError } = await supabase
@@ -127,6 +141,25 @@ export default function PerfilPage() {
           </div>
         </div>
 
+        {/* Documents link for conductores */}
+        {profile?.role === 'conductor' && (
+          <Link
+            href="/perfil/documentos"
+            className="flex items-center justify-between bg-white rounded-3xl p-5 border border-calm-100 hover:bg-calm-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-calm-100 flex items-center justify-center">
+                <FileText size={18} className="text-calm-500" />
+              </div>
+              <div>
+                <p className="font-extrabold text-calm-800 text-sm">Mis documentos</p>
+                <p className="text-xs text-calm-400">Licencia, DNI, antecedentes y más</p>
+              </div>
+            </div>
+            <ChevronRight size={18} className="text-calm-300" />
+          </Link>
+        )}
+
         {/* Personal info */}
         <div className="bg-white rounded-3xl p-5 border border-calm-100 space-y-4">
           <h2 className="font-extrabold text-calm-800">Información personal</h2>
@@ -140,7 +173,7 @@ export default function PerfilPage() {
           <Input
             id="city"
             label="Ciudad"
-            placeholder="Ciudad de México"
+            placeholder="Neuquén"
             value={city}
             onChange={e => setCity(e.target.value)}
           />
@@ -148,7 +181,7 @@ export default function PerfilPage() {
             id="phone"
             label="Teléfono"
             type="tel"
-            placeholder="+52 55 1234 5678"
+            placeholder="+54 299 123 4567"
             value={phone}
             onChange={e => setPhone(e.target.value)}
           />
@@ -175,6 +208,53 @@ export default function PerfilPage() {
               value={experienceYears}
               onChange={e => setExperienceYears(e.target.value)}
             />
+
+            {/* Preferred schedule */}
+            <div>
+              <label className="block text-sm font-semibold text-calm-700 mb-2">
+                Modalidad de trabajo preferida
+              </label>
+              <div className="flex gap-2 flex-wrap">
+                {(Object.entries(SCHEDULE_LABELS) as [ScheduleType, string][]).map(([val, label]) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setPreferredSchedule(val)}
+                    className={`px-3 py-2 rounded-xl font-bold text-sm transition-colors ${
+                      preferredSchedule === val
+                        ? 'bg-calm-500 text-white'
+                        : 'bg-calm-50 text-calm-600 hover:bg-calm-100'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Available days */}
+            <div>
+              <label className="block text-sm font-semibold text-calm-700 mb-2">
+                Días disponibles
+              </label>
+              <div className="flex gap-1.5 flex-wrap">
+                {DAYS_OF_WEEK.map(day => (
+                  <button
+                    key={day.value}
+                    type="button"
+                    onClick={() => toggleDay(day.value)}
+                    className={`w-10 h-10 rounded-xl font-bold text-xs transition-colors ${
+                      availableDays.includes(day.value)
+                        ? 'bg-calm-500 text-white'
+                        : 'bg-calm-50 text-calm-600 hover:bg-calm-100'
+                    }`}
+                  >
+                    {day.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-semibold text-calm-700 mb-1.5">
                 Presentación / Bio
