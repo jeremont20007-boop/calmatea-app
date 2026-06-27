@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { GoogleButton } from '@/components/ui/GoogleButton'
 import type { UserRole } from '@/types'
 
 function RegisterForm() {
@@ -56,6 +57,8 @@ function RegisterForm() {
     router.refresh()
   }
 
+  const roleLabel = role === 'conductor' ? 'conductor' : 'propietario'
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-calm-50 to-calm-100">
       <div className="w-full max-w-sm">
@@ -99,6 +102,20 @@ function RegisterForm() {
             </div>
           </div>
 
+          {/* Google sign-up — passes the chosen role */}
+          <GoogleButton
+            label={`Registrarme como ${roleLabel} con Google`}
+            role={role}
+            isNew
+          />
+
+          {/* Divider */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-calm-100" />
+            <span className="text-xs text-calm-400 font-semibold">o con email</span>
+            <div className="flex-1 h-px bg-calm-100" />
+          </div>
+
           <form onSubmit={handleRegister} className="space-y-4">
             <Input
               id="fullName"
@@ -124,7 +141,7 @@ function RegisterForm() {
               id="phone"
               type="tel"
               label="Teléfono"
-              placeholder="+52 55 1234 5678"
+              placeholder="+54 299 123 4567"
               value={phone}
               onChange={e => setPhone(e.target.value)}
               autoComplete="tel"
@@ -133,7 +150,7 @@ function RegisterForm() {
               id="city"
               type="text"
               label="Ciudad"
-              placeholder="Ciudad de México"
+              placeholder="Neuquén"
               value={city}
               onChange={e => setCity(e.target.value)}
             />
@@ -156,18 +173,18 @@ function RegisterForm() {
             )}
 
             <Button type="submit" size="lg" className="w-full mt-2" disabled={loading}>
-              {loading ? 'Creando cuenta...' : `Crear cuenta como ${role === 'conductor' ? 'conductor' : 'propietario'}`}
+              {loading ? 'Creando cuenta...' : `Crear cuenta como ${roleLabel}`}
             </Button>
           </form>
 
           <p className="text-center text-xs text-calm-400">
-            Al registrarte aceptas nuestros términos de uso y política de privacidad.
+            Al registrarte aceptás nuestros términos de uso y política de privacidad.
           </p>
 
           <p className="text-center text-calm-500 text-sm">
-            ¿Ya tienes cuenta?{' '}
+            ¿Ya tenés cuenta?{' '}
             <Link href="/auth/login" className="font-bold text-calm-600 hover:underline">
-              Inicia sesión
+              Iniciá sesión
             </Link>
           </p>
         </div>

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { GoogleButton } from '@/components/ui/GoogleButton'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -41,8 +42,18 @@ export default function LoginPage() {
           <p className="text-calm-500 mt-1 font-semibold">Intermediación vehicular de confianza</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-calm-100">
-          <h2 className="text-xl font-extrabold text-calm-800 mb-5">Iniciar sesión</h2>
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-calm-100 space-y-5">
+          <h2 className="text-xl font-extrabold text-calm-800">Iniciar sesión</h2>
+
+          {/* Google sign-in */}
+          <GoogleButton label="Continuar con Google" />
+
+          {/* Divider */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-calm-100" />
+            <span className="text-xs text-calm-400 font-semibold">o con email</span>
+            <div className="flex-1 h-px bg-calm-100" />
+          </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
@@ -77,7 +88,7 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <p className="text-center mt-4 text-calm-500 text-sm">
+          <p className="text-center text-calm-500 text-sm">
             ¿No tienes cuenta?{' '}
             <Link href="/auth/register" className="font-bold text-calm-600 hover:underline">
               Regístrate gratis
