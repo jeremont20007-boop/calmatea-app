@@ -52,9 +52,9 @@ export function InstallPWA() {
   return (
     <div className="fixed bottom-24 left-4 right-4 z-50 max-w-sm mx-auto">
       <div className="bg-calm-800 text-white rounded-2xl p-4 shadow-2xl flex items-start gap-3">
-        <div className="text-3xl shrink-0">🌊</div>
+        <div className="text-3xl shrink-0">🚗</div>
         <div className="flex-1 min-w-0">
-          <p className="font-extrabold text-sm">Instala CalmaTEA</p>
+          <p className="font-extrabold text-sm">Instala VehiLink</p>
           {isIOS ? (
             <p className="text-calm-200 text-xs mt-0.5">
               Pulsa <strong>Compartir</strong> → <strong>Añadir a pantalla de inicio</strong>

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { GoogleButton } from '@/components/ui/GoogleButton'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -35,15 +36,24 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-calm-50 to-calm-100">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="text-6xl mb-3">🌊</div>
-          <h1 className="text-3xl font-extrabold text-calm-800">CalmaTEA</h1>
-          <p className="text-calm-500 mt-1 font-semibold">Calma y rutinas para tu peque</p>
+          <div className="text-6xl mb-3">🚗</div>
+          <h1 className="text-3xl font-extrabold text-calm-800">VehiLink</h1>
+          <p className="text-calm-500 mt-1 font-semibold">Intermediación vehicular de confianza</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-calm-100">
-          <h2 className="text-xl font-extrabold text-calm-800 mb-5">Iniciar sesión</h2>
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-calm-100 space-y-5">
+          <h2 className="text-xl font-extrabold text-calm-800">Iniciar sesión</h2>
+
+          {/* Google sign-in */}
+          <GoogleButton label="Continuar con Google" />
+
+          {/* Divider */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-calm-100" />
+            <span className="text-xs text-calm-400 font-semibold">o con email</span>
+            <div className="flex-1 h-px bg-calm-100" />
+          </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
@@ -78,13 +88,22 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <p className="text-center mt-4 text-calm-500 text-sm">
+          <p className="text-center text-calm-500 text-sm">
             ¿No tienes cuenta?{' '}
             <Link href="/auth/register" className="font-bold text-calm-600 hover:underline">
               Regístrate gratis
             </Link>
           </p>
         </div>
+
+        <p className="text-center mt-4">
+          <Link
+            href="/auth/publicitario"
+            className="text-xs text-calm-300 hover:text-calm-500 transition-colors"
+          >
+            Publicita aquí
+          </Link>
+        </p>
       </div>
     </div>
   )

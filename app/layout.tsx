@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Nunito } from 'next/font/google'
 import './globals.css'
-import { SplashScreen } from '@/components/ui/SplashScreen'
 import { ServiceWorkerRegister } from '@/components/ui/ServiceWorkerRegister'
 import { ToastProvider } from '@/components/ui/Toast'
 import { InstallPWA } from '@/components/ui/InstallPWA'
@@ -13,13 +12,13 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: 'CalmaTEA – Calma y rutinas para niños con autismo',
-  description: 'Sonidos relajantes, rutinas visuales y seguimiento emocional para niños con TEA.',
+  title: 'VehiLink – Conectamos conductores con propietarios de vehículos',
+  description: 'La plataforma que conecta conductores con propietarios de vehículos registrados en Uber, Cabify, Beat, InDriver y más.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'CalmaTEA',
+    title: 'VehiLink',
   },
   other: {
     'mobile-web-app-capable': 'yes',
@@ -27,7 +26,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#6BA3BE',
+  themeColor: '#4455E0',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -45,7 +44,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-nunito bg-calm-50 min-h-screen antialiased">
         <ToastProvider>
           <ServiceWorkerRegister />
-          <SplashScreen />
           {children}
           <InstallPWA />
         </ToastProvider>
