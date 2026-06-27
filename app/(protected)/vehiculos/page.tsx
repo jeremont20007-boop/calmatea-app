@@ -5,12 +5,21 @@ import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
 import { Search } from 'lucide-react'
 import { PLATFORM_LABELS, SCHEDULE_LABELS, VEHICLE_TYPE_LABELS, type Vehicle } from '@/types'
+import { AdBanner } from '@/components/ui/AdBanner'
 
 export default async function VehiculosPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/auth/login')
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan')
+    .eq('user_id', user.id)
+    .single()
+
+  const isPremium = profile?.plan === 'premium'
 
   const { data: vehicles, error } = await supabase
     .from('vehicles')
@@ -32,6 +41,9 @@ export default async function VehiculosPage() {
             {list.length} vehículo{list.length !== 1 ? 's' : ''} disponible{list.length !== 1 ? 's' : ''}
           </span>
         </div>
+
+        {/* Ad: free users see it on every load; premium only once per 6 hs (client-side) */}
+        {!isPremium && <AdBanner isPremium={false} />}
 
         {list.length === 0 && !error && (
           <div className="text-center py-16 space-y-3">

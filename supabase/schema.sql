@@ -348,3 +348,77 @@ create policy "Users can update own ratings" on ratings
 -- 1. Create a bucket named "documents" (private)
 -- 2. Enable RLS on the bucket
 -- Storage policies are managed via the Supabase dashboard
+
+-- ─── ADVERTISERS ─────────────────────────────────────────────────────────────
+
+create table if not exists advertisers (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references auth.users(id) on delete cascade not null unique,
+  company_name text not null,
+  contact_email text not null,
+  phone text,
+  website text,
+  status text not null default 'pending' check (status in ('pending', 'active', 'suspended')),
+  created_at timestamptz default now()
+);
+
+alter table advertisers enable row level security;
+
+create policy "Advertisers can view own record" on advertisers
+  for select using (auth.uid() = user_id);
+
+create policy "Advertisers can insert own record" on advertisers
+  for insert with check (auth.uid() = user_id);
+
+create policy "Advertisers can update own record" on advertisers
+  for update using (auth.uid() = user_id);
+
+create policy "Admins can manage advertisers" on advertisers
+  for all using (
+    exists (select 1 from profiles where user_id = auth.uid() and role = 'admin')
+  );
+
+-- ─── ADS ─────────────────────────────────────────────────────────────────────
+
+create table if not exists ads (
+  id uuid primary key default uuid_generate_v4(),
+  advertiser_id uuid references advertisers(id) on delete cascade not null,
+  title text not null,
+  description text,
+  image_url text,
+  target_url text not null,
+  cta_text text not null default 'Ver más',
+  status text not null default 'draft'
+    check (status in ('draft', 'pending_review', 'active', 'paused', 'finished', 'rejected')),
+  starts_at timestamptz,
+  ends_at timestamptz,
+  max_impressions integer,
+  current_impressions integer not null default 0,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+alter table ads enable row level security;
+
+create policy "Anyone can view active ads" on ads
+  for select using (status = 'active');
+
+create policy "Advertisers can view own ads" on ads
+  for select using (
+    advertiser_id in (select id from advertisers where user_id = auth.uid())
+  );
+
+create policy "Advertisers can insert own ads" on ads
+  for insert with check (
+    advertiser_id in (select id from advertisers where user_id = auth.uid())
+  );
+
+create policy "Advertisers can update own ads" on ads
+  for update using (
+    advertiser_id in (select id from advertisers where user_id = auth.uid())
+  );
+
+create policy "Admins can manage ads" on ads
+  for all using (
+    exists (select 1 from profiles where user_id = auth.uid() and role = 'admin')
+  );

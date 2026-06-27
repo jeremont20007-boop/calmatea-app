@@ -188,6 +188,15 @@ function RegisterForm() {
             </Link>
           </p>
         </div>
+
+        <p className="text-center mt-3">
+          <Link
+            href="/auth/publicitario"
+            className="text-xs text-calm-300 hover:text-calm-500 transition-colors"
+          >
+            Publicita aquí
+          </Link>
+        </p>
       </div>
     </div>
   )

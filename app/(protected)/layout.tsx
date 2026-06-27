@@ -15,6 +15,17 @@ export default async function ProtectedLayout({ children }: { children: React.Re
     .eq('user_id', user.id)
     .single()
 
+  if (!profile) {
+    // Check if this user is an advertiser (no profiles row)
+    const { data: advertiser } = await supabase
+      .from('advertisers')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+    if (advertiser) redirect('/ad-dashboard')
+    else redirect('/auth/login')
+  }
+
   const role: UserRole = (profile?.role as UserRole) || 'conductor'
 
   if (role === 'admin') redirect('/admin/dashboard')

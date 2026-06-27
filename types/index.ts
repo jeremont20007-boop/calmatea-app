@@ -265,6 +265,60 @@ export const TICKET_STATUS_LABELS: Record<TicketStatus, string> = {
   cerrado: 'Cerrado',
 }
 
+// ─── Advertising ────────────────────────────────────────────────────────────
+
+export type AdStatus = 'draft' | 'pending_review' | 'active' | 'paused' | 'finished' | 'rejected'
+export type AdvertiserStatus = 'pending' | 'active' | 'suspended'
+
+export interface Advertiser {
+  id: string
+  user_id: string
+  company_name: string
+  contact_email: string
+  phone?: string
+  website?: string
+  status: AdvertiserStatus
+  created_at: string
+}
+
+export interface Ad {
+  id: string
+  advertiser_id: string
+  title: string
+  description?: string
+  image_url?: string
+  target_url: string
+  cta_text: string
+  status: AdStatus
+  starts_at?: string
+  ends_at?: string
+  max_impressions?: number
+  current_impressions: number
+  created_at: string
+  updated_at: string
+  advertiser?: Advertiser
+}
+
+export const AD_STATUS_LABELS: Record<AdStatus, string> = {
+  draft: 'Borrador',
+  pending_review: 'En revisión',
+  active: 'Activo',
+  paused: 'Pausado',
+  finished: 'Finalizado',
+  rejected: 'Rechazado',
+}
+
+export const AD_STATUS_COLORS: Record<AdStatus, string> = {
+  draft: 'bg-gray-100 text-gray-600',
+  pending_review: 'bg-yellow-100 text-yellow-700',
+  active: 'bg-green-100 text-green-700',
+  paused: 'bg-blue-100 text-blue-600',
+  finished: 'bg-gray-100 text-gray-500',
+  rejected: 'bg-red-100 text-red-600',
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const LEGAL_DISCLAIMER = `ACUERDO DE ALQUILER DE VEHÍCULO — CLÁUSULA DE NO RELACIÓN LABORAL
 
 El presente acuerdo constituye exclusivamente un contrato de alquiler de vehículo entre el PROPIETARIO y el CONDUCTOR (en adelante "las partes"). Las partes declaran expresamente que:

@@ -5,6 +5,7 @@ import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
 import { Plus, Search, Bell, Car, TrendingUp } from 'lucide-react'
 import { PLATFORM_LABELS, SCHEDULE_LABELS, type Vehicle, type Application } from '@/types'
+import { AdBanner } from '@/components/ui/AdBanner'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -41,6 +42,7 @@ export default async function DashboardPage() {
       firstName={firstName}
       vehicles={(vehicles ?? []) as unknown as Vehicle[]}
       pendingCount={pendingCount ?? 0}
+      isPremium={profile.plan === 'premium'}
     />
   }
 
@@ -62,6 +64,7 @@ export default async function DashboardPage() {
     firstName={firstName}
     vehicles={(availableVehicles ?? []) as unknown as Vehicle[]}
     applications={(myApplications ?? []) as unknown as Application[]}
+    isPremium={profile.plan === 'premium'}
   />
 }
 
@@ -69,10 +72,12 @@ function PropietarioDashboard({
   firstName,
   vehicles,
   pendingCount,
+  isPremium,
 }: {
   firstName: string
   vehicles: Vehicle[]
   pendingCount: number
+  isPremium: boolean
 }) {
   return (
     <div className="flex flex-col">
@@ -83,6 +88,8 @@ function PropietarioDashboard({
           <h2 className="text-2xl font-extrabold">{firstName} 👋</h2>
           <p className="text-calm-200 text-sm mt-1">Gestiona tus vehículos y conductores</p>
         </div>
+
+        <AdBanner isPremium={isPremium} />
 
         {/* Quick stats */}
         <div className="grid grid-cols-2 gap-3">
@@ -155,10 +162,12 @@ function ConductorDashboard({
   firstName,
   vehicles,
   applications,
+  isPremium,
 }: {
   firstName: string
   vehicles: Vehicle[]
   applications: Application[]
+  isPremium: boolean
 }) {
   return (
     <div className="flex flex-col">
@@ -169,6 +178,8 @@ function ConductorDashboard({
           <h2 className="text-2xl font-extrabold">{firstName} 👋</h2>
           <p className="text-calm-200 text-sm mt-1">Encuentra tu próximo vehículo</p>
         </div>
+
+        <AdBanner isPremium={isPremium} />
 
         {/* CTA */}
         <Link href="/vehiculos">
