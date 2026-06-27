@@ -444,3 +444,31 @@ alter table ads add column if not exists payment_status text not null default 'p
 --
 -- SELECT policy (public):
 --   true  (everyone can read ad images)
+
+-- ─── CREATIVE REQUESTS ───────────────────────────────────────────────────────
+
+create table if not exists creative_requests (
+  id                   uuid default gen_random_uuid() primary key,
+  ad_id                uuid not null references ads(id) on delete cascade,
+  advertiser_id        uuid not null references advertisers(id) on delete cascade,
+  tier                 integer not null check (tier between 1 and 7),
+  selected_deliverables text[] not null default '{}',
+  notes                text,
+  status               text not null default 'pending'
+    check (status in ('pending', 'in_progress', 'delivered', 'revision')),
+  price_ars            numeric(10,2) not null,
+  created_at           timestamptz default now(),
+  updated_at           timestamptz default now()
+);
+
+alter table creative_requests enable row level security;
+
+create policy "Advertisers can manage own creative requests" on creative_requests
+  for all using (
+    advertiser_id in (select id from advertisers where user_id = auth.uid())
+  );
+
+create policy "Admins can manage creative requests" on creative_requests
+  for all using (
+    exists (select 1 from profiles where user_id = auth.uid() and role = 'admin')
+  );

@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { AdImageUpload } from '@/components/ui/AdImageUpload'
 import { AD_STATUS_LABELS, AD_STATUS_COLORS, calcAdPrice, type Ad } from '@/types'
-import { CreditCard, CheckCircle, Eye } from 'lucide-react'
+import { CreditCard, CheckCircle, Eye, Sparkles } from 'lucide-react'
+import Link from 'next/link'
 
 const MOBILE_SPEC = { width: 750, height: 300, maxMB: 2 }
 const DESKTOP_SPEC = { width: 1200, height: 400, maxMB: 3 }
@@ -203,6 +204,21 @@ export default function EditarAnuncioPage() {
           </button>
         </div>
       )}
+
+      {/* Creative services CTA */}
+      <Link
+        href={`/anuncios/${id}/creatividad`}
+        className="flex items-center gap-4 bg-gradient-to-r from-calm-600 to-calm-500 rounded-3xl p-5 text-white"
+      >
+        <Sparkles size={28} className="text-calm-200 shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="font-extrabold text-sm">¿Necesitás ayuda con el diseño?</p>
+          <p className="text-calm-200 text-xs mt-0.5">
+            Solicitá tu creatividad profesional — 7 planes disponibles desde $5.000 ARS
+          </p>
+        </div>
+        <span className="text-calm-200 text-lg shrink-0">→</span>
+      </Link>
 
       {/* Image preview (read-only if not editable) */}
       <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-4">

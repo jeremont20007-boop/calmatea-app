@@ -305,6 +305,71 @@ export interface Ad {
   advertiser?: Advertiser
 }
 
+// ─── Creative services ───────────────────────────────────────────────────────
+
+export const CREATIVE_TIERS = [
+  { tier: 1, label: '1 estrella',  stars: 1, priceARS: 5000,   optionCount: 2  },
+  { tier: 2, label: '2 estrellas', stars: 2, priceARS: 12000,  optionCount: 4  },
+  { tier: 3, label: '3 estrellas', stars: 3, priceARS: 22000,  optionCount: 6  },
+  { tier: 4, label: '4 estrellas', stars: 4, priceARS: 35000,  optionCount: 8  },
+  { tier: 5, label: '5 estrellas', stars: 5, priceARS: 52000,  optionCount: 10 },
+  { tier: 6, label: '6 estrellas', stars: 6, priceARS: 75000,  optionCount: 12 },
+  { tier: 7, label: 'Premium',     stars: 7, priceARS: 110000, optionCount: 14 },
+]
+
+export const CREATIVE_DELIVERABLES = [
+  // tier 1 (2 options)
+  { id: 'flyer_mobile',       tier: 1, label: 'Flyer estático móvil',           description: 'Imagen estática 750×300 px para el anuncio en app' },
+  { id: 'basic_creative',     tier: 1, label: 'Creatividad básica para anuncio', description: 'Diseño creativo adaptado a tu marca para el formato mobile' },
+  // tier 2 (+2 options)
+  { id: 'banner_desktop',     tier: 2, label: 'Banner web desktop',              description: 'Banner 1200×400 px optimizado para visualización en web' },
+  { id: 'social_post',        tier: 2, label: 'Post cuadrado para redes',        description: 'Diseño 1080×1080 px listo para Instagram/Facebook' },
+  // tier 3 (+2 options)
+  { id: 'story',              tier: 3, label: 'Historia vertical (Story)',        description: 'Formato Story 1080×1920 px para redes sociales' },
+  { id: 'pack_mobile_web',    tier: 3, label: 'Pack flyer + banner',             description: 'Entrega combinada: imagen móvil 750×300 + desktop 1200×400' },
+  // tier 4 (+2 options)
+  { id: 'gif_mobile',         tier: 4, label: 'GIF animado – versión móvil',     description: 'Animación GIF 750×300 px para mayor impacto en app' },
+  { id: 'pack_post_story',    tier: 4, label: 'Pack post + historia para redes', description: 'Post cuadrado + Story vertical listos para publicar' },
+  // tier 5 (+2 options)
+  { id: 'gif_desktop',        tier: 5, label: 'GIF animado – versión desktop',   description: 'Animación GIF 1200×400 px para banner web' },
+  { id: 'pack_social_full',   tier: 5, label: 'Pack redes completo (3 formatos)',description: 'Post + Story + Banner para cubrir todas las plataformas' },
+  // tier 6 (+2 options)
+  { id: 'video_15s',          tier: 6, label: 'Video corto 15 seg – móvil',      description: 'Video profesional 15 segundos optimizado para mobile' },
+  { id: 'pack_premium_5',     tier: 6, label: 'Pack premium 5 formatos',         description: 'Flyer + Banner + Post + Story + GIF en un solo pack' },
+  // tier 7 / Premium (+2 options)
+  { id: 'video_full',         tier: 7, label: 'Video + animación completa',      description: 'Video 15 seg + versión animada para todos los formatos' },
+  { id: 'pack_all',           tier: 7, label: 'Pack todo incluido',              description: 'Todos los formatos + variantes A/B para testeo creativo' },
+]
+
+export type CreativeStatus = 'pending' | 'in_progress' | 'delivered' | 'revision'
+
+export interface CreativeRequest {
+  id: string
+  ad_id: string
+  advertiser_id: string
+  tier: number
+  selected_deliverables: string[]
+  notes: string | null
+  status: CreativeStatus
+  price_ars: number
+  created_at: string
+  updated_at: string
+}
+
+export const CREATIVE_STATUS_LABELS: Record<CreativeStatus, string> = {
+  pending:     'Pendiente',
+  in_progress: 'En producción',
+  delivered:   'Entregado',
+  revision:    'En revisión',
+}
+
+export const CREATIVE_STATUS_COLORS: Record<CreativeStatus, string> = {
+  pending:     'bg-yellow-100 text-yellow-700',
+  in_progress: 'bg-blue-100 text-blue-700',
+  delivered:   'bg-green-100 text-green-700',
+  revision:    'bg-orange-100 text-orange-700',
+}
+
 // ─── Ad pricing ──────────────────────────────────────────────────────────────
 
 export const AD_PRICE_PER_DAY_ARS = 500
