@@ -4,7 +4,7 @@ import { DashboardSkeleton } from '@/components/ui/Skeleton'
 export default function DashboardLoading() {
   return (
     <div>
-      <TopBar title="CalmaTEA 🌊" />
+      <TopBar title="VehiLink 🚗" />
       <DashboardSkeleton />
     </div>
   )

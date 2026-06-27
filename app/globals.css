@@ -3,23 +3,27 @@
 @theme inline {
   --font-nunito: var(--font-nunito);
 
-  --color-calm-50: #EEF4FB;
-  --color-calm-100: #D6E8F5;
-  --color-calm-200: #ADCFEB;
-  --color-calm-300: #85B6E1;
-  --color-calm-400: #6BA3BE;
-  --color-calm-500: #4A87A8;
-  --color-calm-600: #3A6D8E;
-  --color-calm-700: #2B5470;
-  --color-calm-800: #1D3A52;
-  --color-calm-900: #0E1E2A;
+  /* Brand: deep blue-indigo for a professional transport marketplace */
+  --color-calm-50: #F0F3FF;
+  --color-calm-100: #E1E8FF;
+  --color-calm-200: #C3D0FE;
+  --color-calm-300: #9BAEF8;
+  --color-calm-400: #6577F0;
+  --color-calm-500: #4455E0;
+  --color-calm-600: #3344CB;
+  --color-calm-700: #2535AA;
+  --color-calm-800: #192685;
+  --color-calm-900: #0D1560;
 
-  --color-ocean: #4A90D9;
-  --color-forest: #4A7C59;
-  --color-sand: #F5E6CC;
-  --color-lavender: #B8A9D9;
-  --color-sunshine: #FFD166;
-  --color-coral: #EF8C6E;
+  --color-ocean: #3B82F6;
+  --color-forest: #10B981;
+  --color-sand: #FEF9C3;
+  --color-lavender: #DDD6FE;
+  --color-sunshine: #FBBF24;
+  --color-coral: #F87171;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
 }
 
 * {
@@ -32,8 +36,8 @@ html {
 
 body {
   font-family: var(--font-nunito), 'Nunito', system-ui, sans-serif;
-  background-color: #EEF4FB;
-  color: #1D3A52;
+  background-color: #F0F3FF;
+  color: #192685;
   min-height: 100vh;
   overflow-x: hidden;
 }

@@ -1,8 +1,9 @@
-export type UserRole = 'child' | 'parent' | 'admin'
+export type UserRole = 'conductor' | 'propietario'
 export type PlanType = 'free' | 'premium'
-export type EmotionType = 'calm' | 'happy' | 'anxious' | 'sad' | 'angry' | 'tired'
-export type SoundCategory = 'rain' | 'ocean' | 'white_noise' | 'brown_noise' | 'forest'
-export type RoutineType = 'morning' | 'school' | 'bath' | 'sleep'
+export type VehicleStatus = 'disponible' | 'ocupado' | 'pausado'
+export type ApplicationStatus = 'pendiente' | 'aceptada' | 'rechazada' | 'retirada'
+export type PlatformType = 'uber' | 'cabify' | 'beat' | 'indrive' | 'didi' | 'otra'
+export type ScheduleType = 'completo' | 'parcial' | 'fines_de_semana'
 
 export interface Profile {
   id: string
@@ -11,64 +12,84 @@ export interface Profile {
   avatar_url?: string
   role: UserRole
   plan: PlanType
+  city?: string
+  phone?: string
+  license_number?: string
+  experience_years?: number
+  bio?: string
   stripe_customer_id?: string
   stripe_subscription_id?: string
   subscription_status?: string
-  favorite_sound?: SoundCategory
-  parent_id?: string
   created_at: string
   updated_at: string
 }
 
-export interface Sound {
+export interface Vehicle {
   id: string
-  name: string
-  category: SoundCategory
-  file_url: string
-  emoji: string
-  is_premium: boolean
+  owner_id: string
+  make: string
+  model: string
+  year: number
   color: string
-}
-
-export interface EmotionLog {
-  id: string
-  child_id: string
-  emotion: EmotionType
-  note?: string
-  sound_played?: SoundCategory
+  license_plate: string
+  platforms: PlatformType[]
+  city: string
+  revenue_split: number
+  schedule: ScheduleType
+  description?: string
+  status: VehicleStatus
   created_at: string
+  updated_at: string
+  owner?: Profile
+  applications_count?: number
 }
 
-export interface SoundSession {
+export interface Application {
   id: string
-  child_id: string
-  sound_category: SoundCategory
-  duration_seconds: number
-  triggered_by: 'manual' | 'emergency'
+  vehicle_id: string
+  driver_id: string
+  status: ApplicationStatus
+  message?: string
+  owner_response?: string
   created_at: string
+  updated_at: string
+  vehicle?: Vehicle
+  driver?: Profile
 }
 
-export interface Routine {
-  id: string
-  type: RoutineType
-  name: string
-  steps: RoutineStep[]
-  is_premium: boolean
+export const PLATFORM_LABELS: Record<PlatformType, string> = {
+  uber: 'Uber',
+  cabify: 'Cabify',
+  beat: 'Beat',
+  indrive: 'InDriver',
+  didi: 'DiDi',
+  otra: 'Otra',
 }
 
-export interface RoutineStep {
-  id: string
-  order: number
-  title: string
-  pictogram: string
-  duration_minutes?: number
+export const PLATFORM_COLORS: Record<PlatformType, string> = {
+  uber: 'bg-black text-white',
+  cabify: 'bg-purple-600 text-white',
+  beat: 'bg-green-600 text-white',
+  indrive: 'bg-blue-600 text-white',
+  didi: 'bg-orange-500 text-white',
+  otra: 'bg-gray-500 text-white',
 }
 
-export interface RoutineProgress {
-  id: string
-  child_id: string
-  routine_type: RoutineType
-  completed_steps: number[]
-  completed_at?: string
-  created_at: string
+export const SCHEDULE_LABELS: Record<ScheduleType, string> = {
+  completo: 'Tiempo completo',
+  parcial: 'Tiempo parcial',
+  fines_de_semana: 'Fines de semana',
+}
+
+export const STATUS_LABELS: Record<VehicleStatus, string> = {
+  disponible: 'Disponible',
+  ocupado: 'Ocupado',
+  pausado: 'Pausado',
+}
+
+export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
+  pendiente: 'Pendiente',
+  aceptada: 'Aceptada',
+  rechazada: 'Rechazada',
+  retirada: 'Retirada',
 }

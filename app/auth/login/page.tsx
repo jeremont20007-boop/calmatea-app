@@ -35,11 +35,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-calm-50 to-calm-100">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="text-6xl mb-3">🌊</div>
-          <h1 className="text-3xl font-extrabold text-calm-800">CalmaTEA</h1>
-          <p className="text-calm-500 mt-1 font-semibold">Calma y rutinas para tu peque</p>
+          <div className="text-6xl mb-3">🚗</div>
+          <h1 className="text-3xl font-extrabold text-calm-800">VehiLink</h1>
+          <p className="text-calm-500 mt-1 font-semibold">Intermediación vehicular de confianza</p>
         </div>
 
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-calm-100">

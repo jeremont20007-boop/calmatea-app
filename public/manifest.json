@@ -1,12 +1,12 @@
 {
-  "name": "CalmaTEA",
-  "short_name": "CalmaTEA",
-  "description": "Ayuda a niños con TEA a reducir ansiedad y regular emociones",
+  "name": "VehiLink",
+  "short_name": "VehiLink",
+  "description": "Conectamos conductores con propietarios de vehículos de plataformas digitales",
   "start_url": "/dashboard",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#EEF4FB",
-  "theme_color": "#6BA3BE",
+  "background_color": "#F0F3FF",
+  "theme_color": "#4455E0",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -21,6 +21,6 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["health", "kids"],
+  "categories": ["business", "productivity"],
   "lang": "es"
 }

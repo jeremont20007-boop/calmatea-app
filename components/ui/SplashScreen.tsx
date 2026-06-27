@@ -20,9 +20,9 @@ export function SplashScreen() {
       style={{ opacity: fading ? 0 : 1 }}
     >
       <div className="text-center space-y-4">
-        <div className="text-8xl animate-breathe">🌊</div>
-        <h1 className="text-4xl font-extrabold text-white tracking-tight">CalmaTEA</h1>
-        <p className="text-calm-100 font-semibold text-lg">Calma y rutinas</p>
+        <div className="text-8xl animate-breathe">🚗</div>
+        <h1 className="text-4xl font-extrabold text-white tracking-tight">VehiLink</h1>
+        <p className="text-calm-100 font-semibold text-lg">Intermediación vehicular</p>
       </div>
 
       <div className="absolute bottom-16 w-40 h-1.5 bg-white/20 rounded-full overflow-hidden">

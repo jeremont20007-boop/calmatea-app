@@ -7,52 +7,56 @@ create table if not exists profiles (
   user_id uuid references auth.users(id) on delete cascade not null unique,
   full_name text not null default '',
   avatar_url text,
-  role text not null default 'parent' check (role in ('child', 'parent', 'admin')),
+  role text not null default 'conductor' check (role in ('conductor', 'propietario')),
   plan text not null default 'free' check (plan in ('free', 'premium')),
+  city text,
+  phone text,
+  license_number text,
+  experience_years integer,
+  bio text,
   stripe_customer_id text unique,
   stripe_subscription_id text unique,
   subscription_status text,
-  favorite_sound text check (favorite_sound in ('rain', 'ocean', 'white_noise', 'brown_noise', 'forest')),
-  parent_id uuid references profiles(id) on delete set null,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 
--- Emotion logs
-create table if not exists emotion_logs (
+-- Vehicles table
+create table if not exists vehicles (
   id uuid primary key default uuid_generate_v4(),
-  child_id uuid references profiles(id) on delete cascade not null,
-  emotion text not null check (emotion in ('calm', 'happy', 'anxious', 'sad', 'angry', 'tired')),
-  note text,
-  sound_played text check (sound_played in ('rain', 'ocean', 'white_noise', 'brown_noise', 'forest')),
-  created_at timestamptz default now()
+  owner_id uuid references profiles(id) on delete cascade not null,
+  make text not null,
+  model text not null,
+  year integer not null,
+  color text not null default '',
+  license_plate text not null,
+  platforms text[] not null default '{}',
+  city text not null,
+  revenue_split integer not null default 60 check (revenue_split between 40 and 90),
+  schedule text not null default 'completo' check (schedule in ('completo', 'parcial', 'fines_de_semana')),
+  description text,
+  status text not null default 'disponible' check (status in ('disponible', 'ocupado', 'pausado')),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
 );
 
--- Sound sessions
-create table if not exists sound_sessions (
+-- Applications table
+create table if not exists applications (
   id uuid primary key default uuid_generate_v4(),
-  child_id uuid references profiles(id) on delete cascade not null,
-  sound_category text not null check (sound_category in ('rain', 'ocean', 'white_noise', 'brown_noise', 'forest')),
-  duration_seconds integer not null default 0,
-  triggered_by text not null default 'manual' check (triggered_by in ('manual', 'emergency')),
-  created_at timestamptz default now()
-);
-
--- Routine progress
-create table if not exists routine_progress (
-  id uuid primary key default uuid_generate_v4(),
-  child_id uuid references profiles(id) on delete cascade not null,
-  routine_type text not null check (routine_type in ('morning', 'school', 'bath', 'sleep')),
-  completed_steps integer[] not null default '{}',
-  completed_at timestamptz,
-  created_at timestamptz default now()
+  vehicle_id uuid references vehicles(id) on delete cascade not null,
+  driver_id uuid references profiles(id) on delete cascade not null,
+  status text not null default 'pendiente' check (status in ('pendiente', 'aceptada', 'rechazada', 'retirada')),
+  message text,
+  owner_response text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique(vehicle_id, driver_id)
 );
 
 -- RLS Policies
 alter table profiles enable row level security;
-alter table emotion_logs enable row level security;
-alter table sound_sessions enable row level security;
-alter table routine_progress enable row level security;
+alter table vehicles enable row level security;
+alter table applications enable row level security;
 
 -- Profiles policies
 create policy "Users can view own profile" on profiles
@@ -64,79 +68,72 @@ create policy "Users can update own profile" on profiles
 create policy "Users can insert own profile" on profiles
   for insert with check (auth.uid() = user_id);
 
-create policy "Parents can view child profiles" on profiles
+create policy "Anyone can view conductor profiles for applications" on profiles
   for select using (
-    exists (
-      select 1 from profiles p
-      where p.user_id = auth.uid() and p.id = profiles.parent_id
+    role = 'conductor' and exists (
+      select 1 from applications a
+      join vehicles v on v.id = a.vehicle_id
+      where a.driver_id = profiles.id
+        and v.owner_id = (select id from profiles where user_id = auth.uid())
     )
   );
 
--- Emotion logs policies
-create policy "View own emotion logs" on emotion_logs
+-- Vehicles policies
+create policy "Anyone can view available vehicles" on vehicles
+  for select using (status = 'disponible');
+
+create policy "Owners can view all their vehicles" on vehicles
   for select using (
-    exists (
-      select 1 from profiles p
-      where p.id = emotion_logs.child_id and (
-        p.user_id = auth.uid() or
-        exists (select 1 from profiles parent where parent.user_id = auth.uid() and parent.id = p.parent_id)
-      )
-    )
+    owner_id = (select id from profiles where user_id = auth.uid())
   );
 
-create policy "Insert own emotion logs" on emotion_logs
+create policy "Owners can insert vehicles" on vehicles
   for insert with check (
-    exists (
-      select 1 from profiles p
-      where p.id = child_id and p.user_id = auth.uid()
-    )
+    owner_id = (select id from profiles where user_id = auth.uid())
   );
 
--- Sound sessions policies
-create policy "View own sound sessions" on sound_sessions
+create policy "Owners can update their vehicles" on vehicles
+  for update using (
+    owner_id = (select id from profiles where user_id = auth.uid())
+  );
+
+create policy "Owners can delete their vehicles" on vehicles
+  for delete using (
+    owner_id = (select id from profiles where user_id = auth.uid())
+  );
+
+-- Applications policies
+create policy "Drivers can view own applications" on applications
+  for select using (
+    driver_id = (select id from profiles where user_id = auth.uid())
+  );
+
+create policy "Owners can view applications for their vehicles" on applications
   for select using (
     exists (
-      select 1 from profiles p
-      where p.id = sound_sessions.child_id and (
-        p.user_id = auth.uid() or
-        exists (select 1 from profiles parent where parent.user_id = auth.uid() and parent.id = p.parent_id)
-      )
+      select 1 from vehicles v
+      where v.id = applications.vehicle_id
+        and v.owner_id = (select id from profiles where user_id = auth.uid())
     )
   );
 
-create policy "Insert own sound sessions" on sound_sessions
+create policy "Drivers can insert applications" on applications
   for insert with check (
-    exists (
-      select 1 from profiles p
-      where p.id = child_id and p.user_id = auth.uid()
-    )
+    driver_id = (select id from profiles where user_id = auth.uid())
   );
 
--- Routine progress policies
-create policy "View own routine progress" on routine_progress
-  for select using (
-    exists (
-      select 1 from profiles p
-      where p.id = routine_progress.child_id and (
-        p.user_id = auth.uid() or
-        exists (select 1 from profiles parent where parent.user_id = auth.uid() and parent.id = p.parent_id)
-      )
-    )
+create policy "Drivers can update own pending applications" on applications
+  for update using (
+    driver_id = (select id from profiles where user_id = auth.uid())
+    and status = 'pendiente'
   );
 
-create policy "Insert own routine progress" on routine_progress
-  for insert with check (
-    exists (
-      select 1 from profiles p
-      where p.id = child_id and p.user_id = auth.uid()
-    )
-  );
-
-create policy "Update own routine progress" on routine_progress
+create policy "Owners can update applications for their vehicles" on applications
   for update using (
     exists (
-      select 1 from profiles p
-      where p.id = routine_progress.child_id and p.user_id = auth.uid()
+      select 1 from vehicles v
+      where v.id = applications.vehicle_id
+        and v.owner_id = (select id from profiles where user_id = auth.uid())
     )
   );
 
@@ -144,11 +141,13 @@ create policy "Update own routine progress" on routine_progress
 create or replace function handle_new_user()
 returns trigger as $$
 begin
-  insert into profiles (user_id, full_name, role)
+  insert into profiles (user_id, full_name, role, city, phone)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', ''),
-    coalesce(new.raw_user_meta_data->>'role', 'parent')
+    coalesce(new.raw_user_meta_data->>'role', 'conductor'),
+    new.raw_user_meta_data->>'city',
+    new.raw_user_meta_data->>'phone'
   );
   return new;
 end;
@@ -158,7 +157,7 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure handle_new_user();
 
--- Updated_at trigger
+-- Updated_at trigger function
 create or replace function update_updated_at()
 returns trigger as $$
 begin
@@ -169,4 +168,12 @@ $$ language plpgsql;
 
 create trigger profiles_updated_at
   before update on profiles
+  for each row execute procedure update_updated_at();
+
+create trigger vehicles_updated_at
+  before update on vehicles
+  for each row execute procedure update_updated_at();
+
+create trigger applications_updated_at
+  before update on applications
   for each row execute procedure update_updated_at();
