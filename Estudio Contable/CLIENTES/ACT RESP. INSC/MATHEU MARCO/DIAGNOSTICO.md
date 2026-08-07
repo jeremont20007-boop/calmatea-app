@@ -18,7 +18,8 @@
 
 - Cliente: **Matheu, Marcos** — **CUIT 20-31822115-5** (confirmado contra la base del estudio `Claves - MyA.xlsx` en Drive, hoja `RESP INSC Y MONOT 1`, fila 464; dígito verificador validado).
 - Es un **alta reciente en la base**: su fila solo tiene apellido, nombre, CUIT y clave AFIP cargada. Sin IIBB, dotación, mails ni sistemas registrados → todo eso se releva con el checklist. La clave fiscal ya está en la base del estudio, así que el diagnóstico ARCA se puede correr hoy mismo desde la PC del estudio (las claves NO se copiaron a esta carpeta).
-- Carpeta del estudio en `ACT RESP. INSC` → **Responsable Inscripto**.
+- **OJO — condición fiscal a verificar primero:** la carpeta del estudio está en `ACT RESP. INSC` (Responsable Inscripto), pero la fila 464 de la base cae en la zona de **Monotributo** de la hoja (bloque "no activos / con inconvenientes para ver la categoría en AFIP"). Puede ser una fila simplemente agregada al final de la planilla, o indicar un pase reciente Monotributo → RI (o que aún sea monotributista). **Primer paso del diagnóstico: bajar la constancia de inscripción** — define qué menú de abono aplica; si hubo exclusión/renuncia reciente, revisar los créditos de la transición (punto 14 del checklist).
+- Barrido completo de Drive (07/08/2026): **no existe ningún PDF ni documento propio del cliente en Drive** — el PDF que envió Marcos está únicamente en la carpeta Dropbox local. Existe además una copia de la base en Google Sheets ("Claves - MyA", versión marzo 2026) con la misma fila mínima.
 - Negocio: **Distribuidora Express** — distribuidora con canal de venta online: <https://distribuidoraexpress.com.ar/>.
 - Perfil típico del rubro (distribución + e-commerce) sobre el que se diseñó el diagnóstico:
   - Cobra por **MercadoPago / transferencias** → acumula retenciones y percepciones (IVA, Ganancias, IIBB-SIRTAC) que casi ningún contribuyente computa completas.
