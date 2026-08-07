@@ -16,7 +16,9 @@
 
 ## 2. Punto de partida (lo que sabemos hoy)
 
-- Cliente: **Marco Matheu**, carpeta del estudio en `ACT RESP. INSC` → **Responsable Inscripto**.
+- Cliente: **Matheu, Marcos** — **CUIT 20-31822115-5** (confirmado contra la base del estudio `Claves - MyA.xlsx` en Drive, hoja `RESP INSC Y MONOT 1`, fila 464; dígito verificador validado).
+- Es un **alta reciente en la base**: su fila solo tiene apellido, nombre, CUIT y clave AFIP cargada. Sin IIBB, dotación, mails ni sistemas registrados → todo eso se releva con el checklist. La clave fiscal ya está en la base del estudio, así que el diagnóstico ARCA se puede correr hoy mismo desde la PC del estudio (las claves NO se copiaron a esta carpeta).
+- Carpeta del estudio en `ACT RESP. INSC` → **Responsable Inscripto**.
 - Negocio: **Distribuidora Express** — distribuidora con canal de venta online: <https://distribuidoraexpress.com.ar/>.
 - Perfil típico del rubro (distribución + e-commerce) sobre el que se diseñó el diagnóstico:
   - Cobra por **MercadoPago / transferencias** → acumula retenciones y percepciones (IVA, Ganancias, IIBB-SIRTAC) que casi ningún contribuyente computa completas.
