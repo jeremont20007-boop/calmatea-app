@@ -1,24 +1,17 @@
 # Cómo generar los materiales para el equipo con NotebookLM
 
-Hay tres documentos fuente en esta carpeta y cada uno da un material distinto:
+Hay dos documentos fuente en esta carpeta y cada uno da un material distinto:
 
 | Documento | Sale de ahí | Para qué |
 |---|---|---|
-| `video-fuente-abordaje-3-pasos.md` | Un video de 4-5 min | **Empezá por acá.** Cómo abordar al cliente, paso por paso |
-| `video-fuente-coca.md` | Un video de ~8 min | Los combos, los retornables y los problemas del mostrador |
+| `video-fuente-coca.md` | Un video de 8-10 min | Cómo atender al cliente en la promo de Coca-Cola |
 | `podcast-fuente-equipo.md` | Un audio de ~10 min | La promo de los chorizos |
 
-El circuito es el mismo para los tres. Cambia sólo el botón del final.
-
-**Por qué están separados el abordaje y los combos.** El abordaje son tres frases que
-el equipo tiene que decir de memoria y nunca cambian. Los combos cambian cada dos
-meses. Si estuvieran en el mismo video, cada vez que Coca renueva los afiches habría
-que regenerar todo y el equipo tendría que volver a mirar los quince minutos enteros.
-Separados, el del abordaje se graba una vez y dura para siempre.
+El circuito es el mismo para los dos. Cambia sólo el botón del final.
 
 ---
 
-## Antes de subir cualquiera de los tres
+## Antes de subir cualquiera de los dos
 
 **Reemplazar todo lo que esté entre corchetes por los datos reales.** El audio y el
 video leen literalmente lo que diga el archivo: si dejás `[fecha]`, lo van a decir
@@ -27,11 +20,10 @@ así.
 Si el mínimo de compra terminó siendo distinto de $18.000, cambialo también: aparece
 varias veces en el documento del podcast.
 
-`video-fuente-abordaje-3-pasos.md` no tiene nada que completar: se sube tal cual.
-
-`video-fuente-coca.md` menciona los combos que hay hoy. **Si Coca-Cola cambia los
-afiches, hay que actualizar la planilla y ese documento antes de volver a generar el
-video.**
+`video-fuente-coca.md` se sube tal cual, no tiene nada que completar. **No menciona
+combos ni precios a propósito**: eso vive en la planilla de la caja, que se actualiza
+cuando Coca renueva los afiches. Así el video se graba una vez y no queda viejo cada
+dos meses.
 
 ## Los pasos
 
@@ -57,23 +49,6 @@ video.**
 > habilitada todavía. En ese caso: generá el audio con la misma fuente y mandalo
 > junto con unas capturas de pantalla del recorrido real.
 
-## Instrucción para el video del abordaje
-
-> Es un video de capacitación para el personal de un almacén de barrio en Neuquén,
-> Argentina, que atiende el mostrador. Español rioplatense, de vos, tono directo y
-> práctico, como un encargado explicándole el procedimiento a su equipo.
->
-> El video tiene un solo objetivo: que se aprendan los tres pasos de memoria y las
-> frases exactas que hay que decir en cada uno. Repetí las tres frases más de una
-> vez, y dejá bien clara la diferencia entre los dos códigos QR, que es lo que más se
-> confunde: uno es el del almacén y otro es el de Coca-Cola.
->
-> Cerrá recalcando la regla de que el descuento se aplica igual aunque el cliente no
-> quiera dar su WhatsApp.
->
-> Corto y al hueso: cuatro o cinco minutos. Nada de introducciones largas, nada de
-> hablar de estrategia comercial ni de los combos en detalle.
-
 ## Instrucción para el podcast de los chorizos
 
 > Están hablando para el equipo que atiende un almacén de barrio en Neuquén,
@@ -97,14 +72,18 @@ video.**
 > Argentina, que atiende el mostrador. Español rioplatense, de vos, tono directo y
 > práctico, como un encargado explicándole el procedimiento a su equipo.
 >
-> Es un instructivo, no una charla: que quede clarísimo el orden de los pasos y qué
-> se dice en cada momento. Dediquen buena parte del video a los problemas que
-> aparecen con los clientes y a cómo resolverlos, porque es lo que más les va a
-> pasar. Recalquen lo que no hay que hacer, sobre todo no agarrarle el teléfono al
-> cliente.
+> Es un instructivo, no una charla. Lo más importante son los tres pasos y las frases
+> textuales que hay que decir en cada uno: repetilas más de una vez a lo largo del
+> video. Dejá bien clara la diferencia entre los dos códigos QR, que es lo que más se
+> confunde: uno es el del almacén, en la caja, y otro es el de Coca-Cola, en la pared.
 >
-> Que sea corto y concreto: entre tres y cinco minutos. Nada de introducciones
-> largas ni de hablar de estrategia comercial.
+> Dedicá buena parte del video a los problemas que aparecen con los clientes y a cómo
+> resolverlos, porque es lo que más les va a pasar. Y cerrá recalcando las dos reglas
+> que no se rompen: no agarrarle el teléfono al cliente, y aplicar el descuento aunque
+> no quiera dar su WhatsApp.
+>
+> Concreto y sin vueltas: entre ocho y diez minutos. Nada de introducciones largas ni
+> de hablar de estrategia comercial.
 
 ## Un detalle
 

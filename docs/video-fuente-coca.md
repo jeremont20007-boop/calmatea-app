@@ -1,249 +1,231 @@
-# Cómo acompañamos al cliente en la promoción de Coca-Cola
+# Promoción de Coca-Cola: cómo atender al cliente
 
-## Por qué le dedicamos tiempo a esto
+## Por qué esto depende de nosotros
 
-Hay una promoción de Coca-Cola dando vueltas en el local. El cliente escanea un
-código QR, completa unos datos, y le llega un mensaje a su WhatsApp.
+Hay una promoción de Coca-Cola en el local. Están los afiches pegados, el cliente
+escanea un código QR, elige un combo y le sale un precio con descuento.
 
-Podríamos dejar el cartel pegado y que cada uno se arregle. La mayoría no lo va a
-ver, unos pocos lo van a intentar, y de esos varios se van a trabar en el camino y
-lo van a dejar por la mitad. Eso ya lo sabemos: pasa con todas las promociones que
-dependen de que alguien haga tres pasos solo, en la vereda, con el celular en una
-mano y las bolsas en la otra.
+Podríamos dejar los afiches ahí y que cada uno se arregle. Y ya sabemos qué pasaría:
+la mayoría no los mira, unos pocos lo intentan, y de esos varios se traban en el
+camino y lo dejan por la mitad. Pasa con todas las promociones que dependen de que
+alguien haga tres cosas solo, parado en la vereda, con el celular en una mano y las
+bolsas en la otra.
 
 La diferencia entre que funcione y que no funcione somos nosotros. Un cliente
-acompañado durante un minuto en el mostrador termina el recorrido. Un cliente que
-lee un cartel, no.
+acompañado durante un minuto termina el recorrido. Un cliente que lee un cartel, no.
 
-Y hay algo que ganamos nosotros en el camino, que es tan importante como la promo
-en sí: para que todo esto funcione, el cliente tiene que tener nuestro WhatsApp. Ese
-contacto queda. Es la forma de avisarle las ofertas del fin de semana durante todo
-el año que viene, sin gastar un peso en publicidad.
+Y hay algo que ganamos nosotros en el camino: para que esto funcione bien, el cliente
+tiene que tener nuestro WhatsApp. Ese contacto queda, y es con lo que le vamos a
+avisar las ofertas todo el año que viene sin gastar un peso en publicidad.
 
-## Qué es la promoción y qué gana el cliente
+## Lo primero: son dos códigos QR distintos
 
-La promoción se llama **Combos Digitales** y la hace Coca-Cola. Están los afiches
-pegados en el local, y cuando el cliente escanea el QR se le abre una pantalla con
-**una lista de combos**, no con uno solo.
+Esto hay que tenerlo clarísimo, porque es lo que más se confunde, y si nos
+equivocamos nosotros el cliente se pierde.
 
-Eso es lo primero que hay que entender, y lo que más se malinterpreta: no estamos
-frente a una promoción, estamos frente a un catálogo que cambia. Hay combos de
-gaseosas, de agua, de Powerade, de Monster. Cada uno tiene su propio precio, su
-propio descuento, sus propias fechas y su propio stock.
+**El QR del almacén** está pegado en la caja y dice «Guardanos en tu WhatsApp». Sirve
+para que el cliente nos tenga agendados y nos pueda escribir. Es nuestro.
 
-Y ojo con esto, porque contradice lo que uno supone: **no todos son de dos
-productos**. Algunos sí, como la Coca de 1,5 litros con la Sprite. Otros son de un
-solo producto, como una Coca retornable de 2,5 litros o una botella de agua. La
-pantalla dice exactamente qué incluye cada combo, y hay que leerla.
+**El QR de Coca-Cola** está en los afiches de la pared. Sirve para que el cliente
+elija su combo y saque su código de descuento. Es de ellos.
 
-Por eso no tiene sentido que nos aprendamos los combos de memoria: para cuando los
-tengamos aprendidos, ya cambiaron. Lo que sí tenemos que saber de memoria es **cómo
-funciona el sistema**, que es siempre igual, y eso es lo que vamos a ver acá. Los
-combos vigentes están en la planilla pegada en la caja, y esa planilla se actualiza.
+Uno no reemplaza al otro. El cliente los va a escanear los dos.
 
-Lo único que todos los combos tienen en común es esto: el descuento no se consigue
-pidiéndolo en la caja. Sólo existe si el cliente saca el código digital. Por eso el
-afiche dice «Encontralos solo en Combos Digitales».
+## Paso 1: ¿Nos tenés en WhatsApp?
 
-## Tres cosas que cambian de un combo a otro
+Esta es siempre la primera pregunta, antes que cualquier cosa de Coca, porque si el
+cliente no nos tiene agendados el paso tres después no lo va a poder hacer.
 
-**El precio es fijo, no es un porcentaje que calculamos nosotros.** Cada combo tiene
-un precio cerrado que define Coca-Cola: tantos pesos por ese combo. El porcentaje que
-figura grande en el afiche es sólo para mostrar el ahorro. Nosotros cobramos el
-precio que dice la pantalla, no hacemos ninguna cuenta.
+Se pregunta corto y sin vueltas:
 
-**Cada combo tiene su fecha de vencimiento, y no son todas la misma.** Unos vencen a
-fin de mes y otros duran hasta octubre. Un combo vencido no genera código, y el
-cliente va a venir a preguntar por qué, mirando un afiche que sigue pegado en la
-pared. Los afiches vencidos hay que despegarlos.
+> «¿Nos tenés en WhatsApp?»
+
+**Si dice que sí**, listo, seguimos.
+
+**Si dice que no**, le señalamos el cartel de la caja:
+
+> «Escaneá este cartel y mandanos un hola. Te queda el contacto y te aviso las ofertas
+> de la semana.»
+
+El cliente apunta la cámara, se le abre nuestro chat con un «Hola!» ya escrito, y sólo
+tiene que apretar enviar. No tiene que anotar ningún número ni agendar nada a mano.
+Cuando nos llega ese «Hola!», el paso uno está terminado.
+
+Ojo con esto: **el paso uno no termina cuando el cliente escanea, termina cuando
+aprieta enviar**. Si sólo escanea y cierra, de nuestro lado no llegó nada.
+
+**Si no quiere darnos el WhatsApp**, se termina ahí, se le agradece y seguimos igual
+con el paso dos. Puede hacer toda la promoción sin darnos nada: lo único que cambia es
+que el código nos lo va a mostrar en la pantalla en vez de mandárnoslo.
+
+## Paso 2: el QR de Coca-Cola
+
+Ahora sí, la promoción. Le señalamos el afiche de la pared **con la mano**:
+
+> «¿Viste que hay una promo de Coca? Escaneá aquel cartel, elegís el combo que quieras
+> y te sale el precio con descuento.»
+
+Señalar importa. La gente no busca: si le señalamos, va; si le decimos «está por ahí»,
+se olvida.
+
+El cliente escanea, se le abre la pantalla de Coca-Cola con la lista de combos, elige
+el que quiere, completa los datos que le piden y le sale un código de letras y
+números.
+
+Mientras lo hace no lo apuramos ni nos quedamos mirándolo fijo. Seguimos atendiendo y
+le decimos que nos avise cuando tenga el código.
+
+## Paso 3: que nos reenvíe el código
+
+Cuando el cliente ya tiene su código:
+
+> «Pasámelo por WhatsApp así no lo copio mal y me queda registrado.»
+
+Y ahí se cierra todo. Nos llega el código por escrito, sin errores de tipeo, con el
+contacto del cliente asociado. Eso es lo que después nos sirve para validar el canje
+con Coca-Cola, porque queda constancia de qué código usó cada cliente y cuándo.
+
+Si el cliente prefirió no darnos el WhatsApp, nos muestra la pantalla y lo copiamos a
+mano, letra por letra, con cuidado.
+
+## Los tres pasos, seguidos
+
+Así suena la secuencia completa cuando ya la tenemos aceitada:
+
+> «¿Nos tenés en WhatsApp? …No. Escaneá este cartel y mandame un hola, es un segundo.
+>
+> Perfecto. Ahora escaneá aquel cartel de allá, el de la promo de Coca, y elegí el
+> combo que quieras.
+>
+> Cuando te salga el código, pasámelo por acá y te lo aplico.»
+
+Tres frases. No hay que explicar la promoción entera ni hablar de porcentajes: el
+cliente ve todo en la pantalla cuando escanea.
+
+## El truco para que esto no tarde tanto
+
+Hacer los tres pasos de corrido con alguien que no nos tiene agendados lleva su
+tiempo, y con cola atrás no da.
+
+Por eso conviene **separar el paso uno de la promoción**. El «¿nos tenés en WhatsApp?»
+se lo podemos preguntar a todo el mundo, todos los días, aunque no haya ninguna
+promoción de por medio. Son diez segundos mientras se cobra.
+
+Si lo hacemos siempre, en un par de meses media clientela ya nos tiene agendados. Y
+ahí, cuando aparece una promoción, el paso uno ya está hecho y todo se reduce a dos
+frases.
+
+**Si hay cola**, no arrancamos los tres pasos. Le decimos «ahí está la promo de Coca,
+escaneá el cartel cuando tengas un minuto» y listo. Es preferible perder un canje que
+tener cinco clientes cansados de esperar.
+
+## Qué tenemos que saber de los combos
+
+Cuando el cliente escanea, no le aparece una promoción: le aparece **una lista de
+combos**. Hay de gaseosas, de agua, de Powerade, de Monster. Y cambian cada dos meses.
+
+Por eso no tiene sentido aprendérselos de memoria. Los combos vigentes están en la
+**planilla pegada en la caja**, que se actualiza. Lo que sí tenemos que saber son
+estas cuatro cosas, que no cambian nunca:
+
+**No todos los combos son de dos productos.** Algunos sí, como la Coca de 1,5 litros
+con la Sprite. Otros son de uno solo, como una botella de agua. La pantalla dice
+exactamente qué incluye cada uno.
+
+**El precio es fijo y lo pone Coca-Cola.** Nosotros cobramos lo que dice la planilla,
+no hacemos ninguna cuenta. El porcentaje grande del afiche es sólo para mostrar el
+ahorro.
+
+**Cada combo tiene su fecha de vencimiento, y no son todas la misma.** Un combo
+vencido no genera código. Los afiches vencidos hay que despegarlos, porque si no el
+cliente se para frente a uno y no entiende por qué no le sale nada.
 
 **Algunos tienen muy poco stock.** Hay combos con doscientos mil disponibles y otros
-con apenas cien. Los de cien se agotan, y cuando se agotan el cliente no puede
-generar el código aunque el afiche siga ahí. No es una falla nuestra ni del teléfono
-del cliente.
+con apenas cien. Los de cien se agotan, y cuando se agotan no hay código, aunque el
+afiche siga en la pared.
 
-## Los combos retornables: ojo con los envases
+## Los retornables: ojo con los envases
 
-Varios de los combos son **retornables** y lo dicen con todas las letras en la
-pantalla y en la etiqueta de la botella. Esta va a ser nuestra discusión más
-frecuente en el mostrador, así que conviene tenerlo clarísimo antes de que pase.
+Varios combos son **retornables** y lo dicen con todas las letras. Esta va a ser
+nuestra discusión más frecuente en el mostrador.
 
 Retornable quiere decir que el precio de la promoción es el del producto **sin el
 envase**. Si el cliente trae sus botellas vacías, cambia envase por envase y paga el
-precio con descuento. Si no trae los envases, tiene que pagarlos aparte, y ahí el
-total le va a dar más de lo que esperaba después de ver el precio grande en el
-afiche.
+precio con descuento. Si no las trae, el envase se cobra aparte, y el total le va a
+dar más de lo que esperaba después de ver el precio grande en el afiche.
 
-Eso no es un error nuestro ni una trampa, pero si el cliente se entera recién cuando
-le decimos el total, lo va a vivir como una. Por eso **se avisa antes de cobrar**:
+No es un error nuestro ni una trampa, pero si el cliente se entera recién cuando le
+decimos el total, lo va a vivir como una. Por eso **se avisa antes de cobrar**:
 
 > «Este combo es retornable, ¿trajiste los envases? Si no, te los tengo que cobrar
 > aparte.»
 
-Diez segundos antes de cobrar evitan una discusión de cinco minutos y un cliente que
-se va enojado.
-
-## El recorrido del cliente
-
-El afiche de Coca-Cola tiene dos pasos escritos, y son literalmente estos:
-
-**Uno: escaneá el QR y elegí tu combo.** El cliente apunta la cámara del teléfono al
-código QR del afiche. Se le abre la plataforma de Coca-Cola, elige el combo que
-quiere, completa los datos que le piden y recibe un código de letras y números.
-
-**Dos: entregá el código al encargado de caja.** Ese código es el que activa el
-descuento. Sin código no hay descuento; con el código, el descuento sale.
-
-Es importante entender qué es ese código, porque cambia cómo lo tratamos: **no es un
-número de sorteo ni una participación en nada**. Es un vale de descuento, y
-Coca-Cola lo diseñó para que el cliente nos lo entregue en la caja. Que llegue a
-nuestras manos no es un atajo nuestro: es el paso dos de la promoción, escrito en el
-afiche de ellos.
-
-## Dónde entra nuestro WhatsApp
-
-Acá está lo único que agregamos nosotros, y conviene entender por qué.
-
-Cuando el cliente tiene el código se lo puede mostrar en la pantalla y nosotros lo
-copiamos a mano. Funciona, pero es un código de letras y números: leerlo en voz alta
-y tipearlo es la forma más segura de equivocarse en un carácter y que después no
-valide.
-
-Por eso le pedimos que **nos lo reenvíe por WhatsApp**. Nos queda escrito, sin
-errores de tipeo, y con registro de qué código usó cada cliente y cuándo. Y de paso
-—esto es lo que nos sirve a largo plazo— nos queda su contacto para avisarle las
-ofertas.
-
-Para eso el cliente tiene que tenernos agendados, y para eso hay un segundo cartel
-pegado en la caja: el que dice «Guardanos en tu WhatsApp». Tiene su propio código
-QR. Cuando el cliente lo escanea con la cámara, se le abre solo el chat con el
-almacén y con un «Hola!» ya escrito. No tiene que anotar ningún número ni agendar
-nada a mano: sólo apretar enviar. Eso es todo lo que hay que lograr.
-
-Cómo se lo pedimos:
-
-> «Pasámelo por WhatsApp así no lo tipeo mal. ¿Nos tenés agendados? Escaneá este otro
-> cartel y mandanos un hola, y te aviso las ofertas de la semana.»
-
-Fijate que no le estamos pidiendo un favor ni sus datos personales: le estamos
-ofreciendo dos cosas útiles, que su código no falle y que se entere de las ofertas.
-Esa es la diferencia entre que diga que sí o que ponga cara rara.
-
-**Dos reglas sobre esto.**
-
-La primera: si hay cola, no lo hacemos. Que el cliente muestre la pantalla y listo.
-El WhatsApp es un plus para nosotros, no una condición para que él tenga su
-descuento. Hacer esperar a cinco personas para conseguir un contacto es mal negocio
-y además queda mal.
-
-La segunda, y es la más importante: **el descuento se lo damos igual**. Tenga o no
-tenga nuestro WhatsApp, quiera o no quiera agendarnos. El descuento es de Coca-Cola y
-es del cliente. Nunca, bajo ninguna circunstancia, condicionamos una cosa a la otra.
-
-## Cómo lo ofrecemos sin ser pesados
-
-El momento importa. Nadie quiere que le expliquen una promoción mientras está
-buscando la billetera o mientras hay cinco personas esperando atrás.
-
-El buen momento es **mientras se está cobrando**, cuando el cliente ya está quieto
-frente al mostrador y tiene las manos libres por unos segundos. Ahí se lo
-mencionamos, corto. Si dice que sí, lo acompañamos. Si dice que no, se termina ahí y
-no se insiste. Un «bueno, cualquier cosa está el cartel» y listo.
-
-Tampoco hace falta ofrecérselo a todo el mundo. Si hay cola y alguien tiene apuro,
-mejor no arrancar algo que va a quedar por la mitad. Vale más hacerlo bien con
-quince personas por día que mal con cincuenta.
+Diez segundos ahí evitan una discusión de cinco minutos y un cliente que se va
+enojado.
 
 ## Los problemas que van a aparecer
 
-Estos son los que se repiten. Conviene tener la respuesta lista, porque si dudamos
-el cliente abandona.
-
 **«No sé escanear un código de esos.»**
-Se abre la cámara del teléfono y se apunta al código, sin sacar la foto. Solo. A los
-dos segundos aparece un cartelito arriba de la pantalla y ahí hay que tocar. En
-teléfonos más viejos a veces hay que entrar a la cámara y activar la opción de
-códigos QR. Si no funciona de ninguna manera, no vale la pena pelearse: se le
-explica de palabra y se sigue.
+Se abre la cámara y se apunta al código, sin sacar la foto. A los dos segundos aparece
+un cartelito arriba de la pantalla y ahí hay que tocar. En teléfonos más viejos a veces
+hay que activar la opción de códigos QR en la cámara. Si no sale de ninguna manera, no
+vale la pena pelearse.
 
 **No tiene datos ni wifi.**
 Sin internet no puede sacar el código, y sin código no hay descuento. Si tenemos wifi
-para clientes, este es el momento de ofrecerlo. Si no, se le explica que lo puede
-hacer la próxima vez que venga, con datos.
+para clientes, este es el momento de ofrecerlo.
 
 **No tiene WhatsApp.**
-No importa: el WhatsApp lo necesitamos nosotros, no la promoción. El cliente saca su
-código igual y nos lo muestra en la pantalla. Se lo copiamos a mano, con cuidado, y
-listo. Que nadie le diga a un cliente que sin WhatsApp no puede tener el descuento,
-porque es falso.
+No importa: el WhatsApp lo necesitamos nosotros, no la promoción. Saca su código igual
+y nos lo muestra en la pantalla. Que nadie le diga a un cliente que sin WhatsApp no
+puede tener el descuento, porque es falso.
 
-**«El código no me anda» o no lo toma.**
+**«El código no me anda.»**
 Antes de pensar en un problema técnico, revisar las dos cosas que fallan siempre: que
-el código esté bien copiado letra por letra, y que lo que el cliente tiene en la mano
-sea **exactamente** lo que dice ese combo — el producto, el tamaño y la cantidad. Si
-sacó el código del combo de 1,5 litros y trajo los de 2 litros, no va a funcionar, y
-no está roto nada.
-
-Si está todo bien y aun así no anda, no inventamos explicaciones: se le dice que el
-problema es del sistema de la promoción, se le pide que lo saque de nuevo, y si no
-sale, se cobra normal explicándole que esta vez no pudimos aplicarlo. Nunca discutir
-con un cliente por un código.
-
-**Es una persona mayor y se pone nerviosa.**
-Este es el caso donde más se nota si lo hacemos bien. Nunca hay que agarrarle el
-teléfono de la mano: se le va indicando y lo hace él. Va más lento, pero termina
-contento y vuelve. Si vemos que no va a salir, se corta amablemente: «dejalo, la
-próxima lo hacemos con calma».
-
-**«¿Para qué quieren mis datos?»**
-Es una pregunta legítima y hay que responderla derecho: los datos son de la
-promoción de Coca-Cola, no nuestros; y nuestro WhatsApp es para avisarle ofertas, no
-se le pasa a nadie. Si no quiere, participa igual o no participa, y no pasa
-absolutamente nada.
-
-**Saca el código de un combo de dos productos y se lleva uno solo.**
-Si el combo incluye dos, sin el segundo no hay descuento que aplicar. Se le avisa
-antes de cobrar, no después: «este combo es por los dos, ¿querés que te alcance el
-otro?». Avisar a tiempo es una venta más; avisar tarde es un cliente enojado en la
-puerta.
+esté bien copiado letra por letra, y que lo que el cliente tiene en la mano sea
+**exactamente** lo que dice ese combo, en ese tamaño y esa cantidad. Si sacó el código
+del combo de 1,5 litros y trajo los de 2 litros, no va a funcionar y no está roto nada.
 
 **«El afiche está en la pared pero no me deja generar el código.»**
-Casi siempre es una de dos: el combo venció, o se agotó el stock. Ninguna de las dos
-es culpa del cliente ni del teléfono, así que no lo mandemos a reiniciar nada. Se
-mira la planilla de la caja, se le dice cuál es el combo que sí está vigente, y se le
-ofrece ese. Y después despegamos el afiche vencido, para que no vuelva a pasar.
+Casi siempre es una de dos: el combo venció o se agotó el stock. Ninguna de las dos es
+culpa del cliente, así que no lo mandemos a reiniciar el teléfono. Se mira la planilla,
+se le ofrece un combo que sí esté vigente, y después despegamos el afiche viejo.
 
-**«¿Y esto me lo descontás vos o Coca?»**
-El descuento lo pone Coca-Cola, nosotros lo aplicamos. No hace falta entrar en más
-detalle que eso.
+**Es una persona mayor y se pone nerviosa.**
+Acá es donde más se nota si lo hacemos bien. Nunca le agarramos el teléfono: le vamos
+indicando y lo hace él. Va más lento, pero termina contento y vuelve. Si vemos que no
+va a salir, se corta amablemente: «dejalo, la próxima lo hacemos con calma».
+
+**«¿Para qué quieren mis datos?»**
+Es una pregunta legítima y se responde derecho: los datos del formulario son de la
+promoción de Coca-Cola, no nuestros; y nuestro WhatsApp es para avisarle ofertas, no se
+le pasa a nadie. Si no quiere, no pasa nada.
 
 ## Lo que no hay que hacer
 
 **No agarrarle el teléfono al cliente.** Aunque sea más rápido, aunque lo pida.
-Manipular el celular de otra persona nos pone en un lugar incómodo si después algo
-falla o si el cliente cree que le vimos algo.
 
-**No completar los datos por él.** Todo lo que pida el formulario de Coca-Cola lo
-carga el cliente. Son sus datos, no los nuestros, y el código sale a su nombre.
+**No completar sus datos.** El formulario de Coca-Cola lo llena él. Son sus datos y el
+código sale a su nombre.
 
-**No prometer lo que no sabemos.** Si alguien pregunta hasta cuándo dura la promo, si
-el código vence, o si puede usar el mismo dos veces, y no lo sabemos, decimos que no
-lo sabemos y que en el afiche está el sitio de Coca-Cola con toda la información.
-Prometer de más nos deja mal parados cuando el cliente vuelve a reclamar.
+**No prometer lo que no sabemos.** Si preguntan hasta cuándo dura o si el código vence
+y no lo sabemos, decimos que no lo sabemos y que en el afiche está el sitio de
+Coca-Cola con toda la información.
 
-**No condicionar el descuento.** Ya está dicho más arriba pero va de nuevo, porque es
-lo único de esta lista que nos puede traer un problema serio: el descuento se aplica
-tenga o no tenga el cliente nuestro WhatsApp.
+**No presionar.** Es una promoción, no una obligación. Un cliente que se va molesto
+porque le insistimos tres veces vale más que la promoción entera.
 
-**No presionar.** Es una promoción, no una obligación. Alguien que se va molesto
-porque le insistimos tres veces vale menos que la promoción entera.
+**No condicionar el descuento.** Esta es la única de la lista que nos puede traer un
+problema serio: el descuento se aplica tenga o no tenga el cliente nuestro WhatsApp. El
+paso uno es una comodidad nuestra, no un requisito de la promoción.
 
 ## En resumen
 
-Somos el paso que hace que esto funcione. El cartel solo no alcanza y el cliente
-solo tampoco: lo que convierte una promoción pegada en la pared en algo que la gente
-efectivamente completa es que alguien del mostrador se tome un minuto y lo acompañe.
+Tres pasos: WhatsApp, QR de Coca, que nos reenvíe el código.
 
-Y cada cliente que termina el recorrido nos deja además su WhatsApp, que es lo que
-vamos a estar usando todos los viernes del año que viene para avisarle qué está en
-oferta.
+Somos el paso que hace que esto funcione. El afiche solo no alcanza y el cliente solo
+tampoco: lo que convierte una promoción pegada en la pared en algo que la gente
+efectivamente usa es que alguien del mostrador se tome un minuto y lo acompañe.
+
+Y cada cliente que termina el recorrido nos deja su WhatsApp, que es lo que vamos a
+estar usando todos los viernes del año que viene para avisarle qué está en oferta.
