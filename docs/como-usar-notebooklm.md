@@ -17,13 +17,13 @@ El circuito es el mismo para los dos. Cambia sólo el botón del final.
 video leen literalmente lo que diga el archivo: si dejás `[fecha]`, lo van a decir
 así.
 
-En `video-fuente-coca.md` hay además **dos secciones marcadas como A COMPLETAR**. No
-subas el documento con ese texto adentro — NotebookLM lo va a leer en voz alta y el
-video va a quedar diciendo que falta completar una sección. Primero se escriben esas
-dos partes con el recorrido real de la promoción.
-
 Si el mínimo de compra terminó siendo distinto de $18.000, cambialo también: aparece
 varias veces en el documento del podcast.
+
+`video-fuente-coca.md` ya está completo con los dos combos que hay pegados hoy en el
+local. **Si Coca-Cola cambia los afiches, hay que actualizar esa lista antes de
+volver a generar el video**: los combos, los descuentos y cuáles son retornables
+están escritos ahí y el video repite lo que diga el archivo.
 
 ## Los pasos
 
