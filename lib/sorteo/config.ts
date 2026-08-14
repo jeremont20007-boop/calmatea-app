@@ -7,8 +7,9 @@
  */
 
 export const COMERCIO = {
-  /** COMPLETAR: nombre comercial tal como lo conoce el barrio. */
-  nombre: 'COMPLETAR — Nombre del almacén',
+  nombre: 'Almacén Virtual',
+  /** Bajada del logo. Se usa en el cartel del mostrador. */
+  rubro: 'Ramos Generales',
   /** COMPLETAR: falta el nombre de la calle (me pasaste la altura: 2441). */
   calle: 'COMPLETAR — Calle',
   altura: '2441',

@@ -56,6 +56,9 @@ export default async function CartelWhatsAppPage() {
         <p className="text-sm font-extrabold uppercase tracking-[0.25em] text-emerald-800">
           {COMERCIO.nombre}
         </p>
+        <p className="mt-1 text-xs uppercase tracking-[0.3em] text-stone-400">
+          {COMERCIO.rubro}
+        </p>
 
         <h1 className="mt-8 text-6xl font-extrabold leading-[1.02] text-stone-900">
           Guardanos
