@@ -26,7 +26,14 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const publicPaths = ['/auth/login', '/auth/register', '/']
-  const isPublic = publicPaths.some(p => request.nextUrl.pathname === p)
+  // La campaña del almacén es para vecinos sin cuenta: la landing, las bases,
+  // el cartel y el alta del formulario tienen que quedar fuera del login.
+  // `/admin/sorteo` y el resto de `/api/sorteo/*` siguen protegidos.
+  const publicPrefixes = ['/sorteo', '/api/sorteo/participar']
+  const { pathname } = request.nextUrl
+  const isPublic =
+    publicPaths.some(p => pathname === p) ||
+    publicPrefixes.some(p => pathname === p || pathname.startsWith(`${p}/`))
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone()

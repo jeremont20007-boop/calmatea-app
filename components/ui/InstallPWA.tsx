@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { X, Download } from 'lucide-react'
 
 interface BeforeInstallPromptEvent extends Event {
@@ -9,9 +10,14 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallPWA() {
+  const pathname = usePathname()
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [visible, setVisible] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
+
+  // La landing de la campaña del almacén la abren vecinos que escanean un QR:
+  // ofrecerles instalar VehiLink ahí no tiene sentido.
+  const enCampania = pathname?.startsWith('/sorteo') ?? false
 
   useEffect(() => {
     const isIOSDevice = /iphone|ipad|ipod/i.test(navigator.userAgent)
@@ -47,7 +53,7 @@ export function InstallPWA() {
     if (outcome === 'accepted') setVisible(false)
   }
 
-  if (!visible) return null
+  if (!visible || enCampania) return null
 
   return (
     <div className="fixed bottom-24 left-4 right-4 z-50 max-w-sm mx-auto">

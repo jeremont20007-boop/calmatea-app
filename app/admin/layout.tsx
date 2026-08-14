@@ -1,10 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, Ticket, FileText, Users, Megaphone, Sparkles } from 'lucide-react'
+import { LayoutDashboard, Ticket, FileText, Users, Megaphone, Sparkles, Gift } from 'lucide-react'
 
 const ADMIN_NAV = [
   { href: '/admin/dashboard',    label: 'Panel',     icon: LayoutDashboard },
+  { href: '/admin/sorteo',       label: 'Sorteo',    icon: Gift },
   { href: '/admin/tickets',      label: 'Tickets',   icon: Ticket },
   { href: '/admin/documentos',   label: 'Docs',      icon: FileText },
   { href: '/admin/usuarios',     label: 'Usuarios',  icon: Users },
