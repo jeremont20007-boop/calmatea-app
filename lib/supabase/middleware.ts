@@ -29,7 +29,7 @@ export async function updateSession(request: NextRequest) {
   // La campaña del almacén es para vecinos sin cuenta: la landing, las bases,
   // el cartel y el alta del formulario tienen que quedar fuera del login.
   // `/admin/sorteo` y el resto de `/api/sorteo/*` siguen protegidos.
-  const publicPrefixes = ['/sorteo', '/api/sorteo/participar']
+  const publicPrefixes = ['/sorteo', '/api/sorteo/participar', '/carteles']
   const { pathname } = request.nextUrl
   const isPublic =
     publicPaths.some(p => pathname === p) ||

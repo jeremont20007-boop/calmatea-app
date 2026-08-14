@@ -26,6 +26,15 @@ export const COMERCIO = {
 
 export const COMERCIO_DIRECCION = `${COMERCIO.calle} ${COMERCIO.altura}, ${COMERCIO.barrio}, ${COMERCIO.ciudad}`
 
+/** `true` mientras el número del local siga sin cargarse: el QR no serviría. */
+export const WHATSAPP_SIN_CARGAR = COMERCIO.whatsapp.includes('COMPLETAR')
+
+/** Mensaje que queda pre-escrito cuando el cliente abre el chat desde el QR. */
+export const WHATSAPP_SALUDO = 'Hola!'
+
+/** Link que abre el chat con el local y el saludo ya tipeado. */
+export const WHATSAPP_URL = `https://wa.me/${COMERCIO.whatsapp}?text=${encodeURIComponent(WHATSAPP_SALUDO)}`
+
 export const PROMO = {
   /** Lo que se regala al llegar al mínimo de compra. */
   regalo: '4 chorizos',
