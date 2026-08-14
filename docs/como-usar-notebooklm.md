@@ -1,17 +1,24 @@
 # Cómo generar los materiales para el equipo con NotebookLM
 
-Hay dos documentos fuente en esta carpeta y cada uno da un material distinto:
+Hay tres documentos fuente en esta carpeta y cada uno da un material distinto:
 
 | Documento | Sale de ahí | Para qué |
 |---|---|---|
-| `podcast-fuente-equipo.md` | Un audio de ~10 min | Que el equipo entienda la promo de los chorizos |
-| `video-fuente-coca.md` | Un video narrado | Cómo acompañar al cliente en la promo de Coca |
+| `video-fuente-abordaje-3-pasos.md` | Un video de 4-5 min | **Empezá por acá.** Cómo abordar al cliente, paso por paso |
+| `video-fuente-coca.md` | Un video de ~8 min | Los combos, los retornables y los problemas del mostrador |
+| `podcast-fuente-equipo.md` | Un audio de ~10 min | La promo de los chorizos |
 
-El circuito es el mismo para los dos. Cambia sólo el botón del final.
+El circuito es el mismo para los tres. Cambia sólo el botón del final.
+
+**Por qué están separados el abordaje y los combos.** El abordaje son tres frases que
+el equipo tiene que decir de memoria y nunca cambian. Los combos cambian cada dos
+meses. Si estuvieran en el mismo video, cada vez que Coca renueva los afiches habría
+que regenerar todo y el equipo tendría que volver a mirar los quince minutos enteros.
+Separados, el del abordaje se graba una vez y dura para siempre.
 
 ---
 
-## Antes de subir cualquiera de los dos
+## Antes de subir cualquiera de los tres
 
 **Reemplazar todo lo que esté entre corchetes por los datos reales.** El audio y el
 video leen literalmente lo que diga el archivo: si dejás `[fecha]`, lo van a decir
@@ -20,26 +27,27 @@ así.
 Si el mínimo de compra terminó siendo distinto de $18.000, cambialo también: aparece
 varias veces en el documento del podcast.
 
-`video-fuente-coca.md` ya está completo con los dos combos que hay pegados hoy en el
-local. **Si Coca-Cola cambia los afiches, hay que actualizar esa lista antes de
-volver a generar el video**: los combos, los descuentos y cuáles son retornables
-están escritos ahí y el video repite lo que diga el archivo.
+`video-fuente-abordaje-3-pasos.md` no tiene nada que completar: se sube tal cual.
+
+`video-fuente-coca.md` menciona los combos que hay hoy. **Si Coca-Cola cambia los
+afiches, hay que actualizar la planilla y ese documento antes de volver a generar el
+video.**
 
 ## Los pasos
 
 1. Entrar a [notebooklm.google.com](https://notebooklm.google.com) con la cuenta de
    Google. Es gratis.
-2. Crear un cuaderno nuevo, uno por cada material. No mezclar las dos fuentes en el
-   mismo cuaderno: si están las dos juntas, el resultado habla de las dos cosas y no
-   sirve para ninguna.
+2. Crear un cuaderno nuevo, **uno por cada material**. No mezclar dos fuentes en el
+   mismo cuaderno: si están juntas, el resultado habla de las dos cosas y no sirve
+   para ninguna.
 3. Subir el archivo `.md` como fuente. Si el formato diera problemas, abrirlo,
    copiar todo el texto y pegarlo como fuente de texto: da exactamente igual.
 4. Revisar que el **idioma de salida esté en español** en la configuración del
    cuaderno. Si queda en inglés, sale en inglés.
 5. Elegir qué generar:
+   - **Resumen en video** (Video Overview) para el abordaje y para los combos.
    - **Resumen en audio** (Audio Overview) para el podcast de los chorizos.
-   - **Resumen en video** (Video Overview) para el instructivo de Coca.
-   
+
    Antes de darle a generar, abrir la opción de personalizar y pegar la instrucción
    que corresponda, de las de más abajo.
 6. Tarda unos minutos. Cuando está listo, el reproductor tiene una opción para
@@ -48,6 +56,23 @@ están escritos ahí y el video repite lo que diga el archivo.
 > Si en tu cuenta sólo aparece la opción de audio, la de video puede no estar
 > habilitada todavía. En ese caso: generá el audio con la misma fuente y mandalo
 > junto con unas capturas de pantalla del recorrido real.
+
+## Instrucción para el video del abordaje
+
+> Es un video de capacitación para el personal de un almacén de barrio en Neuquén,
+> Argentina, que atiende el mostrador. Español rioplatense, de vos, tono directo y
+> práctico, como un encargado explicándole el procedimiento a su equipo.
+>
+> El video tiene un solo objetivo: que se aprendan los tres pasos de memoria y las
+> frases exactas que hay que decir en cada uno. Repetí las tres frases más de una
+> vez, y dejá bien clara la diferencia entre los dos códigos QR, que es lo que más se
+> confunde: uno es el del almacén y otro es el de Coca-Cola.
+>
+> Cerrá recalcando la regla de que el descuento se aplica igual aunque el cliente no
+> quiera dar su WhatsApp.
+>
+> Corto y al hueso: cuatro o cinco minutos. Nada de introducciones largas, nada de
+> hablar de estrategia comercial ni de los combos en detalle.
 
 ## Instrucción para el podcast de los chorizos
 
