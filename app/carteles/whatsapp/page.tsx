@@ -3,6 +3,7 @@ import QRCode from 'qrcode'
 import {
   COMERCIO,
   COMERCIO_DIRECCION,
+  DIRECCION_SIN_CARGAR,
   WHATSAPP_SALUDO,
   WHATSAPP_SIN_CARGAR,
   WHATSAPP_URL,
@@ -91,7 +92,9 @@ export default async function CartelWhatsAppPage() {
           </p>
         </div>
 
-        <p className="mt-12 text-sm text-stone-500">{COMERCIO_DIRECCION}</p>
+        {!DIRECCION_SIN_CARGAR && (
+          <p className="mt-12 text-sm text-stone-500">{COMERCIO_DIRECCION}</p>
+        )}
       </div>
     </main>
   )

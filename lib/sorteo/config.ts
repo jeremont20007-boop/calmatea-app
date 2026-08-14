@@ -10,14 +10,13 @@ export const COMERCIO = {
   nombre: 'Almacén Virtual',
   /** Bajada del logo. Se usa en el cartel del mostrador. */
   rubro: 'Ramos Generales',
-  /** COMPLETAR: falta el nombre de la calle (me pasaste la altura: 2441). */
-  calle: 'COMPLETAR — Calle',
-  altura: '2441',
+  calle: 'Alderete',
+  altura: '2449',
   barrio: 'Barrio Sapere',
   ciudad: 'Neuquén Capital',
   provincia: 'Neuquén',
-  /** COMPLETAR: número de WhatsApp del local, formato internacional sin signos. */
-  whatsapp: '549299COMPLETAR',
+  /** WhatsApp del local en formato internacional sin signos: +54 9 299 577-4881 */
+  whatsapp: '5492995774881',
   /** COMPLETAR: usuario de Instagram sin la arroba. */
   instagram: 'completar',
   /** COMPLETAR: razón social y CUIT — hacen falta en las bases y condiciones. */
@@ -29,6 +28,12 @@ export const COMERCIO_DIRECCION = `${COMERCIO.calle} ${COMERCIO.altura}, ${COMER
 
 /** `true` mientras el número del local siga sin cargarse: el QR no serviría. */
 export const WHATSAPP_SIN_CARGAR = COMERCIO.whatsapp.includes('COMPLETAR')
+
+/**
+ * `true` mientras falte el nombre de la calle. Los carteles que ve el público
+ * omiten la dirección en vez de imprimir el marcador de pendiente.
+ */
+export const DIRECCION_SIN_CARGAR = COMERCIO.calle.includes('COMPLETAR')
 
 /** Mensaje que queda pre-escrito cuando el cliente abre el chat desde el QR. */
 export const WHATSAPP_SALUDO = 'Hola!'
