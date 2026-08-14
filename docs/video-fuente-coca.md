@@ -23,33 +23,56 @@ el año que viene, sin gastar un peso en publicidad.
 ## Qué es la promoción y qué gana el cliente
 
 La promoción se llama **Combos Digitales** y la hace Coca-Cola. Están los afiches
-pegados en el local, con el título «Juntas cuestan menos».
+pegados en el local, y cuando el cliente escanea el QR se le abre una pantalla con
+**una lista de combos**, no con uno solo.
 
-Lo primero que hay que entender, y es lo que más se malinterpreta: **no es una sola
-promoción, son varios combos distintos**. Cada afiche arma su propio combo, con su
-propio descuento y con su propio código QR. Los que tenemos pegados hoy son:
+Eso es lo primero que hay que entender, y lo que más se malinterpreta: no estamos
+frente a una promoción, estamos frente a un catálogo que cambia. Hay combos de
+gaseosas, de agua, de Powerade, de Monster. Cada uno tiene su propio precio, su
+propio descuento, sus propias fechas y su propio stock.
 
-- **Coca-Cola 1,5 L + Sprite 1,5 L** — 50% de descuento en la segunda unidad.
-- **1 Coca-Cola + 1 sabor de 2 L retornable** — 25% de descuento.
+Y ojo con esto, porque contradice lo que uno supone: **no todos son de dos
+productos**. Algunos sí, como la Coca de 1,5 litros con la Sprite. Otros son de un
+solo producto, como una Coca retornable de 2,5 litros o una botella de agua. La
+pantalla dice exactamente qué incluye cada combo, y hay que leerla.
 
-Que cada combo tenga su propio QR importa: si el cliente escanea el afiche de un
-combo y después en la caja quiere llevarse el otro, el código no le va a servir.
-Primero se decide qué combo quiere, después se escanea **ese** afiche.
+Por eso no tiene sentido que nos aprendamos los combos de memoria: para cuando los
+tengamos aprendidos, ya cambiaron. Lo que sí tenemos que saber de memoria es **cómo
+funciona el sistema**, que es siempre igual, y eso es lo que vamos a ver acá. Los
+combos vigentes están en la planilla pegada en la caja, y esa planilla se actualiza.
 
-Lo que todos tienen en común son dos cosas. Una: siempre son **dos productos**, no
-uno. Y dos: el descuento no se consigue pidiéndolo en la caja, sólo existe si el
-cliente saca el código digital. Por eso el afiche dice «Encontralos solo en Combos
-Digitales».
+Lo único que todos los combos tienen en común es esto: el descuento no se consigue
+pidiéndolo en la caja. Sólo existe si el cliente saca el código digital. Por eso el
+afiche dice «Encontralos solo en Combos Digitales».
 
-## El combo retornable: ojo con los envases
+## Tres cosas que cambian de un combo a otro
 
-El combo de 2 litros es **retornable**, y esta va a ser nuestra discusión más
-frecuente en el mostrador. Vale la pena tenerlo clarísimo antes de que pase.
+**El precio es fijo, no es un porcentaje que calculamos nosotros.** Cada combo tiene
+un precio cerrado que define Coca-Cola: tantos pesos por ese combo. El porcentaje que
+figura grande en el afiche es sólo para mostrar el ahorro. Nosotros cobramos el
+precio que dice la pantalla, no hacemos ninguna cuenta.
+
+**Cada combo tiene su fecha de vencimiento, y no son todas la misma.** Unos vencen a
+fin de mes y otros duran hasta octubre. Un combo vencido no genera código, y el
+cliente va a venir a preguntar por qué, mirando un afiche que sigue pegado en la
+pared. Los afiches vencidos hay que despegarlos.
+
+**Algunos tienen muy poco stock.** Hay combos con doscientos mil disponibles y otros
+con apenas cien. Los de cien se agotan, y cuando se agotan el cliente no puede
+generar el código aunque el afiche siga ahí. No es una falla nuestra ni del teléfono
+del cliente.
+
+## Los combos retornables: ojo con los envases
+
+Varios de los combos son **retornables** y lo dicen con todas las letras en la
+pantalla y en la etiqueta de la botella. Esta va a ser nuestra discusión más
+frecuente en el mostrador, así que conviene tenerlo clarísimo antes de que pase.
 
 Retornable quiere decir que el precio de la promoción es el del producto **sin el
 envase**. Si el cliente trae sus botellas vacías, cambia envase por envase y paga el
 precio con descuento. Si no trae los envases, tiene que pagarlos aparte, y ahí el
-total le va a dar más de lo que esperaba después de ver el 25% en el afiche.
+total le va a dar más de lo que esperaba después de ver el precio grande en el
+afiche.
 
 Eso no es un error nuestro ni una trampa, pero si el cliente se entera recién cuando
 le decimos el total, lo va a vivir como una. Por eso **se avisa antes de cobrar**:
@@ -155,11 +178,11 @@ listo. Que nadie le diga a un cliente que sin WhatsApp no puede tener el descuen
 porque es falso.
 
 **«El código no me anda» o no lo toma.**
-Antes de pensar en un problema técnico, revisar las tres cosas que fallan siempre:
-que el código esté bien copiado letra por letra; que el cliente esté llevando **los
-dos productos** del combo y no uno solo; y que sean **exactamente** los productos de
-ese combo, en ese tamaño. Si sacó el código del afiche de 1,5 litros y en la mano
-tiene los de 2 litros, no va a funcionar, y no está roto nada.
+Antes de pensar en un problema técnico, revisar las dos cosas que fallan siempre: que
+el código esté bien copiado letra por letra, y que lo que el cliente tiene en la mano
+sea **exactamente** lo que dice ese combo — el producto, el tamaño y la cantidad. Si
+sacó el código del combo de 1,5 litros y trajo los de 2 litros, no va a funcionar, y
+no está roto nada.
 
 Si está todo bien y aun así no anda, no inventamos explicaciones: se le dice que el
 problema es del sistema de la promoción, se le pide que lo saque de nuevo, y si no
@@ -178,11 +201,17 @@ promoción de Coca-Cola, no nuestros; y nuestro WhatsApp es para avisarle oferta
 se le pasa a nadie. Si no quiere, participa igual o no participa, y no pasa
 absolutamente nada.
 
-**Saca el código pero se lleva un solo producto.**
-Todos los combos son de dos productos. Sin el segundo no hay descuento que aplicar.
-Se le avisa antes de cobrar, no después: «el descuento es por los dos, ¿querés que te
-alcance el otro?». Avisar a tiempo es una venta más; avisar tarde es un cliente
-enojado en la puerta.
+**Saca el código de un combo de dos productos y se lleva uno solo.**
+Si el combo incluye dos, sin el segundo no hay descuento que aplicar. Se le avisa
+antes de cobrar, no después: «este combo es por los dos, ¿querés que te alcance el
+otro?». Avisar a tiempo es una venta más; avisar tarde es un cliente enojado en la
+puerta.
+
+**«El afiche está en la pared pero no me deja generar el código.»**
+Casi siempre es una de dos: el combo venció, o se agotó el stock. Ninguna de las dos
+es culpa del cliente ni del teléfono, así que no lo mandemos a reiniciar nada. Se
+mira la planilla de la caja, se le dice cuál es el combo que sí está vigente, y se le
+ofrece ese. Y después despegamos el afiche vencido, para que no vuelva a pasar.
 
 **«¿Y esto me lo descontás vos o Coca?»**
 El descuento lo pone Coca-Cola, nosotros lo aplicamos. No hace falta entrar en más
