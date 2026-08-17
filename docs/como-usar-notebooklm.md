@@ -1,11 +1,16 @@
 # Cómo generar los materiales para el equipo con NotebookLM
 
-Hay dos documentos fuente en esta carpeta y cada uno da un material distinto:
+**NotebookLM sirve para los materiales del personal, no para los del cliente.** Los
+videos que genera duran ocho o diez minutos y son dos personas conversando: el equipo
+se los banca porque es su trabajo, un cliente abandona a los quince segundos. Todo lo
+que empieza con `cliente-` se filma con el celular, no pasa por acá.
+
+Los dos documentos que sí van a NotebookLM:
 
 | Documento | Sale de ahí | Para qué |
 |---|---|---|
-| `video-fuente-coca.md` | Un video de 8-10 min | Cómo atender al cliente en la promo de Coca-Cola |
-| `podcast-fuente-equipo.md` | Un audio de ~10 min | La promo de los chorizos |
+| `personal-video-coca.md` | Un video de 8-10 min | Cómo atender al cliente en la promo de Coca-Cola |
+| `personal-podcast-chorizos.md` | Un audio de ~10 min | La promo de los chorizos |
 
 El circuito es el mismo para los dos. Cambia sólo el botón del final.
 
@@ -20,7 +25,7 @@ así.
 Si el mínimo de compra terminó siendo distinto de $18.000, cambialo también: aparece
 varias veces en el documento del podcast.
 
-`video-fuente-coca.md` se sube tal cual, no tiene nada que completar. **No menciona
+`personal-video-coca.md` se sube tal cual, no tiene nada que completar. **No menciona
 combos ni precios a propósito**: eso vive en la planilla de la caja, que se actualiza
 cuando Coca renueva los afiches. Así el video se graba una vez y no queda viejo cada
 dos meses.
