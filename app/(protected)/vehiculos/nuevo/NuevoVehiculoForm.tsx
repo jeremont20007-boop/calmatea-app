@@ -405,7 +405,7 @@ export function NuevoVehiculoForm() {
         </Button>
 
         <p className="text-xs text-calm-400 text-center px-4">
-          Después de publicar podrás subir los documentos del vehículo desde "Mis Vehículos".
+          Después de publicar podrás subir los documentos del vehículo desde &ldquo;Mis Vehículos&rdquo;.
         </p>
       </form>
     </div>

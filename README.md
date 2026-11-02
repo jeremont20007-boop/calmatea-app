@@ -34,3 +34,19 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Tests
+
+| Comando | Qué hace |
+|---|---|
+| `npm test` | Tests unitarios (Vitest + Testing Library): utilidades, middleware de sesión, componentes y formularios. |
+| `npm run test:watch` | Lo mismo, pero se re-ejecutan al guardar cambios. |
+| `npm run test:e2e` | Tests end-to-end (Playwright) en un navegador real, escritorio y móvil. |
+
+Los tests **no usan claves reales ni tocan la base de producción**: los unitarios simulan Supabase
+y los end-to-end levantan un Supabase falso (`e2e/mock-supabase.mjs`) con datos inventados.
+
+La primera vez que se corren los end-to-end hay que instalar el navegador: `npx playwright install chromium`.
+
+En cada Pull Request, GitHub Actions (`.github/workflows/ci.yml`) corre lint, chequeo de tipos,
+tests unitarios, build y tests end-to-end.

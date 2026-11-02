@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -12,7 +12,10 @@ import type { UserRole } from '@/types'
 function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [role, setRole] = useState<'conductor' | 'propietario'>('conductor')
+  // El rol inicial puede venir en la URL (?role=propietario desde la home)
+  const [role, setRole] = useState<'conductor' | 'propietario'>(() =>
+    searchParams.get('role') === 'propietario' ? 'propietario' : 'conductor'
+  )
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,13 +23,6 @@ function RegisterForm() {
   const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const roleParam = searchParams.get('role')
-    if (roleParam === 'propietario' || roleParam === 'conductor') {
-      setRole(roleParam)
-    }
-  }, [searchParams])
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
