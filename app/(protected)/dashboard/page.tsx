@@ -30,7 +30,7 @@ export default async function DashboardPage() {
   // other queries) so the banner is part of the first paint instead of popping
   // in later and pushing the content down. Premium users keep the client-side
   // 6 h cooldown logic inside <AdBanner>.
-  const adPromise: Promise<PublicAd | null> | undefined = isPremium ? undefined : pickRandomAd(supabase).catch(() => null)
+  const adPromise: Promise<PublicAd | null> | undefined = isPremium ? undefined : pickRandomAd().catch(() => null)
 
   if (isPropietario) {
     const { data: vehicles } = await supabase

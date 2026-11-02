@@ -1,4 +1,3 @@
-import type { SupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export interface PublicAd {
@@ -12,52 +11,45 @@ export interface PublicAd {
   advertiser_name?: string
 }
 
+interface ServedAdRow {
+  id: string
+  title: string
+  description: string | null
+  mobile_image_url: string | null
+  desktop_image_url: string | null
+  target_url: string
+  cta_text: string
+  advertiser_name: string | null
+}
+
 /**
- * Picks a random active ad that still has impressions left and counts one
- * impression for it. Shared by the /api/ads/random endpoint and by server
- * pages that render the banner directly (so it doesn't pop in after load).
+ * Elige un anuncio activo al azar y le cuenta una impresión.
+ * Lo usan /api/ads/random y las páginas del servidor que muestran el banner
+ * directamente (para que no "aparezca de golpe" después de cargar).
+ *
+ * Todo lo hace la función de la base serve_random_ad() en un solo paso atómico
+ * (ver supabase/migrations/20261102_ad_impressions.sql): así no se pierden
+ * impresiones con visitas simultáneas. Sólo la puede llamar el servidor.
  */
-export async function pickRandomAd(supabase: SupabaseClient): Promise<PublicAd | null> {
-  const now = new Date().toISOString()
+export async function pickRandomAd(): Promise<PublicAd | null> {
+  const { data, error } = await createAdminClient().rpc('serve_random_ad')
 
-  const { data: ads } = await supabase
-    .from('ads')
-    .select('id, title, description, mobile_image_url, desktop_image_url, target_url, cta_text, current_impressions, max_impressions, advertiser:advertisers(company_name)')
-    .eq('status', 'active')
-    .or(`starts_at.is.null,starts_at.lte.${now}`)
-    .or(`ends_at.is.null,ends_at.gte.${now}`)
-    .limit(10)
-
-  if (!ads || ads.length === 0) return null
-
-  // Filter out ads that reached max impressions
-  const eligible = ads.filter(a => !a.max_impressions || a.current_impressions < a.max_impressions)
-  if (eligible.length === 0) return null
-
-  const picked = eligible[Math.floor(Math.random() * eligible.length)]
-
-  // Counting impressions needs the service role: regular users can't update ads
-  // under RLS. NOTE: this read-then-write is not atomic; under heavy traffic a
-  // few impressions may be lost.
-  try {
-    await createAdminClient()
-      .from('ads')
-      .update({ current_impressions: picked.current_impressions + 1 })
-      .eq('id', picked.id)
-  } catch (err) {
-    console.error('Could not count ad impression', err)
+  if (error) {
+    console.error('[ads] no se pudo obtener un anuncio', error)
+    return null
   }
 
-  const advertiser = picked.advertiser as unknown as { company_name: string } | null
+  const ad = (data as ServedAdRow[] | null)?.[0]
+  if (!ad) return null
 
   return {
-    id: picked.id,
-    title: picked.title,
-    description: picked.description,
-    mobile_image_url: picked.mobile_image_url,
-    desktop_image_url: picked.desktop_image_url,
-    target_url: picked.target_url,
-    cta_text: picked.cta_text,
-    advertiser_name: advertiser?.company_name,
+    id: ad.id,
+    title: ad.title,
+    description: ad.description ?? undefined,
+    mobile_image_url: ad.mobile_image_url ?? undefined,
+    desktop_image_url: ad.desktop_image_url ?? undefined,
+    target_url: ad.target_url,
+    cta_text: ad.cta_text,
+    advertiser_name: ad.advertiser_name ?? undefined,
   }
 }

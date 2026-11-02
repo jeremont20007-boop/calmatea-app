@@ -1,29 +1,24 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { isValidMpPaymentId } from '@/lib/payments'
-import { AD_DURATION_OPTIONS, calcAdPrice } from '@/types'
+import { fetchMercadoPagoPayment, getPaymentIdFromNotification } from '@/lib/payments/mercadopago'
+import { getAdPriceARS } from '@/lib/payments/ads'
 
+// Aviso de MercadoPago cuando cambia el estado del pago de un anuncio.
 export async function POST(request: Request) {
+  const url = new URL(request.url)
   const body = await request.json().catch(() => null)
-  if (!body) return NextResponse.json({ ok: false }, { status: 400 })
 
-  // Never trust the body: always re-fetch the payment from MercadoPago.
-  const paymentId = body.data?.id ?? body.id
-  if (!isValidMpPaymentId(paymentId)) return NextResponse.json({ ok: true })
+  const paymentId = getPaymentIdFromNotification(url, body)
+  if (!paymentId) return NextResponse.json({ ok: true })
 
-  const res = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-    headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}` },
-  })
-  if (!res.ok) return NextResponse.json({ ok: false }, { status: 502 })
-
-  const payment = await res.json()
+  // No confiamos en el contenido del aviso: consultamos el pago real a MercadoPago.
+  const payment = await fetchMercadoPagoPayment(paymentId)
+  if (!payment) return NextResponse.json({ ok: false }, { status: 502 })
   if (payment.status !== 'approved') return NextResponse.json({ ok: true })
 
   const adId = payment.metadata?.ad_id
   if (typeof adId !== 'string' || !adId) return NextResponse.json({ ok: true })
 
-  // Service role client: the webhook has no logged-in user, so with the normal
-  // client RLS silently blocked this update and ads were never marked as paid.
   const supabase = createAdminClient()
 
   const { data: ad } = await supabase
@@ -32,22 +27,27 @@ export async function POST(request: Request) {
     .eq('id', adId)
     .single()
 
-  if (!ad || ad.payment_status === 'paid') return NextResponse.json({ ok: true })
+  if (!ad) return NextResponse.json({ ok: true })
+  // Avisos repetidos: no volver a reiniciar las fechas de un anuncio ya pago.
+  if (ad.payment_status === 'paid') return NextResponse.json({ ok: true })
 
-  const durationDays = AD_DURATION_OPTIONS.some(o => o.days === ad.duration_days)
-    ? (ad.duration_days as number)
-    : 30
-  const expected = calcAdPrice(durationDays)
-  if (payment.currency_id !== 'ARS' || Number(payment.transaction_amount) < expected) {
-    console.error('MercadoPago ad payment amount mismatch', { paymentId, adId })
+  const expected = getAdPriceARS(ad.duration_days)
+  if (expected === null || payment.currency_id !== 'ARS' || Number(payment.transaction_amount) < expected) {
+    console.error('[ads/webhook] monto o moneda no coinciden con el anuncio', {
+      paymentId,
+      adId,
+      amount: payment.transaction_amount,
+      currency: payment.currency_id,
+      expected,
+    })
     return NextResponse.json({ ok: true })
   }
 
   const now = new Date()
   const endsAt = new Date(now)
-  endsAt.setDate(endsAt.getDate() + durationDays)
+  endsAt.setDate(endsAt.getDate() + ad.duration_days)
 
-  await supabase
+  const { error } = await supabase
     .from('ads')
     .update({
       payment_status: 'paid',
@@ -57,6 +57,11 @@ export async function POST(request: Request) {
       ends_at: endsAt.toISOString(),
     })
     .eq('id', adId)
+
+  if (error) {
+    console.error('[ads/webhook] no se pudo marcar el anuncio como pago', error)
+    return NextResponse.json({ ok: false }, { status: 500 })
+  }
 
   return NextResponse.json({ ok: true })
 }

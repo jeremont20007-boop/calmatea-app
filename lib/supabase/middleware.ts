@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { AUTH_ONLY_PATHS, isPublicPath } from '@/lib/routes'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -25,27 +26,14 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { pathname } = request.nextUrl
-
-  // Routes reachable without a session. Everything else requires login.
-  //  - /auth/*: login, registro, registro de publicitarios, callback de OAuth, logout
-  //  - /api/*: each API route checks the session itself and answers 401 (a
-  //    redirect would break payment webhooks, which never carry a session)
-  //  - SEO / PWA files that browsers and crawlers fetch anonymously
-  const publicExact = ['/', '/robots.txt', '/sitemap.xml', '/manifest.json', '/sw.js']
-  const publicPrefixes = ['/auth/', '/api/']
-  const isPublic =
-    publicExact.includes(pathname) ||
-    publicPrefixes.some(prefix => pathname.startsWith(prefix))
-
-  if (!user && !isPublic) {
+  if (!user && !isPublicPath(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
     url.search = ''
     return NextResponse.redirect(url)
   }
 
-  if (user && (pathname === '/auth/login' || pathname === '/auth/register')) {
+  if (user && AUTH_ONLY_PATHS.includes(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     url.search = ''

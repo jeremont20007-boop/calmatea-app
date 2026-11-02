@@ -19,8 +19,9 @@
 --   B. Postulaciones: reglas explícitas de qué estados puede poner cada uno
 --      (el auto-aceptarse ya estaba bloqueado; ahora queda explícito).
 --   C. Nadie puede auto-aprobar sus propios documentos.
---   D. Un publicitario no puede activar su anuncio sin pagar ni sin revisión,
---      ni auto-aprobar su cuenta.
+--   D. Un publicitario no puede auto-aprobar su cuenta. (Que no pueda activar
+--      su anuncio sin pagar ni sin revisión lo hace la migración
+--      supabase/migrations/20261102_protect_ad_prices.sql: correrla también.)
 --   E. Arregla la política de `profiles` que se consultaba a sí misma.
 --      Con schema.sql tal cual, TODAS las consultas de usuarios logueados
 --      fallan con "infinite recursion detected in policy" (probado).
@@ -359,45 +360,16 @@ create policy "Advertisers can update own ads" on ads
     advertiser_id in (select id from advertisers where user_id = auth.uid())
   );
 
-create or replace function protect_ad_columns()
-returns trigger language plpgsql as $$
-begin
-  if public.is_trusted_writer() or public.is_admin() then return new; end if;
-
-  if new.status is distinct from old.status
-     or new.payment_status is distinct from old.payment_status
-     or new.total_price is distinct from old.total_price
-     or new.current_impressions is distinct from old.current_impressions
-     or new.max_impressions is distinct from old.max_impressions
-     or new.starts_at is distinct from old.starts_at
-     or new.ends_at is distinct from old.ends_at
-     or new.advertiser_id is distinct from old.advertiser_id then
-    raise exception 'No tenés permiso para modificar estos datos del anuncio';
-  end if;
-
-  -- El contenido solo se edita en borrador o si fue rechazado (igual que la app).
-  if old.status not in ('draft', 'rejected') then
-    raise exception 'Este anuncio ya no se puede editar';
-  end if;
-
-  -- Tampoco se puede cambiar la duración una vez pagado.
-  if old.payment_status = 'paid' and new.duration_days is distinct from old.duration_days then
-    raise exception 'No se puede cambiar la duración de un anuncio pagado';
-  end if;
-
-  return new;
-end;
-$$;
-
-drop trigger if exists ads_protect_columns on ads;
-create trigger ads_protect_columns
-  before update on ads
-  for each row execute procedure protect_ad_columns();
+-- La protección de columnas (precio, pago, estado, fechas, impresiones y
+-- "sólo se edita en borrador o rechazado") está en
+-- supabase/migrations/20261102_protect_ad_prices.sql, que además calcula el
+-- precio en la base. Antes estaba acá con el mismo nombre de trigger
+-- (ads_protect_columns): se movió para que no se pisen entre sí.
 
 -- ─── 12. CREATIVE REQUESTS ──────────────────────────────────────────────────
 -- Antes: "for all" permitía al publicitario cambiarse el estado.
--- NOTA: el precio (price_ars) lo sigue mandando el navegador. Hoy no se cobra
--- online, pero si en el futuro se cobra, hay que calcularlo en el servidor.
+-- El precio (price_ars) lo calcula la base según el nivel: ver
+-- supabase/migrations/20261102_protect_ad_prices.sql.
 
 drop policy if exists "Advertisers can manage own creative requests" on creative_requests;
 drop policy if exists "Advertisers can view own creative requests" on creative_requests;

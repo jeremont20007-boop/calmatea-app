@@ -1,23 +1,21 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { isValidMpPaymentId, premiumPriceFor } from '@/lib/payments'
+import { fetchMercadoPagoPayment, getPaymentIdFromNotification } from '@/lib/payments/mercadopago'
+import { activatePremium, getPremiumPriceARS } from '@/lib/payments/premium'
 
+// Aviso de MercadoPago cuando cambia el estado de un pago de suscripción premium.
+// Respondemos 200 a todo lo que no hay que procesar; un error 5xx hace que
+// MercadoPago reintente más tarde.
 export async function POST(request: Request) {
+  const url = new URL(request.url)
   const body = await request.json().catch(() => null)
-  if (!body) return NextResponse.json({ ok: false }, { status: 400 })
 
-  // MercadoPago sends topic=payment&id=XXX. We never trust the body: we always
-  // re-fetch the payment from MercadoPago with our own access token.
-  const paymentId = body.data?.id ?? body.id
-  if (!isValidMpPaymentId(paymentId)) return NextResponse.json({ ok: true })
+  const paymentId = getPaymentIdFromNotification(url, body)
+  if (!paymentId) return NextResponse.json({ ok: true })
 
-  const res = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-    headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}` },
-  })
-
-  if (!res.ok) return NextResponse.json({ ok: false }, { status: 502 })
-
-  const payment = await res.json()
+  // No confiamos en el contenido del aviso: consultamos el pago real a MercadoPago.
+  const payment = await fetchMercadoPagoPayment(paymentId)
+  if (!payment) return NextResponse.json({ ok: false }, { status: 502 })
   if (payment.status !== 'approved') return NextResponse.json({ ok: true })
 
   const profileId = payment.metadata?.profile_id
@@ -26,22 +24,30 @@ export async function POST(request: Request) {
   const supabase = createAdminClient()
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, role')
+    .select('id, role, plan')
     .eq('id', profileId)
     .single()
-  if (!profile) return NextResponse.json({ ok: true })
 
-  // Make sure the amount actually paid matches the real price.
-  const expected = premiumPriceFor(profile.role)
-  if (payment.currency_id !== 'ARS' || Number(payment.transaction_amount) < expected) {
-    console.error('MercadoPago premium payment amount mismatch', { paymentId, profileId })
+  if (!profile) return NextResponse.json({ ok: true })
+  if (profile.plan === 'premium') return NextResponse.json({ ok: true })
+
+  const expected = getPremiumPriceARS(profile.role)
+  if (expected === null || payment.currency_id !== 'ARS' || Number(payment.transaction_amount) < expected) {
+    console.error('[mercadopago/webhook] monto o moneda no coinciden con el plan', {
+      paymentId,
+      profileId,
+      amount: payment.transaction_amount,
+      currency: payment.currency_id,
+      expected,
+    })
     return NextResponse.json({ ok: true })
   }
 
-  await supabase
-    .from('profiles')
-    .update({ plan: 'premium', subscription_status: 'active' })
-    .eq('id', profileId)
+  const error = await activatePremium(supabase, profileId)
+  if (error) {
+    console.error('[mercadopago/webhook] no se pudo activar premium', error)
+    return NextResponse.json({ ok: false }, { status: 500 })
+  }
 
   return NextResponse.json({ ok: true })
 }

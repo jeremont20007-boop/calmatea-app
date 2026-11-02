@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { pickRandomAd } from '@/lib/ads'
 
+// Cada pedido elige un anuncio distinto y cuenta una impresión: nunca cachear.
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
-  const supabase = await createClient()
-  const ad = await pickRandomAd(supabase)
-  return NextResponse.json({ ad })
+  const ad = await pickRandomAd()
+  return NextResponse.json({ ad }, { headers: { 'Cache-Control': 'no-store' } })
 }

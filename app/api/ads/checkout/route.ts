@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { AD_DURATION_OPTIONS, calcAdPrice } from '@/types'
+import { getAdPriceARS } from '@/lib/payments/ads'
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -25,15 +25,10 @@ export async function POST(request: Request) {
   if (ad.payment_status === 'paid') {
     return NextResponse.json({ error: 'Already paid' }, { status: 400 })
   }
-  // Recompute the price on the server from the chosen duration. The total_price
-  // column is written by the browser, so it can't be trusted.
-  const durationDays = Number(ad.duration_days)
-  if (!AD_DURATION_OPTIONS.some(o => o.days === durationDays)) {
+  // El precio se calcula en el servidor según la duración, nunca se toma del anuncio.
+  const priceARS = getAdPriceARS(ad.duration_days)
+  if (priceARS === null) {
     return NextResponse.json({ error: 'Invalid duration' }, { status: 400 })
-  }
-  const price = calcAdPrice(durationDays)
-  if (!price || price <= 0) {
-    return NextResponse.json({ error: 'Invalid price' }, { status: 400 })
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
@@ -48,9 +43,9 @@ export async function POST(request: Request) {
       items: [
         {
           title: `Publicidad VehiLink — ${ad.title}`,
-          description: `Campaña publicitaria · ${durationDays} días`,
+          description: `Campaña publicitaria · ${ad.duration_days} días`,
           quantity: 1,
-          unit_price: price,
+          unit_price: priceARS,
           currency_id: 'ARS',
         },
       ],

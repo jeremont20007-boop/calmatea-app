@@ -80,7 +80,10 @@ activas**; un propietario puede publicar **1 vehículo**.
    Editor*, pegá el contenido de `supabase/schema.sql` y ejecutalo. Después
    ejecutá también `supabase/propuestas/2026-11-02_endurecer_rls.sql`, que
    corrige reglas de seguridad (sin él, los usuarios logueados reciben
-   errores). Además creá dos "buckets" en *Storage*: `documents` y
+   errores), y después, en este orden, los archivos de `supabase/migrations/`:
+   `20261102_protect_ad_prices.sql` (precios y estados de anuncios) y
+   `20261102_ad_impressions.sql` (contador de impresiones; sin él no se
+   muestran anuncios). Además creá dos "buckets" en *Storage*: `documents` y
    `ads-media` (este último público). Detalles en
    [`docs/MANUAL.md`](docs/MANUAL.md).
 6. **Arrancá la app:**
@@ -98,6 +101,25 @@ Otros comandos útiles:
 | `npm run lint` | Revisa el estilo del código. |
 | `npm run typecheck` | Revisa errores de tipos de TypeScript. |
 | `npm run icons` | Regenera los íconos de `public/icons/`. |
+| `npm test` | Corre los tests automáticos rápidos (ver abajo). |
+| `npm run test:e2e` | Corre los tests en un navegador de verdad (ver abajo). |
+
+## Tests automáticos
+
+| Comando | Qué hace |
+|---|---|
+| `npm test` | Tests unitarios (Vitest + Testing Library): utilidades, sesión, componentes, formularios, webhooks de pago y reglas de la base de datos. |
+| `npm run test:watch` | Lo mismo, pero se re-ejecutan al guardar cambios. |
+| `npm run test:e2e` | Tests end-to-end (Playwright) en un navegador real, escritorio y móvil. |
+
+Los tests **no usan claves reales ni tocan la base de producción**: los unitarios simulan Supabase
+(y prueban las reglas de la base en un Postgres en memoria), y los end-to-end levantan un Supabase
+falso (`e2e/mock-supabase.mjs`) con datos inventados.
+
+La primera vez que se corren los end-to-end hay que instalar el navegador: `npx playwright install chromium`.
+
+En cada Pull Request, GitHub Actions (`.github/workflows/ci.yml`) corre lint, chequeo de tipos,
+tests unitarios, build y tests end-to-end.
 
 
 ## Documentación

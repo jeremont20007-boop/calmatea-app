@@ -30,7 +30,7 @@ export default async function VehiculosPage() {
       .select('id, make, model, year, color, city, revenue_split, platforms, schedule, status, description, vehicle_type, neuquen_only')
       .eq('status', 'disponible')
       .order('created_at', { ascending: false }),
-    isPremium ? Promise.resolve(null) : pickRandomAd(supabase).catch(() => null),
+    isPremium ? Promise.resolve(null) : pickRandomAd().catch(() => null),
   ])
 
   const list = (vehicles ?? []) as unknown as Vehicle[]

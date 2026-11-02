@@ -114,7 +114,7 @@ La forma más simple, sin instalar nada:
 | Íconos de la app | `public/icons/icon-192.png` e `icon-512.png` (reemplazar por imágenes del mismo tamaño) |
 | Ícono de la pestaña del navegador | `app/favicon.ico` |
 | Colores generales (la familia de azules "calm", verde, amarillo) | `app/globals.css`, al principio |
-| Precio del plan Premium | El precio que se **cobra** está en `lib/payments.ts`. El precio que se **muestra** está escrito aparte en `app/(protected)/subscription/page.tsx` y `app/(protected)/subscription/CheckoutButton.tsx`. Hay que cambiar los tres para que coincidan. |
+| Precio del plan Premium | El precio que se **cobra** está en `lib/payments/premium.ts`. El precio que se **muestra** está escrito aparte en `app/(protected)/subscription/page.tsx` y `app/(protected)/subscription/CheckoutButton.tsx`. Hay que cambiar los tres para que coincidan. |
 | Beneficios del plan gratis y Premium | `app/(protected)/subscription/page.tsx` |
 | Precio por día de los anuncios y descuentos por duración | `types/index.ts` (`AD_PRICE_PER_DAY_ARS`, `AD_DURATION_OPTIONS`) |
 | Planes de "creatividad" (precios y entregables) | `types/index.ts` (`CREATIVE_TIERS`, `CREATIVE_DELIVERABLES`) |
@@ -284,10 +284,14 @@ Lo que sigue pendiente:
    que alguien lo ejecute en Supabase, siguen abiertos los problemas que
    describe: errores de "infinite recursion", usuarios que pueden ponerse
    Premium o admin, el panel de admin sin permiso para ver datos, etc.
+   Después hay que correr, en este orden, los archivos de
+   `supabase/migrations/`: `20261102_protect_ad_prices.sql` (precios, pago y
+   estado de anuncios los decide la base) y `20261102_ad_impressions.sql`
+   (contador de impresiones; **sin este último no se muestran anuncios**).
 2. **PayWay necesita `PAYWAY_WEBHOOK_SECRET`.** Sin esa variable, el pago con
-   PayWay queda desactivado a propósito. Además, el aviso de PayWay todavía no
-   confirma el pago contra la API de PayWay (hay un TODO en
-   `app/api/payway/webhook/route.ts`).
+   PayWay queda desactivado a propósito (mínimo 16 caracteres). Además, el
+   aviso de PayWay todavía no confirma el pago contra la API de PayWay: conviene
+   hacer un pago de prueba real.
 3. **Documentos:** el bucket `documents` debería ser privado, pero el código
    (`components/ui/DocumentUpload.tsx`) usa `getPublicUrl`, que solo funciona
    con buckets públicos. Si es privado, los enlaces a los documentos no abren.
@@ -295,18 +299,14 @@ Lo que sigue pendiente:
 4. **Los anunciantes también reciben una fila en `profiles`** como
    "conductor", porque `handle_new_user` se ejecuta con todo registro nuevo
    (también en la versión del archivo de propuestas).
-5. **El administrador no tiene botón para cerrar sesión.** "← Salir" lleva a
-   `/dashboard`, que lo devuelve al panel. La ruta `/auth/signout` existe,
-   pero solo funciona desde un botón (no escribiéndola en el navegador). Hoy
-   la única salida es borrar los datos del sitio en el navegador.
-6. **Restos de CalmaTEA:** `SETUP.md`, `scripts/setup-env.mjs` y el dominio
+5. **Restos de CalmaTEA:** `SETUP.md`, `scripts/setup-env.mjs` y el dominio
    por defecto de `app/sitemap.xml/route.ts` (`calmatea.app`) siguen hablando
    de CalmaTEA.
-7. **`vercel.json` usa referencias `@nombre`** (los viejos "Vercel Secrets",
+6. **`vercel.json` usa referencias `@nombre`** (los viejos "Vercel Secrets",
    ya discontinuados) y no incluye las variables de Mercado Pago ni PayWay.
    Lo recomendable es cargar las variables en el panel de Vercel y quitar ese
    bloque `env`.
-8. **Los números de la portada son inventados** (2.400 vehículos, 8.900
+7. **Los números de la portada son inventados** (2.400 vehículos, 8.900
    conductores, 95 %). Conviene cambiarlos o quitarlos antes de lanzar.
 
 ---
@@ -326,16 +326,20 @@ Lo que sigue pendiente:
   (`lib/supabase/lazy-client.ts`) para que la app cargue más rápido en
   celulares.
 - Pagos: `app/api/mercadopago/*`, `app/api/payway/*`, `app/api/ads/*`
-  (Mercado Pago para anuncios), `app/api/stripe/*` (heredado). Precios de
-  Premium del lado del servidor en `lib/payments.ts`. Los webhooks escriben
-  con `lib/supabase/admin.ts` (service role, solo servidor).
+  (Mercado Pago para anuncios), `app/api/stripe/*` (heredado). Precios y
+  verificación de pagos del lado del servidor en `lib/payments/`. Los webhooks
+  escriben con `lib/supabase/admin.ts` (service role, solo servidor).
 - Stripe se crea recién al usarse (`getStripe()` en `lib/stripe/client.ts`),
   así que el build no necesita sus claves.
-- Anuncios: `GET /api/ads/random` elige un anuncio activo al azar y suma una
-  impresión; `components/ui/AdBanner.tsx` lo muestra (a usuarios Premium como
-  máximo una vez cada 6 horas).
-- No hay tests automatizados. Antes de publicar: `npm run lint`,
+- Anuncios: `pickRandomAd()` (`lib/ads.ts`, usado por `GET /api/ads/random` y
+  por las páginas del servidor) llama a la función de la base
+  `serve_random_ad()`, que elige un anuncio activo al azar y suma la impresión
+  en un solo paso; `components/ui/AdBanner.tsx` lo muestra (a usuarios Premium
+  como máximo una vez cada 6 horas).
+- Tests: `npm test` (Vitest, incluye las reglas de la base en PGlite) y
+  `npm run test:e2e` (Playwright contra un Supabase falso). Corren solos en
+  cada Pull Request. Antes de publicar también: `npm run lint`,
   `npm run typecheck`, `npm run build`.
-- Cambios en la base: agregarlos a `supabase/schema.sql` (o como archivo en
-  `supabase/propuestas/`) y ejecutarlos a mano en el SQL Editor. No hay
-  sistema de migraciones.
+- Cambios en la base: como archivo nuevo en `supabase/migrations/` (y copiado
+  al final de `supabase/schema.sql` para instalaciones nuevas), ejecutado a
+  mano en el SQL Editor. No se aplican solos.
