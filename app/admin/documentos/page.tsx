@@ -1,10 +1,19 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { signDocumentUrls } from '@/lib/documents'
 import { DRIVER_DOC_LABELS, VEHICLE_DOC_LABELS, type DriverDocType, type VehicleDocType } from '@/types'
 import { Eye } from 'lucide-react'
 import { DocReviewActions } from './DocReviewActions'
 
 export default async function AdminDocumentosPage() {
   const supabase = await createClient()
+
+  // El layout ya lo verifica, pero esta página genera links a documentos
+  // personales: lo confirmamos acá también.
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/auth/login')
+  const { data: me } = await supabase.from('profiles').select('role').eq('user_id', user.id).single()
+  if (me?.role !== 'admin') redirect('/dashboard')
 
   const [{ data: driverDocs }, { data: vehicleDocs }] = await Promise.all([
     supabase
@@ -22,6 +31,12 @@ export default async function AdminDocumentosPage() {
   const driverPending = driverDocs ?? []
   const vehiclePending = vehicleDocs ?? []
   const total = driverPending.length + vehiclePending.length
+
+  // Links temporales (1 hora) para ver cada archivo del bucket privado
+  const viewUrls = await signDocumentUrls(
+    supabase,
+    [...driverPending, ...vehiclePending].map(d => d.file_url)
+  )
 
   return (
     <div className="p-4 space-y-6">
@@ -52,12 +67,7 @@ export default async function AdminDocumentosPage() {
                     <p className="text-xs text-calm-500">{driver?.full_name}</p>
                     <p className="text-xs text-calm-400">{new Date(doc.uploaded_at).toLocaleDateString('es-AR')}</p>
                   </div>
-                  {doc.file_url && (
-                    <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs font-bold text-calm-500 hover:text-calm-700 bg-calm-50 px-2.5 py-1.5 rounded-lg">
-                      <Eye size={12} /> Ver
-                    </a>
-                  )}
+                  <DocumentLink url={viewUrls[doc.file_url ?? '']} />
                 </div>
                 <DocReviewActions docId={doc.id} table="driver_documents" currentStatus={doc.status} />
               </div>
@@ -81,12 +91,7 @@ export default async function AdminDocumentosPage() {
                     <p className="text-xs text-calm-500">{vehicle?.make} {vehicle?.model} {vehicle?.year}</p>
                     <p className="text-xs text-calm-400">{vehicle?.owner?.full_name} · {new Date(doc.uploaded_at).toLocaleDateString('es-AR')}</p>
                   </div>
-                  {doc.file_url && (
-                    <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs font-bold text-calm-500 hover:text-calm-700 bg-calm-50 px-2.5 py-1.5 rounded-lg">
-                      <Eye size={12} /> Ver
-                    </a>
-                  )}
+                  <DocumentLink url={viewUrls[doc.file_url ?? '']} />
                 </div>
                 <DocReviewActions docId={doc.id} table="vehicle_documents" currentStatus={doc.status} />
               </div>
@@ -95,5 +100,17 @@ export default async function AdminDocumentosPage() {
         </section>
       )}
     </div>
+  )
+}
+
+function DocumentLink({ url }: { url?: string }) {
+  if (!url) {
+    return <span className="text-xs font-semibold text-red-500 bg-red-50 px-2.5 py-1.5 rounded-lg">Sin archivo</span>
+  }
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer"
+      className="flex items-center gap-1 text-xs font-bold text-calm-500 hover:text-calm-700 bg-calm-50 px-2.5 py-1.5 rounded-lg">
+      <Eye size={12} /> Ver
+    </a>
   )
 }

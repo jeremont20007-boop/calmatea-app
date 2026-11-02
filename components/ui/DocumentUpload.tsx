@@ -2,6 +2,10 @@
 
 import { useState } from 'react'
 import { getBrowserClient } from '@/lib/supabase/lazy-client'
+import {
+  DOCUMENTS_BUCKET, DOCUMENT_LINK_SECONDS, MAX_DOCUMENT_BYTES,
+  buildDocumentPath, hasDocumentFile, type DocumentEntityType,
+} from '@/lib/documents'
 import { Upload, Check, AlertCircle, FileText, Eye } from 'lucide-react'
 
 interface DocumentUploadProps {
@@ -9,10 +13,13 @@ interface DocumentUploadProps {
   label: string
   description?: string
   required?: boolean
+  /** Lo guardado en file_url (ubicación del archivo en el bucket privado). */
   existingUrl?: string | null
+  /** Link temporal firmado para ver el archivo, generado en el servidor. */
+  viewUrl?: string | null
   existingStatus?: string
   entityId: string
-  entityType: 'driver' | 'vehicle'
+  entityType: DocumentEntityType
 }
 
 export function DocumentUpload({
@@ -21,13 +28,14 @@ export function DocumentUpload({
   description,
   required = false,
   existingUrl,
+  viewUrl,
   existingStatus,
   entityId,
   entityType,
 }: DocumentUploadProps) {
   const [uploading, setUploading] = useState(false)
-  const [uploaded, setUploaded] = useState(!!existingUrl)
-  const [fileUrl, setFileUrl] = useState(existingUrl || '')
+  const [uploaded, setUploaded] = useState(hasDocumentFile(existingUrl))
+  const [linkUrl, setLinkUrl] = useState(viewUrl || '')
   const [status, setStatus] = useState(existingStatus || '')
   const [error, setError] = useState('')
 
@@ -35,13 +43,16 @@ export function DocumentUpload({
     const file = e.target.files?.[0]
     if (!file) return
 
-    const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
-    if (!validTypes.includes(file.type)) {
-      setError('Solo se aceptan PDF, JPG o PNG')
+    // Permite volver a elegir el mismo archivo si algo falla
+    e.target.value = ''
+
+    const path = buildDocumentPath(entityType, entityId, docType, file.type)
+    if (!path) {
+      setError('Solo se aceptan PDF, JPG, PNG o WEBP')
       return
     }
 
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > MAX_DOCUMENT_BYTES) {
       setError('El archivo no puede superar 10 MB')
       return
     }
@@ -50,45 +61,44 @@ export function DocumentUpload({
     setError('')
 
     const supabase = await getBrowserClient()
-    const ext = file.name.split('.').pop()
-    const path = `${entityType}/${entityId}/${docType}.${ext}`
 
+    // El bucket "documents" es privado: sólo el dueño (y el admin) pueden verlo.
     const { error: uploadError } = await supabase.storage
-      .from('documents')
+      .from(DOCUMENTS_BUCKET)
       .upload(path, file, { upsert: true, contentType: file.type })
 
     if (uploadError) {
-      // If storage bucket doesn't exist yet, still save the intent
-      setError('Archivo recibido. Configura el bucket "documents" en Supabase Storage.')
+      // Antes se registraba igual el documento, apuntando a un archivo que no existía.
+      setError('No se pudo subir el archivo. Intentá de nuevo.')
       setUploading(false)
-    }
-
-    // Try to get URL (may fail if bucket isn't set up)
-    let publicUrl = ''
-    try {
-      const result = supabase.storage.from('documents').getPublicUrl(path)
-      publicUrl = result.data.publicUrl
-    } catch {
-      publicUrl = `pending:${entityType}/${entityId}/${docType}`
+      return
     }
 
     const table = entityType === 'driver' ? 'driver_documents' : 'vehicle_documents'
     const idField = entityType === 'driver' ? 'driver_id' : 'vehicle_id'
 
+    // Se guarda la ubicación del archivo, no un link público.
     const { error: dbError } = await supabase.from(table).upsert(
-      { [idField]: entityId, doc_type: docType, file_url: publicUrl, status: 'pendiente' },
+      { [idField]: entityId, doc_type: docType, file_url: path, status: 'pendiente' },
       { onConflict: `${idField},doc_type` }
     )
 
-    setUploading(false)
-    if (!dbError) {
-      setUploaded(true)
-      setStatus('pendiente')
-      setFileUrl(publicUrl)
-      setError('')
-    } else {
+    if (dbError) {
       setError('Error al registrar el documento.')
+      setUploading(false)
+      return
     }
+
+    // Link temporal para que el usuario pueda ver lo que acaba de subir
+    const { data: signed } = await supabase.storage
+      .from(DOCUMENTS_BUCKET)
+      .createSignedUrl(path, DOCUMENT_LINK_SECONDS)
+
+    setUploading(false)
+    setUploaded(true)
+    setStatus('pendiente')
+    setLinkUrl(signed?.signedUrl ?? '')
+    setError('')
   }
 
   const statusStyles: Record<string, string> = {
@@ -104,7 +114,7 @@ export function DocumentUpload({
   }
 
   return (
-    <div className={`flex items-start gap-3 p-4 rounded-2xl border-2 transition-colors ${
+    <div data-doc-type={docType} className={`flex items-start gap-3 p-4 rounded-2xl border-2 transition-colors ${
       uploaded ? 'border-calm-200 bg-white' : 'border-dashed border-calm-200 bg-calm-50/50'
     }`}>
       {/* Icon */}
@@ -145,9 +155,9 @@ export function DocumentUpload({
 
       {/* Actions */}
       <div className="flex items-center gap-1 shrink-0">
-        {uploaded && fileUrl && !fileUrl.startsWith('pending:') && (
+        {uploaded && linkUrl && (
           <a
-            href={fileUrl}
+            href={linkUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center w-8 h-8 rounded-xl bg-calm-50 text-calm-400 hover:text-calm-600 hover:bg-calm-100 transition-colors"

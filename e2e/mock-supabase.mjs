@@ -84,6 +84,9 @@ const defaultProfile = () => ({
 let profile = defaultProfile()
 // Si el usuario actual es un publicitario, no tiene perfil: tiene registro en "advertisers".
 let advertiser = null
+// Documentos (tabla driver_documents) y archivos del bucket privado "documents"
+let driverDocuments = []
+const storedFiles = new Map()
 
 function send(res, status, body, extraHeaders = {}) {
   res.writeHead(status, {
@@ -95,6 +98,14 @@ function send(res, status, body, extraHeaders = {}) {
     ...extraHeaders,
   })
   res.end(body === undefined ? '' : JSON.stringify(body))
+}
+
+function readRaw(req) {
+  return new Promise(resolve => {
+    const chunks = []
+    req.on('data', c => chunks.push(c))
+    req.on('end', () => resolve(Buffer.concat(chunks)))
+  })
 }
 
 function readBody(req) {
@@ -133,6 +144,8 @@ const server = http.createServer(async (req, res) => {
         // Cada login reinicia los datos del usuario de prueba correspondiente
         profile = defaultProfile()
         advertiser = null
+        driverDocuments = []
+        storedFiles.clear()
         if (body.email === ADMIN_EMAIL) profile = { ...profile, full_name: 'Ana Admin', role: 'admin' }
         if (body.email === ADVERTISER_EMAIL) {
           profile = null
@@ -192,6 +205,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === 'GET') {
+      if (table === 'driver_documents') {
+        return send(res, 200, isAuthorized(req) ? driverDocuments : [])
+      }
       const row = !isAuthorized(req) ? null : table === 'profiles' ? profile : table === 'advertisers' ? advertiser : null
       if (row) {
         return wantsSingle ? send(res, 200, row) : send(res, 200, [row])
@@ -207,9 +223,60 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, [], { 'Content-Range': '*/0' })
     }
 
-    // Inserciones/actualizaciones: se aceptan sin guardar nada.
+    if (table === 'driver_documents' && req.method === 'POST' && isAuthorized(req)) {
+      const body = await readBody(req)
+      for (const row of Array.isArray(body) ? body : [body]) {
+        driverDocuments = driverDocuments.filter(d => d.doc_type !== row.doc_type).concat([row])
+      }
+      return send(res, 201, [])
+    }
+
+    // Otras inserciones/actualizaciones: se aceptan sin guardar nada.
     await readBody(req)
     return send(res, 201, [])
+  }
+
+  // ── Storage (bucket privado "documents") ─────────────────────────────
+  if (path.startsWith('/storage/v1/object/')) {
+    const rest = decodeURIComponent(path.slice('/storage/v1/object/'.length))
+
+    // Ver un archivo con link firmado
+    if (req.method === 'GET' && rest.startsWith('sign/documents/')) {
+      const filePath = rest.slice('sign/documents/'.length)
+      const file = storedFiles.get(filePath)
+      if (!file || url.searchParams.get('token') !== 'token-falso') return send(res, 400, { message: 'Invalid signature' })
+      res.writeHead(200, { 'Content-Type': file.type })
+      return res.end(file.body)
+    }
+
+    if (req.method === 'POST' && !isAuthorized(req)) return send(res, 403, { message: 'Unauthorized' })
+
+    // Firmar varios: POST /object/sign/documents  { expiresIn, paths }
+    if (req.method === 'POST' && rest === 'sign/documents') {
+      const body = await readBody(req)
+      return send(res, 200, (body.paths ?? []).map(p => storedFiles.has(p)
+        ? { path: p, signedURL: `/object/sign/documents/${p}?token=token-falso`, error: null }
+        : { path: p, signedURL: null, error: 'Object not found' }))
+    }
+
+    // Firmar uno: POST /object/sign/documents/<ruta>
+    if (req.method === 'POST' && rest.startsWith('sign/documents/')) {
+      const filePath = rest.slice('sign/documents/'.length)
+      await readBody(req)
+      if (!storedFiles.has(filePath)) return send(res, 400, { message: 'Object not found' })
+      return send(res, 200, { signedURL: `/object/sign/documents/${filePath}?token=token-falso` })
+    }
+
+    // Subir: POST/PUT /object/documents/<ruta>
+    if ((req.method === 'POST' || req.method === 'PUT') && rest.startsWith('documents/')) {
+      const filePath = rest.slice('documents/'.length)
+      const body = await readRaw(req)
+      storedFiles.set(filePath, { body, type: req.headers['content-type'] ?? 'application/octet-stream' })
+      return send(res, 200, { Id: filePath, Key: `documents/${filePath}` })
+    }
+
+    // El bucket es privado: los links públicos no funcionan
+    if (rest.startsWith('public/documents/')) return send(res, 400, { message: 'Bucket not found' })
   }
 
   if (path === '/__health') return send(res, 200, { ok: true })

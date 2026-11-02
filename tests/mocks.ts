@@ -19,17 +19,30 @@ export const supabaseAuth = {
 
 export const insert = vi.fn()
 export const updateEq = vi.fn()
+export const upsert = vi.fn()
 export const from = vi.fn(() => ({
   insert,
+  upsert,
   update: () => ({ eq: updateEq }),
 }))
+
+// Storage (bucket de documentos)
+export const storageBucket = {
+  upload: vi.fn(),
+  createSignedUrl: vi.fn(),
+  getPublicUrl: vi.fn(),
+}
+export const storageFrom = vi.fn(() => storageBucket)
 
 export function resetMocks() {
   Object.values(router).forEach(fn => fn.mockReset())
   Object.values(supabaseAuth).forEach(fn => fn.mockReset())
   insert.mockReset()
   updateEq.mockReset()
+  upsert.mockReset()
   from.mockClear()
+  Object.values(storageBucket).forEach(fn => fn.mockReset())
+  storageFrom.mockClear()
   setSearchParams('')
 }
 
@@ -40,5 +53,5 @@ vi.mock('next/navigation', () => ({
 }))
 
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => ({ auth: supabaseAuth, from }),
+  createClient: () => ({ auth: supabaseAuth, from, storage: { from: storageFrom } }),
 }))
