@@ -289,22 +289,20 @@ Lo que sigue pendiente:
    estado de anuncios los decide la base), `20261102_ad_impressions.sql`
    (contador de impresiones; **sin este no se muestran anuncios**) y
    `20261102_private_documents.sql` (documentos privados; **sin este no se
-   pueden subir ni ver documentos**).
+   pueden subir ni ver documentos**) y `20261102_advertiser_accounts.sql`
+   (cuentas de anunciantes sin perfil de conductor).
 2. **PayWay necesita `PAYWAY_WEBHOOK_SECRET`.** Sin esa variable, el pago con
    PayWay queda desactivado a propósito (mínimo 16 caracteres). Además, el
    aviso de PayWay todavía no confirma el pago contra la API de PayWay: conviene
    hacer un pago de prueba real.
-3. **Los anunciantes también reciben una fila en `profiles`** como
-   "conductor", porque `handle_new_user` se ejecuta con todo registro nuevo
-   (también en la versión del archivo de propuestas).
-4. **Restos de CalmaTEA:** `SETUP.md`, `scripts/setup-env.mjs` y el dominio
+3. **Restos de CalmaTEA:** `SETUP.md`, `scripts/setup-env.mjs` y el dominio
    por defecto de `app/sitemap.xml/route.ts` (`calmatea.app`) siguen hablando
    de CalmaTEA.
-5. **`vercel.json` usa referencias `@nombre`** (los viejos "Vercel Secrets",
+4. **`vercel.json` usa referencias `@nombre`** (los viejos "Vercel Secrets",
    ya discontinuados) y no incluye las variables de Mercado Pago ni PayWay.
    Lo recomendable es cargar las variables en el panel de Vercel y quitar ese
    bloque `env`.
-6. **Los números de la portada son inventados** (2.400 vehículos, 8.900
+5. **Los números de la portada son inventados** (2.400 vehículos, 8.900
    conductores, 95 %). Conviene cambiarlos o quitarlos antes de lanzar.
 
 ---

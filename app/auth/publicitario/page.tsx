@@ -30,7 +30,21 @@ export default function PublicitarioAuthPage() {
     setInfo('')
 
     const supabase = await getBrowserClient()
-    const { data, error: signUpError } = await supabase.auth.signUp({ email, password })
+    // account_type = 'advertiser' hace que la base cree la fila del anunciante
+    // y NO un perfil de conductor (ver supabase/migrations/20261102_advertiser_accounts.sql).
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: {
+        data: {
+          account_type: 'advertiser',
+          company_name: companyName.trim(),
+          phone: phone.trim(),
+          website: website.trim(),
+        },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
 
     if (signUpError) {
       setError(signUpError.message)
@@ -38,25 +52,36 @@ export default function PublicitarioAuthPage() {
       return
     }
 
-    const userId = data.user?.id
-    if (!userId) {
+    // Si Supabase pide confirmar el email, todavía no hay sesión: la cuenta ya
+    // quedó creada en la base y se termina de activar desde el link del email.
+    if (!data.session || !data.user) {
       setInfo('Revisá tu email para confirmar tu cuenta, luego iniciá sesión.')
       setLoading(false)
       return
     }
 
-    const { error: insertError } = await supabase.from('advertisers').insert({
-      user_id: userId,
-      company_name: companyName.trim(),
-      contact_email: email.trim(),
-      phone: phone.trim() || null,
-      website: website.trim() || null,
-    })
+    // Compatibilidad: si la base todavía no tiene la actualización, la fila del
+    // anunciante no se creó sola y la creamos desde acá (como antes).
+    const { data: existing } = await supabase
+      .from('advertisers')
+      .select('id')
+      .eq('user_id', data.user.id)
+      .maybeSingle()
 
-    if (insertError) {
-      setError('Error al crear el perfil de publicitario. Intentá de nuevo.')
-      setLoading(false)
-      return
+    if (!existing) {
+      const { error: insertError } = await supabase.from('advertisers').insert({
+        user_id: data.user.id,
+        company_name: companyName.trim(),
+        contact_email: email.trim(),
+        phone: phone.trim() || null,
+        website: website.trim() || null,
+      })
+
+      if (insertError) {
+        setError('Error al crear el perfil de publicitario. Intentá de nuevo.')
+        setLoading(false)
+        return
+      }
     }
 
     router.push('/ad-dashboard')
