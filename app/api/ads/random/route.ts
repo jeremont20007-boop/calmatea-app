@@ -21,10 +21,9 @@ export async function GET() {
 
   const picked = eligible[Math.floor(Math.random() * eligible.length)]
 
-  await supabase
-    .from('ads')
-    .update({ current_impressions: picked.current_impressions + 1 })
-    .eq('id', picked.id)
+  // El conteo se hace con una función SQL (security definer) que solo suma 1:
+  // los usuarios no tienen permiso de UPDATE directo sobre ads.
+  await supabase.rpc('increment_ad_impression', { p_ad_id: picked.id })
 
   const advertiser = picked.advertiser as unknown as { company_name: string } | null
 

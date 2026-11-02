@@ -120,7 +120,7 @@ export default function NuevoAnuncioPage() {
       return
     }
 
-    window.location.href = url
+    window.location.assign(url)
   }
 
   return (

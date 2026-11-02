@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { AD_DURATION_OPTIONS, calcAdPrice } from '@/types'
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -17,14 +18,20 @@ export async function POST(request: Request) {
 
   if (!ad) return NextResponse.json({ error: 'Ad not found' }, { status: 404 })
 
-  const advertiser = ad.advertiser as unknown as { user_id: string }
-  if (advertiser.user_id !== user.id) {
+  const advertiser = ad.advertiser as unknown as { user_id: string } | null
+  if (!advertiser || advertiser.user_id !== user.id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
   if (ad.payment_status === 'paid') {
     return NextResponse.json({ error: 'Already paid' }, { status: 400 })
   }
-  if (!ad.total_price || ad.total_price <= 0) {
+  // El precio se recalcula en el servidor a partir de la duración: total_price
+  // lo escribe el navegador y no es confiable.
+  if (!AD_DURATION_OPTIONS.some(o => o.days === ad.duration_days)) {
+    return NextResponse.json({ error: 'Invalid duration' }, { status: 400 })
+  }
+  const price = calcAdPrice(ad.duration_days)
+  if (!price || price <= 0) {
     return NextResponse.json({ error: 'Invalid price' }, { status: 400 })
   }
 
@@ -42,7 +49,7 @@ export async function POST(request: Request) {
           title: `Publicidad VehiLink — ${ad.title}`,
           description: `Campaña publicitaria · ${ad.duration_days} días`,
           quantity: 1,
-          unit_price: ad.total_price,
+          unit_price: price,
           currency_id: 'ARS',
         },
       ],

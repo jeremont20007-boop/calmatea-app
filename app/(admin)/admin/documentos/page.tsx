@@ -19,8 +19,29 @@ export default async function AdminDocumentosPage() {
       .order('uploaded_at', { ascending: true }),
   ])
 
-  const driverPending = driverDocs ?? []
-  const vehiclePending = vehicleDocs ?? []
+  // El bucket "documents" es privado: las URLs públicas guardadas no abren.
+  // Generamos URLs firmadas de corta duración (1 h) para el admin.
+  const PUBLIC_PREFIX = '/storage/v1/object/public/documents/'
+  const toPath = (url: string | null) => {
+    if (!url) return null
+    const i = url.indexOf(PUBLIC_PREFIX)
+    return i >= 0 ? decodeURIComponent(url.slice(i + PUBLIC_PREFIX.length)) : null
+  }
+  const allPaths = [...(driverDocs ?? []), ...(vehicleDocs ?? [])]
+    .map(d => toPath(d.file_url))
+    .filter((p): p is string => !!p)
+  const signed = new Map<string, string>()
+  if (allPaths.length > 0) {
+    const { data } = await supabase.storage.from('documents').createSignedUrls(allPaths, 3600)
+    data?.forEach(d => { if (d.path && d.signedUrl) signed.set(d.path, d.signedUrl) })
+  }
+  const withSigned = <T extends { file_url: string | null }>(d: T): T => {
+    const path = toPath(d.file_url)
+    return { ...d, file_url: (path && signed.get(path)) || d.file_url }
+  }
+
+  const driverPending = (driverDocs ?? []).map(withSigned)
+  const vehiclePending = (vehicleDocs ?? []).map(withSigned)
   const total = driverPending.length + vehiclePending.length
 
   return (
