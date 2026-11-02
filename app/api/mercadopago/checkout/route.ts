@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getPremiumPriceARS } from '@/lib/payments/premium'
 
-export async function POST(request: Request) {
+export async function POST() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -15,8 +16,9 @@ export async function POST(request: Request) {
   if (!profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
   if (profile.plan === 'premium') return NextResponse.json({ error: 'Already premium' }, { status: 400 })
 
-  const body = await request.json().catch(() => ({}))
-  const priceARS = body.price ?? (profile.role === 'conductor' ? 2990 : 3990)
+  // El precio lo decide siempre el servidor (nunca el navegador).
+  const priceARS = getPremiumPriceARS(profile.role)
+  if (priceARS === null) return NextResponse.json({ error: 'Plan not available' }, { status: 400 })
   const title = `VehiLink Premium — ${profile.role === 'conductor' ? 'Conductor' : 'Propietario'}`
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'

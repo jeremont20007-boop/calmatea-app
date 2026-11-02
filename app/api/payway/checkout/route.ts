@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getPremiumPriceARS } from '@/lib/payments/premium'
+import { buildPaywayNotificationUrl, isPaywayWebhookConfigured } from '@/lib/payments/payway'
 
 // PayWay (Prisma) — Argentina payment gateway
 // Docs: https://developers.payway.com.ar
@@ -17,7 +19,14 @@ export async function POST(request: Request) {
   if (!profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
   if (profile.plan === 'premium') return NextResponse.json({ error: 'Already premium' }, { status: 400 })
 
-  const priceARS = profile.role === 'conductor' ? 2990 : 3990
+  const priceARS = getPremiumPriceARS(profile.role)
+  if (priceARS === null) return NextResponse.json({ error: 'Plan not available' }, { status: 400 })
+
+  // Sin el secreto no podríamos verificar el aviso de pago: mejor no cobrar.
+  if (!isPaywayWebhookConfigured()) {
+    console.error('[payway/checkout] falta PAYWAY_WEBHOOK_SECRET')
+    return NextResponse.json({ error: 'PayWay not configured' }, { status: 503 })
+  }
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
   // PayWay Hosted Checkout session creation
@@ -40,7 +49,7 @@ export async function POST(request: Request) {
         cancel: `${appUrl}/subscription`,
         pending: `${appUrl}/subscription?pending=pw`,
       },
-      notification_url: `${appUrl}/api/payway/webhook`,
+      notification_url: buildPaywayNotificationUrl(appUrl, profile.id),
       metadata: { profile_id: profile.id },
     }),
   })
