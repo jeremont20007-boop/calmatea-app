@@ -83,8 +83,9 @@ activas**; un propietario puede publicar **1 vehículo**.
    errores), y después, en este orden, los archivos de `supabase/migrations/`:
    `20261102_protect_ad_prices.sql` (precios y estados de anuncios) y
    `20261102_ad_impressions.sql` (contador de impresiones; sin él no se
-   muestran anuncios). Además creá dos "buckets" en *Storage*: `documents` y
-   `ads-media` (este último público). Detalles en
+   muestran anuncios) y `20261102_private_documents.sql` (crea el bucket
+   privado `documents` y sus reglas de acceso). Además creá en *Storage* el
+   bucket `ads-media` (público). Detalles en
    [`docs/MANUAL.md`](docs/MANUAL.md).
 6. **Arrancá la app:**
    ```bash

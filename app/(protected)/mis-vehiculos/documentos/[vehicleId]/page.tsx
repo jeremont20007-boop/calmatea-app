@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
 import { DocumentUpload } from '@/components/ui/DocumentUpload'
+import { hasDocumentFile, signDocumentUrls } from '@/lib/documents'
 import {
   VEHICLE_DOC_LABELS, VEHICLE_TYPE_LABELS,
   type VehicleDocType, type VehicleDocument, type Vehicle,
@@ -50,6 +51,9 @@ export default async function VehicleDocumentosPage({
     .select('doc_type, file_url, status')
     .eq('vehicle_id', vehicleId)
 
+  // Links temporales para ver cada documento (el bucket es privado)
+  const viewUrls = await signDocumentUrls(supabase, (docs ?? []).map(d => d.file_url))
+
   const docMap = Object.fromEntries(
     (docs ?? []).map(d => [d.doc_type, d as VehicleDocument])
   )
@@ -64,7 +68,7 @@ export default async function VehicleDocumentosPage({
     ...(isTaxi ? ['habilitacion_taxi' as VehicleDocType] : []),
   ]
 
-  const uploadedRequired = requiredDocs.filter(t => docMap[t]?.file_url)
+  const uploadedRequired = requiredDocs.filter(t => hasDocumentFile(docMap[t]?.file_url))
   const allRequiredDone = uploadedRequired.length === requiredDocs.length
 
   return (
@@ -122,6 +126,7 @@ export default async function VehicleDocumentosPage({
               description={VEHICLE_DOC_LABELS[docType].description}
               required
               existingUrl={docMap[docType]?.file_url}
+              viewUrl={viewUrls[docMap[docType]?.file_url ?? '']}
               existingStatus={docMap[docType]?.status}
               entityId={vehicleId}
               entityType="vehicle"
@@ -140,6 +145,7 @@ export default async function VehicleDocumentosPage({
                 label={VEHICLE_DOC_LABELS[docType].label}
                 description={VEHICLE_DOC_LABELS[docType].description}
                 existingUrl={docMap[docType]?.file_url}
+              viewUrl={viewUrls[docMap[docType]?.file_url ?? '']}
                 existingStatus={docMap[docType]?.status}
                 entityId={vehicleId}
                 entityType="vehicle"

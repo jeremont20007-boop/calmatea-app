@@ -20,6 +20,9 @@ Se pegan en el **SQL Editor** igual que el schema. Son seguros de correr más de
   (y de las solicitudes de creatividad) los decida la base de datos y no el navegador.
 - `20261102_ad_impressions.sql`: arregla el contador de impresiones de los anuncios.
   Correrlo **después** del anterior.
+- `20261102_private_documents.sql`: deja privado el bucket `documents` (DNI, licencias,
+  antecedentes) y define quién puede subir y ver cada archivo. Los documentos se ven
+  con links temporales que vencen a la hora.
 
 ### Obtener las credenciales
 1. **Settings** → **API**

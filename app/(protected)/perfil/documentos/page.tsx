@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
 import { DocumentUpload } from '@/components/ui/DocumentUpload'
+import { hasDocumentFile, signDocumentUrls } from '@/lib/documents'
 import { DRIVER_DOC_LABELS, type DriverDocType, type DriverDocument } from '@/types'
 import { ShieldCheck, AlertTriangle } from 'lucide-react'
 
@@ -34,12 +35,15 @@ export default async function DriverDocumentosPage() {
     .select('doc_type, file_url, status')
     .eq('driver_id', profile.id)
 
+  // Links temporales para ver cada documento (el bucket es privado)
+  const viewUrls = await signDocumentUrls(supabase, (docs ?? []).map(d => d.file_url))
+
   const docMap = Object.fromEntries(
     (docs ?? []).map(d => [d.doc_type, d as DriverDocument])
   )
 
   const requiredDocs = DOC_ORDER.filter(t => DRIVER_DOC_LABELS[t].required)
-  const uploadedRequired = requiredDocs.filter(t => docMap[t]?.file_url)
+  const uploadedRequired = requiredDocs.filter(t => hasDocumentFile(docMap[t]?.file_url))
   const allRequiredDone = uploadedRequired.length === requiredDocs.length
 
   return (
@@ -90,6 +94,7 @@ export default async function DriverDocumentosPage() {
               description={DRIVER_DOC_LABELS[docType].description}
               required
               existingUrl={docMap[docType]?.file_url}
+              viewUrl={viewUrls[docMap[docType]?.file_url ?? '']}
               existingStatus={docMap[docType]?.status}
               entityId={profile.id}
               entityType="driver"
@@ -112,6 +117,7 @@ export default async function DriverDocumentosPage() {
               label={DRIVER_DOC_LABELS[docType].label}
               description={DRIVER_DOC_LABELS[docType].description}
               existingUrl={docMap[docType]?.file_url}
+              viewUrl={viewUrls[docMap[docType]?.file_url ?? '']}
               existingStatus={docMap[docType]?.status}
               entityId={profile.id}
               entityType="driver"

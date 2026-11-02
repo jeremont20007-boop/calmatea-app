@@ -195,7 +195,7 @@ login, publicar, postularse, subir documentos y pagar.
 
 | Bucket | Qué guarda | Tipo |
 |---|---|---|
-| `documents` | Fotos/PDF de documentos de conductores y autos. Son datos personales sensibles. | Privado |
+| `documents` | Fotos/PDF de documentos de conductores y autos. Son datos personales sensibles. | Privado. Lo crea `supabase/migrations/20261102_private_documents.sql`, con sus reglas: cada persona sube sólo en su carpeta, y ve el archivo quien puede ver el documento (el dueño, el admin y el dueño de un auto con el conductor aceptado). La app los muestra con links temporales que vencen a la hora. |
 | `ads-media` | Imágenes de los anuncios. | Público |
 
 Estos buckets **no** se crean con el archivo SQL: hay que crearlos a mano en
@@ -286,27 +286,25 @@ Lo que sigue pendiente:
    Premium o admin, el panel de admin sin permiso para ver datos, etc.
    Después hay que correr, en este orden, los archivos de
    `supabase/migrations/`: `20261102_protect_ad_prices.sql` (precios, pago y
-   estado de anuncios los decide la base) y `20261102_ad_impressions.sql`
-   (contador de impresiones; **sin este último no se muestran anuncios**).
+   estado de anuncios los decide la base), `20261102_ad_impressions.sql`
+   (contador de impresiones; **sin este no se muestran anuncios**) y
+   `20261102_private_documents.sql` (documentos privados; **sin este no se
+   pueden subir ni ver documentos**).
 2. **PayWay necesita `PAYWAY_WEBHOOK_SECRET`.** Sin esa variable, el pago con
    PayWay queda desactivado a propósito (mínimo 16 caracteres). Además, el
    aviso de PayWay todavía no confirma el pago contra la API de PayWay: conviene
    hacer un pago de prueba real.
-3. **Documentos:** el bucket `documents` debería ser privado, pero el código
-   (`components/ui/DocumentUpload.tsx`) usa `getPublicUrl`, que solo funciona
-   con buckets públicos. Si es privado, los enlaces a los documentos no abren.
-   Si es público, cualquiera con el enlace ve DNI y antecedentes.
-4. **Los anunciantes también reciben una fila en `profiles`** como
+3. **Los anunciantes también reciben una fila en `profiles`** como
    "conductor", porque `handle_new_user` se ejecuta con todo registro nuevo
    (también en la versión del archivo de propuestas).
-5. **Restos de CalmaTEA:** `SETUP.md`, `scripts/setup-env.mjs` y el dominio
+4. **Restos de CalmaTEA:** `SETUP.md`, `scripts/setup-env.mjs` y el dominio
    por defecto de `app/sitemap.xml/route.ts` (`calmatea.app`) siguen hablando
    de CalmaTEA.
-6. **`vercel.json` usa referencias `@nombre`** (los viejos "Vercel Secrets",
+5. **`vercel.json` usa referencias `@nombre`** (los viejos "Vercel Secrets",
    ya discontinuados) y no incluye las variables de Mercado Pago ni PayWay.
    Lo recomendable es cargar las variables en el panel de Vercel y quitar ese
    bloque `env`.
-7. **Los números de la portada son inventados** (2.400 vehículos, 8.900
+6. **Los números de la portada son inventados** (2.400 vehículos, 8.900
    conductores, 95 %). Conviene cambiarlos o quitarlos antes de lanzar.
 
 ---
