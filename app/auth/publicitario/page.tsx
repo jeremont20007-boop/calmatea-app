@@ -30,7 +30,13 @@ export default function PublicitarioAuthPage() {
     setInfo('')
 
     const supabase = createClient()
-    const { data, error: signUpError } = await supabase.auth.signUp({ email, password })
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      // Marca la cuenta como publicitario para que el trigger handle_new_user
+      // no le cree una fila en profiles (si no, quedaría como "conductor").
+      options: { data: { role: 'publicitario' } },
+    })
 
     if (signUpError) {
       setError(signUpError.message)

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe/client'
+import { getStripe } from '@/lib/stripe/client'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST() {
   try {
@@ -17,19 +18,20 @@ export async function POST() {
     let customerId = profile?.stripe_customer_id
 
     if (!customerId) {
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: user.email,
         name: profile?.full_name || '',
         metadata: { user_id: user.id },
       })
       customerId = customer.id
-      await supabase
+      // stripe_customer_id es una columna protegida: solo el servidor la escribe.
+      await createAdminClient()
         .from('profiles')
         .update({ stripe_customer_id: customerId })
         .eq('user_id', user.id)
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
       line_items: [

@@ -21,9 +21,12 @@ export function InstallPWA() {
     if (isStandalone || dismissed) return
 
     if (isIOSDevice) {
-      setIsIOS(true)
-      setVisible(true)
-      return
+      // Se difiere al próximo tick para no hacer setState sincrónico dentro del effect.
+      const t = setTimeout(() => {
+        setIsIOS(true)
+        setVisible(true)
+      }, 0)
+      return () => clearTimeout(t)
     }
 
     const handler = (e: Event) => {

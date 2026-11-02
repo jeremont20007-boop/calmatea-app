@@ -25,8 +25,34 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const publicPaths = ['/auth/login', '/auth/register', '/']
-  const isPublic = publicPaths.some(p => request.nextUrl.pathname === p)
+  const pathname = request.nextUrl.pathname
+  const publicPaths = [
+    '/',
+    '/auth/login',
+    '/auth/register',
+    '/auth/publicitario',
+    '/auth/callback',
+    '/robots.txt',
+    '/sitemap.xml',
+    '/manifest.json',
+    '/sw.js',
+  ]
+  // Los webhooks los llaman Stripe / Mercado Pago / PayWay sin sesión: cada uno
+  // valida su propia firma o token, así que no deben redirigirse al login.
+  const publicPrefixes = [
+    '/api/stripe/webhook',
+    '/api/mercadopago/webhook',
+    '/api/payway/webhook',
+    '/api/ads/webhook',
+  ]
+  const isPublic =
+    publicPaths.includes(pathname) ||
+    publicPrefixes.some(p => pathname === p || pathname.startsWith(p + '/')) ||
+    pathname.startsWith('/workbox-')
+
+  if (!user && pathname.startsWith('/api/') && !isPublic) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone()
@@ -34,7 +60,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && (request.nextUrl.pathname === '/auth/login' || request.nextUrl.pathname === '/auth/register')) {
+  if (user && (pathname === '/auth/login' || pathname === '/auth/register')) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)

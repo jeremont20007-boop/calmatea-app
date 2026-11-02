@@ -472,3 +472,9 @@ create policy "Admins can manage creative requests" on creative_requests
   for all using (
     exists (select 1 from profiles where user_id = auth.uid() and role = 'admin')
   );
+
+-- ─── SEGURIDAD ───────────────────────────────────────────────────────────────
+-- IMPORTANTE: después de este archivo ejecutar
+--   supabase/migrations/20261102_security_hardening.sql
+-- (reemplaza las políticas de arriba por versiones sin recursión y agrega los
+-- triggers que impiden auto-asignarse plan/rol, aprobar documentos o fijar precios).
