@@ -18,6 +18,8 @@ Se pegan en el **SQL Editor** igual que el schema. Son seguros de correr más de
 
 - `20261102_protect_ad_prices.sql`: hace que el precio, el pago y el estado de los anuncios
   (y de las solicitudes de creatividad) los decida la base de datos y no el navegador.
+- `20261102_ad_impressions.sql`: arregla el contador de impresiones de los anuncios.
+  Correrlo **después** del anterior.
 
 ### Obtener las credenciales
 1. **Settings** → **API**

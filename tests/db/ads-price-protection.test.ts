@@ -2,70 +2,19 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { PGlite } from '@electric-sql/pglite'
+import type { PGlite } from '@electric-sql/pglite'
 import { AD_DURATION_OPTIONS, CREATIVE_TIERS, calcAdPrice } from '@/types'
 import { getAdPriceARS } from '@/lib/payments/ads'
+import {
+  ADMIN_USER, ADVERTISER_ID, AD_ID, MIGRATIONS, actAs, createTestDb, readMigration, resetData, type Who,
+} from './helpers'
 
 /**
- * Corre la migración real (supabase/migrations/...) en un Postgres en memoria
- * (PGlite) y simula pedidos de un anunciante, un admin y el servidor.
+ * Corre las migraciones reales (supabase/migrations/...) en un Postgres en
+ * memoria (PGlite) y simula pedidos de un anunciante, un admin y el servidor.
  */
-const MIGRATION = readFileSync(
-  join(__dirname, '../../supabase/migrations/20261102_protect_ad_prices.sql'),
-  'utf8'
-)
-
-const ADVERTISER_USER = '11111111-1111-4111-8111-111111111111'
-const ADMIN_USER = '22222222-2222-4222-8222-222222222222'
-const ADVERTISER_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
-const AD_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'
-
-// Tablas mínimas que imitan a Supabase (sólo las columnas que importan aquí)
-const BASE_SCHEMA = `
-  create schema auth;
-  create function auth.uid() returns uuid language sql stable as $$
-    select nullif(current_setting('request.jwt.claims', true)::json ->> 'sub', '')::uuid
-  $$;
-  create table profiles (user_id uuid primary key, role text not null);
-  create table advertisers (id uuid primary key, user_id uuid not null);
-  create table ads (
-    id uuid primary key default gen_random_uuid(),
-    advertiser_id uuid not null references advertisers(id),
-    title text not null,
-    target_url text not null default 'https://example.test',
-    status text not null default 'draft',
-    starts_at timestamptz,
-    ends_at timestamptz,
-    max_impressions integer,
-    current_impressions integer not null default 0,
-    duration_days integer,
-    total_price numeric(10,2),
-    payment_status text not null default 'pending'
-  );
-  create table creative_requests (
-    id uuid primary key default gen_random_uuid(),
-    ad_id uuid not null references ads(id),
-    advertiser_id uuid not null references advertisers(id),
-    tier integer not null,
-    status text not null default 'pending',
-    price_ars numeric(10,2) not null
-  );
-`
-
-type Who = 'advertiser' | 'admin' | 'server' | 'sql-editor'
-const CLAIMS: Record<Who, object | null> = {
-  advertiser: { role: 'authenticated', sub: ADVERTISER_USER },
-  admin: { role: 'authenticated', sub: ADMIN_USER },
-  server: { role: 'service_role' },
-  'sql-editor': null,
-}
-
 let db: PGlite
-
-async function as(who: Who) {
-  const claims = CLAIMS[who]
-  await db.query(`select set_config('request.jwt.claims', $1, false)`, [claims ? JSON.stringify(claims) : ''])
-}
+const as = (who: Who) => actAs(db, who)
 
 async function getAd() {
   const { rows } = await db.query<Record<string, unknown>>(`select * from ads where id = $1`, [AD_ID])
@@ -83,21 +32,10 @@ async function createAdAsAdvertiser() {
 }
 
 beforeAll(async () => {
-  db = new PGlite()
-  await db.exec(BASE_SCHEMA)
-  await db.exec(MIGRATION)
-  // Correrla dos veces: tiene que ser idempotente
-  await db.exec(MIGRATION)
+  db = await createTestDb()
 }, 30_000)
 
-beforeEach(async () => {
-  await as('sql-editor')
-  await db.exec(`
-    delete from creative_requests; delete from ads; delete from advertisers; delete from profiles;
-    insert into profiles values ('${ADVERTISER_USER}', 'conductor'), ('${ADMIN_USER}', 'admin');
-    insert into advertisers values ('${ADVERTISER_ID}', '${ADVERTISER_USER}');
-  `)
-})
+beforeEach(() => resetData(db))
 
 describe('Los precios de la base coinciden con los de la app', () => {
   it.each(AD_DURATION_OPTIONS.map(o => o.days))('anuncio de %i días', async days => {
@@ -118,9 +56,9 @@ describe('Los precios de la base coinciden con los de la app', () => {
     expect(Number(rows[0].p)).toBe(price)
   })
 
-  it('schema.sql incluye la migración (para instalaciones nuevas)', () => {
+  it.each(MIGRATIONS)('schema.sql incluye %s (para instalaciones nuevas)', name => {
     const schema = readFileSync(join(__dirname, '../../supabase/schema.sql'), 'utf8')
-    expect(schema).toContain(MIGRATION.trim())
+    expect(schema).toContain(readMigration(name).trim())
   })
 })
 
@@ -189,7 +127,7 @@ describe('Anunciante editando su anuncio', () => {
   it('NO puede pasar el anuncio a otro anunciante', async () => {
     const other = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc'
     await as('sql-editor')
-    await db.query(`insert into advertisers values ($1, $2)`, [other, ADMIN_USER])
+    await db.query(`insert into advertisers values ($1, $2, 'Otra')`, [other, ADMIN_USER])
     await as('advertiser')
     await db.query(`update ads set advertiser_id = $2 where id = $1`, [AD_ID, other])
     expect((await getAd()).advertiser_id).toBe(ADVERTISER_ID)

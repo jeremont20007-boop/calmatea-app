@@ -58,7 +58,7 @@ security definer
 set search_path = public
 as $$
   select
-    coalesce(current_setting('request.jwt.claims', true)::json ->> 'role', '') in ('', 'service_role')
+    coalesce(nullif(current_setting('request.jwt.claims', true), '')::json ->> 'role', '') in ('', 'service_role')
     or exists (select 1 from profiles where user_id = auth.uid() and role = 'admin')
 $$;
 

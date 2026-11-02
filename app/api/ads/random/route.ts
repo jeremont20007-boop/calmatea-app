@@ -1,43 +1,47 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+
+// Cada pedido elige un anuncio distinto y cuenta una impresión: nunca cachear.
+export const dynamic = 'force-dynamic'
+
+interface ServedAd {
+  id: string
+  title: string
+  description: string | null
+  mobile_image_url: string | null
+  desktop_image_url: string | null
+  target_url: string
+  cta_text: string
+  advertiser_name: string | null
+}
 
 export async function GET() {
-  const supabase = await createClient()
-  const now = new Date().toISOString()
+  // La función de la base elige el anuncio y suma la impresión en un solo paso
+  // (ver supabase/migrations/20261102_ad_impressions.sql).
+  const supabase = createAdminClient()
+  const { data, error } = await supabase.rpc('serve_random_ad')
 
-  const { data: ads } = await supabase
-    .from('ads')
-    .select('id, title, description, mobile_image_url, desktop_image_url, target_url, cta_text, current_impressions, max_impressions, advertiser:advertisers(company_name)')
-    .eq('status', 'active')
-    .or(`starts_at.is.null,starts_at.lte.${now}`)
-    .or(`ends_at.is.null,ends_at.gte.${now}`)
-    .limit(10)
+  if (error) {
+    console.error('[ads/random] no se pudo obtener un anuncio', error)
+    return NextResponse.json({ ad: null })
+  }
 
-  if (!ads || ads.length === 0) return NextResponse.json({ ad: null })
+  const ad = (data as ServedAd[] | null)?.[0]
+  if (!ad) return NextResponse.json({ ad: null })
 
-  // Filter out ads that reached max impressions
-  const eligible = ads.filter(a => !a.max_impressions || a.current_impressions < a.max_impressions)
-  if (eligible.length === 0) return NextResponse.json({ ad: null })
-
-  const picked = eligible[Math.floor(Math.random() * eligible.length)]
-
-  await supabase
-    .from('ads')
-    .update({ current_impressions: picked.current_impressions + 1 })
-    .eq('id', picked.id)
-
-  const advertiser = picked.advertiser as unknown as { company_name: string } | null
-
-  return NextResponse.json({
-    ad: {
-      id: picked.id,
-      title: picked.title,
-      description: picked.description,
-      mobile_image_url: picked.mobile_image_url,
-      desktop_image_url: picked.desktop_image_url,
-      target_url: picked.target_url,
-      cta_text: picked.cta_text,
-      advertiser_name: advertiser?.company_name,
+  return NextResponse.json(
+    {
+      ad: {
+        id: ad.id,
+        title: ad.title,
+        description: ad.description ?? undefined,
+        mobile_image_url: ad.mobile_image_url ?? undefined,
+        desktop_image_url: ad.desktop_image_url ?? undefined,
+        target_url: ad.target_url,
+        cta_text: ad.cta_text,
+        advertiser_name: ad.advertiser_name ?? undefined,
+      },
     },
-  })
+    { headers: { 'Cache-Control': 'no-store' } }
+  )
 }
