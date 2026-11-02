@@ -87,7 +87,9 @@ vercel --prod
 ```
 
 ### Variables de entorno en Vercel
-En **Project Settings** → **Environment Variables**, añade:
+Las claves se cargan **solo desde el panel de Vercel** (no van en `vercel.json`).
+En **Project Settings** → **Environment Variables** (o en la sección
+"Environment Variables" al importar el proyecto), añade:
 
 | Variable | Valor |
 |---|---|
@@ -99,6 +101,7 @@ En **Project Settings** → **Environment Variables**, añade:
 | `STRIPE_WEBHOOK_SECRET` | Signing secret del webhook |
 | `STRIPE_PREMIUM_PRICE_ID` | Price ID del plan Premium |
 | `NEXT_PUBLIC_APP_URL` | `https://tu-dominio.vercel.app` |
+| `MP_ACCESS_TOKEN` | Access token de MercadoPago (pagos Premium y anuncios) |
 
 ### Después del deploy
 1. Actualiza en Supabase → Auth → Site URL con tu dominio Vercel
