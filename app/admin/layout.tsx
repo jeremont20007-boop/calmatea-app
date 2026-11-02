@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { SignOutButton } from '@/components/ui/SignOutButton'
 import { LayoutDashboard, Ticket, FileText, Users, Megaphone, Sparkles } from 'lucide-react'
 
 const ADMIN_NAV = [
@@ -33,9 +34,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <span className="text-lg">🛡️</span>
           <span className="font-extrabold text-sm tracking-wide">VehiLink Admin</span>
         </div>
-        <Link href="/dashboard" className="text-xs text-calm-300 hover:text-white transition-colors">
-          ← Salir
-        </Link>
+        <SignOutButton label="Cerrar sesión" redirectTo="/auth/login" />
       </header>
 
       {/* Content */}

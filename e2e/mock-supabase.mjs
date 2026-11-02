@@ -15,9 +15,19 @@ export const TEST_USER = {
   email: 'conductor@example.test',
   password: 'clave-de-prueba-123',
 }
+// Mismas credenciales de prueba (inventadas) para todos los usuarios.
+const ADMIN_EMAIL = 'admin@example.test'
+const ADVERTISER_EMAIL = 'publicidad@example.test'
 
 const USER_ID = '00000000-0000-4000-8000-000000000001'
 const PROFILE_ID = '00000000-0000-4000-8000-0000000000a1'
+const ADVERTISER = {
+  id: '00000000-0000-4000-8000-0000000000b1',
+  user_id: USER_ID,
+  company_name: 'Publicidad de Prueba SRL',
+  contact_email: ADVERTISER_EMAIL,
+  status: 'active',
+}
 
 function base64url(obj) {
   return Buffer.from(JSON.stringify(obj)).toString('base64url')
@@ -72,6 +82,8 @@ const defaultProfile = () => ({
   created_at: new Date().toISOString(),
 })
 let profile = defaultProfile()
+// Si el usuario actual es un publicitario, no tiene perfil: tiene registro en "advertisers".
+let advertiser = null
 
 function send(res, status, body, extraHeaders = {}) {
   res.writeHead(status, {
@@ -116,10 +128,17 @@ const server = http.createServer(async (req, res) => {
   if (path === '/auth/v1/token' && req.method === 'POST') {
     const body = await readBody(req)
     if (url.searchParams.get('grant_type') === 'password') {
-      if (body.email === TEST_USER.email && body.password === TEST_USER.password) {
-        // El usuario de prueba siempre vuelve a ser la conductora "Juana Prueba"
+      const knownEmails = [TEST_USER.email, ADMIN_EMAIL, ADVERTISER_EMAIL]
+      if (knownEmails.includes(body.email) && body.password === TEST_USER.password) {
+        // Cada login reinicia los datos del usuario de prueba correspondiente
         profile = defaultProfile()
-        currentUser = fakeUser(body.email, { full_name: profile.full_name })
+        advertiser = null
+        if (body.email === ADMIN_EMAIL) profile = { ...profile, full_name: 'Ana Admin', role: 'admin' }
+        if (body.email === ADVERTISER_EMAIL) {
+          profile = null
+          advertiser = { ...ADVERTISER }
+        }
+        currentUser = fakeUser(body.email, { full_name: profile?.full_name ?? ADVERTISER.company_name })
         return send(res, 200, session(currentUser))
       }
       return send(res, 400, {
@@ -144,8 +163,9 @@ const server = http.createServer(async (req, res) => {
     }
     const meta = body.data ?? {}
     currentUser = fakeUser(body.email, meta)
+    advertiser = null
     profile = {
-      ...profile,
+      ...defaultProfile(),
       full_name: meta.full_name ?? 'Nuevo Usuario',
       role: meta.role ?? 'conductor',
       city: meta.city ?? null,
@@ -172,8 +192,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === 'GET') {
-      if (table === 'profiles' && isAuthorized(req)) {
-        return wantsSingle ? send(res, 200, profile) : send(res, 200, [profile])
+      const row = !isAuthorized(req) ? null : table === 'profiles' ? profile : table === 'advertisers' ? advertiser : null
+      if (row) {
+        return wantsSingle ? send(res, 200, row) : send(res, 200, [row])
       }
       if (wantsSingle) {
         return send(res, 406, {

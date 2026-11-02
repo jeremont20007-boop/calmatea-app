@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { SignOutButton } from '@/components/ui/SignOutButton'
 import { LayoutDashboard, Megaphone } from 'lucide-react'
 
 const ADV_NAV = [
@@ -39,9 +40,7 @@ export default async function AdvertiserLayout({ children }: { children: React.R
               En revisión
             </span>
           )}
-          <Link href="/auth/login" className="text-xs text-calm-300 hover:text-white transition-colors">
-            Salir
-          </Link>
+          <SignOutButton label="Salir" redirectTo="/auth/publicitario" />
         </div>
       </header>
 

@@ -14,6 +14,7 @@ export const supabaseAuth = {
   signInWithPassword: vi.fn(),
   signUp: vi.fn(),
   signInWithOAuth: vi.fn(),
+  signOut: vi.fn(),
 }
 
 export const insert = vi.fn()
