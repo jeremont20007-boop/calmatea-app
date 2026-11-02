@@ -114,3 +114,10 @@ html {
 .active\:scale-98:active {
   transform: scale(0.98);
 }
+
+/* Bigger tap area for small text links/buttons on phones, without changing
+   how they look or moving anything around (padding is cancelled by margin). */
+@utility tap-target {
+  padding-block: 0.625rem;
+  margin-block: -0.625rem;
+}

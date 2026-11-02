@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { AdImageUpload } from '@/components/ui/AdImageUpload'
@@ -38,8 +38,8 @@ export default function NuevoAnuncioPage() {
   const selectedOpt = AD_DURATION_OPTIONS.find(o => o.days === durationDays)
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
+    getBrowserClient().then(async supabase => {
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       const { data } = await supabase
         .from('advertisers')
@@ -69,7 +69,7 @@ export default function NuevoAnuncioPage() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/auth/publicitario'); return }
 

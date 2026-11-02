@@ -40,7 +40,7 @@ export default async function AdvertiserLayout({ children }: { children: React.R
             </span>
           )}
           <form action="/auth/signout" method="post">
-            <button type="submit" className="text-xs text-calm-300 hover:text-white transition-colors">
+            <button type="submit" className="tap-target px-2 -mx-2 text-xs text-calm-300 hover:text-white transition-colors">
               Salir
             </button>
           </form>

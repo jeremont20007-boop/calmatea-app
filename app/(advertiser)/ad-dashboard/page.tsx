@@ -91,7 +91,7 @@ export default async function AdDashboardPage() {
         <div>
           <div className="flex items-center justify-between mb-3 px-1">
             <h3 className="font-extrabold text-calm-700">Anuncios recientes</h3>
-            <Link href="/anuncios" className="text-xs text-calm-500 font-semibold hover:underline">
+            <Link href="/anuncios" className="tap-target text-xs text-calm-500 font-semibold hover:underline">
               Ver todos →
             </Link>
           </div>

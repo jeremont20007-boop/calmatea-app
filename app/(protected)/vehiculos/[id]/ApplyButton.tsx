@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { DAYS_OF_WEEK, SCHEDULE_LABELS, LEGAL_DISCLAIMER, type ScheduleType } from '@/types'
 import { ChevronDown, ChevronUp } from 'lucide-react'
@@ -42,7 +42,7 @@ export function ApplyButton({ vehicleId, driverId, ownerSplit }: ApplyButtonProp
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { error: dbError } = await supabase.from('applications').insert({
       vehicle_id: vehicleId,
       driver_id: driverId,
