@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Check, X } from 'lucide-react'
 
 interface DocReviewActionsProps {
@@ -19,7 +19,7 @@ export function DocReviewActions({ docId, table, currentStatus }: DocReviewActio
 
   async function updateStatus(status: 'aprobado' | 'rechazado') {
     setLoading(status)
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     await supabase
       .from(table)
       .update({ status, notes: notes.trim() || null })
@@ -57,7 +57,7 @@ export function DocReviewActions({ docId, table, currentStatus }: DocReviewActio
       )}
       <button
         onClick={() => setShowNotes(!showNotes)}
-        className="text-xs text-calm-400 hover:text-calm-600 font-semibold"
+        className="tap-target text-xs text-calm-400 hover:text-calm-600 font-semibold"
       >
         {showNotes ? '↑' : '+ Nota'}
       </button>

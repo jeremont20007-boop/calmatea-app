@@ -39,7 +39,7 @@ export default async function AdvertiserLayout({ children }: { children: React.R
               En revisión
             </span>
           )}
-          <Link href="/auth/login" className="text-xs text-calm-300 hover:text-white transition-colors">
+          <Link href="/auth/login" className="tap-target px-2 -mx-2 text-xs text-calm-300 hover:text-white transition-colors">
             Salir
           </Link>
         </div>

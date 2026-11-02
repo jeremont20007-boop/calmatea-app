@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 
 export function WithdrawButton({ applicationId }: { applicationId: string }) {
   const router = useRouter()
@@ -11,7 +11,7 @@ export function WithdrawButton({ applicationId }: { applicationId: string }) {
 
   async function withdraw() {
     setLoading(true)
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     await supabase
       .from('applications')
       .update({ status: 'retirada' })
@@ -45,7 +45,7 @@ export function WithdrawButton({ applicationId }: { applicationId: string }) {
     <div className="pt-2 border-t border-calm-100">
       <button
         onClick={() => setConfirming(true)}
-        className="text-xs font-semibold text-calm-400 hover:text-red-500 transition-colors"
+        className="tap-target text-xs font-semibold text-calm-400 hover:text-red-500 transition-colors"
       >
         Retirar solicitud
       </button>

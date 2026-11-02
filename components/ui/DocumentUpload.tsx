@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Upload, Check, AlertCircle, FileText, Eye } from 'lucide-react'
 
 interface DocumentUploadProps {
@@ -49,7 +49,7 @@ export function DocumentUpload({
     setUploading(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const ext = file.name.split('.').pop()
     const path = `${entityType}/${entityId}/${docType}.${ext}`
 

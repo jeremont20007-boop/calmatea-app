@@ -21,9 +21,11 @@ export function InstallPWA() {
     if (isStandalone || dismissed) return
 
     if (isIOSDevice) {
-      setIsIOS(true)
-      setVisible(true)
-      return
+      const t = setTimeout(() => {
+        setIsIOS(true)
+        setVisible(true)
+      }, 0)
+      return () => clearTimeout(t)
     }
 
     const handler = (e: Event) => {
@@ -73,7 +75,7 @@ export function InstallPWA() {
             </button>
           )}
         </div>
-        <button onClick={dismiss} className="text-calm-400 hover:text-white shrink-0">
+        <button onClick={dismiss} aria-label="Cerrar" className="p-2 -m-2 text-calm-400 hover:text-white shrink-0">
           <X size={18} />
         </button>
       </div>

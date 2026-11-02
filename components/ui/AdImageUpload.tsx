@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Upload, X, CheckCircle, AlertCircle } from 'lucide-react'
 
 interface AdImageUploadProps {
@@ -68,7 +68,7 @@ export function AdImageUpload({
 
     setUploading(true)
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const ext = file.type === 'image/png' ? 'png' : 'jpg'
     const path = `${advertiserId}/${slot}-${Date.now()}.${ext}`
 

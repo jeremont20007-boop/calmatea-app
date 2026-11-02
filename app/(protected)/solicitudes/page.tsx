@@ -153,9 +153,9 @@ function ConductorApplications({ applications }: { applications: Application[] }
             <div className="text-6xl">📋</div>
             <p className="font-extrabold text-calm-700">Aún no tienes solicitudes</p>
             <p className="text-calm-400 text-sm">Busca vehículos disponibles y aplica al que te interese</p>
-            <a href="/vehiculos" className="inline-block bg-calm-500 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-calm-600 transition-colors mt-2">
+            <Link href="/vehiculos" className="inline-block bg-calm-500 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-calm-600 transition-colors mt-2">
               Buscar vehículos →
-            </a>
+            </Link>
           </div>
         )}
 

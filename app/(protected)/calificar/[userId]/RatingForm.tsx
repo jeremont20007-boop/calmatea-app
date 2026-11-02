@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Star } from 'lucide-react'
 
@@ -35,7 +35,7 @@ export function RatingForm({
     }
     setLoading(true)
     setError('')
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
 
     if (existingRatingId) {
       await supabase

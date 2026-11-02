@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import type { AdStatus } from '@/types'
 
 interface AdApprovalActionsProps {
@@ -17,7 +17,7 @@ export function AdApprovalActions({ adId, advertiserId, currentStatus }: AdAppro
 
   async function updateStatus(newStatus: AdStatus) {
     setLoading(newStatus)
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
 
     await supabase.from('ads').update({ status: newStatus }).eq('id', adId)
 

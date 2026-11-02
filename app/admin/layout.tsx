@@ -33,7 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <span className="text-lg">🛡️</span>
           <span className="font-extrabold text-sm tracking-wide">VehiLink Admin</span>
         </div>
-        <Link href="/dashboard" className="text-xs text-calm-300 hover:text-white transition-colors">
+        <Link href="/dashboard" className="tap-target px-2 -mx-2 text-xs text-calm-300 hover:text-white transition-colors">
           ← Salir
         </Link>
       </header>
