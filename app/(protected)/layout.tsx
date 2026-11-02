@@ -1,7 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import type { Metadata } from 'next'
 import { BottomNav } from '@/components/layout/BottomNav'
 import type { UserRole } from '@/types'
+
+export const metadata: Metadata = {
+  // Área privada: no se indexa en buscadores.
+  robots: { index: false, follow: false },
+}
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -32,7 +38,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
 
   return (
     <div className="flex flex-col min-h-screen max-w-lg mx-auto">
-      <main className="flex-1 pb-24">
+      <main id="contenido" className="flex-1 pb-24">
         {children}
       </main>
       <BottomNav role={role} />

@@ -115,7 +115,7 @@ export const PLATFORM_LABELS: Record<PlatformType, string> = {
   uber: 'Uber',
   cabify: 'Cabify',
   beat: 'Beat',
-  indrive: 'InDriver',
+  indrive: 'inDrive',
   didi: 'DiDi',
   otra: 'Otra',
 }
@@ -320,7 +320,7 @@ export const CREATIVE_TIERS = [
 export const CREATIVE_DELIVERABLES = [
   // tier 1 (2 options)
   { id: 'flyer_mobile',       tier: 1, label: 'Flyer estático móvil',           description: 'Imagen estática 750×300 px para el anuncio en app' },
-  { id: 'basic_creative',     tier: 1, label: 'Creatividad básica para anuncio', description: 'Diseño creativo adaptado a tu marca para el formato mobile' },
+  { id: 'basic_creative',     tier: 1, label: 'Creatividad básica para anuncio', description: 'Diseño creativo adaptado a tu marca para el formato móvil' },
   // tier 2 (+2 options)
   { id: 'banner_desktop',     tier: 2, label: 'Banner web desktop',              description: 'Banner 1200×400 px optimizado para visualización en web' },
   { id: 'social_post',        tier: 2, label: 'Post cuadrado para redes',        description: 'Diseño 1080×1080 px listo para Instagram/Facebook' },
@@ -334,7 +334,7 @@ export const CREATIVE_DELIVERABLES = [
   { id: 'gif_desktop',        tier: 5, label: 'GIF animado – versión desktop',   description: 'Animación GIF 1200×400 px para banner web' },
   { id: 'pack_social_full',   tier: 5, label: 'Pack redes completo (3 formatos)',description: 'Post + Story + Banner para cubrir todas las plataformas' },
   // tier 6 (+2 options)
-  { id: 'video_15s',          tier: 6, label: 'Video corto 15 seg – móvil',      description: 'Video profesional 15 segundos optimizado para mobile' },
+  { id: 'video_15s',          tier: 6, label: 'Video corto 15 seg – móvil',      description: 'Video profesional de 15 segundos optimizado para celulares' },
   { id: 'pack_premium_5',     tier: 6, label: 'Pack premium 5 formatos',         description: 'Flyer + Banner + Post + Story + GIF en un solo pack' },
   // tier 7 / Premium (+2 options)
   { id: 'video_full',         tier: 7, label: 'Video + animación completa',      description: 'Video 15 seg + versión animada para todos los formatos' },

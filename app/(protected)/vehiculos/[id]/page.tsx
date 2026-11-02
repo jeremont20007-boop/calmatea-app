@@ -1,9 +1,16 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
 import { PLATFORM_LABELS, SCHEDULE_LABELS, VEHICLE_TYPE_LABELS, DAYS_OF_WEEK, APPLICATION_STATUS_LABELS, type Vehicle, type Application } from '@/types'
 import { ApplyButton } from './ApplyButton'
+
+export const metadata: Metadata = {
+  title: 'Detalle del vehículo',
+  description: 'Conocé las plataformas, la disponibilidad y el porcentaje para el conductor de este vehículo, y enviá tu solicitud en VehiLink.',
+}
 
 export default async function VehicleDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -59,15 +66,15 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
         <Card>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-extrabold text-calm-800">
+              <h2 className="text-2xl font-extrabold text-calm-800">
                 {v.make} {v.model}
-              </h1>
+              </h2>
               <p className="text-calm-500 font-semibold">{v.year} · {v.color}</p>
-              <p className="text-calm-400 text-sm mt-1">📍 {v.city}</p>
+              <p className="text-calm-500 text-sm mt-1"><span aria-hidden="true">📍</span> {v.city}</p>
             </div>
             <div className="bg-forest/10 rounded-2xl px-4 py-3 text-center shrink-0">
-              <p className="text-4xl font-extrabold text-forest">{v.revenue_split}%</p>
-              <p className="text-xs text-forest/70 font-bold">para el conductor</p>
+              <p className="text-4xl font-extrabold text-emerald-700">{v.revenue_split}%</p>
+              <p className="text-xs text-emerald-800 font-bold">para el conductor</p>
             </div>
           </div>
 
@@ -76,7 +83,8 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
             v.status === 'ocupado' ? 'bg-gray-100 text-gray-600' :
             'bg-yellow-100 text-yellow-700'
           }`}>
-            {v.status === 'disponible' ? '● Disponible' : v.status === 'ocupado' ? '● Ocupado' : '● Pausado'}
+            <span aria-hidden="true">●&nbsp;</span>
+            {v.status === 'disponible' ? 'Disponible' : v.status === 'ocupado' ? 'Ocupado' : 'Pausado'}
           </div>
         </Card>
 
@@ -133,10 +141,13 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                       className={`text-xs font-bold px-2 py-1 rounded-lg ${
                         v.available_days!.includes(d.value)
                           ? 'bg-calm-500 text-white'
-                          : 'bg-calm-50 text-calm-300'
+                          : 'bg-calm-50 text-calm-500 line-through'
                       }`}
                     >
                       {d.label}
+                      <span className="sr-only">
+                        {v.available_days!.includes(d.value) ? ' (disponible)' : ' (no disponible)'}
+                      </span>
                     </span>
                   ))}
                 </div>
@@ -149,11 +160,11 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
               </div>
             )}
             <div className="flex justify-between items-center py-2 border-b border-calm-100">
-              <span className="text-calm-500 text-sm font-semibold">Porcentaje para conductor</span>
-              <span className="font-extrabold text-forest text-lg">{v.revenue_split}%</span>
+              <span className="text-calm-500 text-sm font-semibold">Porcentaje para el conductor</span>
+              <span className="font-extrabold text-emerald-700 text-lg">{v.revenue_split}%</span>
             </div>
             <div className="flex justify-between items-center py-2">
-              <span className="text-calm-500 text-sm font-semibold">Porcentaje para propietario</span>
+              <span className="text-calm-500 text-sm font-semibold">Porcentaje para el propietario</span>
               <span className="font-bold text-calm-700">{100 - v.revenue_split}%</span>
             </div>
           </div>
@@ -171,14 +182,14 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
         <Card>
           <h2 className="font-extrabold text-calm-700 mb-3">Propietario</h2>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-calm-100 flex items-center justify-center text-2xl">
+            <div className="w-12 h-12 rounded-full bg-calm-100 flex items-center justify-center text-2xl" aria-hidden="true">
               👤
             </div>
             <div>
               <p className="font-bold text-calm-800">
                 {isOwner ? (v.owner as unknown as { full_name: string })?.full_name : 'Propietario verificado'}
               </p>
-              <p className="text-sm text-calm-400">{v.city}</p>
+              <p className="text-sm text-calm-500">{v.city}</p>
             </div>
           </div>
         </Card>
@@ -192,38 +203,38 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                 existingApplication.status === 'rechazada' ? 'bg-red-50 border-red-200' :
                 'bg-yellow-50 border-yellow-200'
               }`}>
-                <p className="font-extrabold text-calm-800 text-lg mb-1">Tu solicitud</p>
+                <h2 className="font-extrabold text-calm-800 text-lg mb-1">Tu solicitud</h2>
                 <p className={`font-bold text-xl ${
-                  existingApplication.status === 'aceptada' ? 'text-green-600' :
-                  existingApplication.status === 'rechazada' ? 'text-red-600' :
-                  'text-yellow-600'
+                  existingApplication.status === 'aceptada' ? 'text-green-700' :
+                  existingApplication.status === 'rechazada' ? 'text-red-700' :
+                  'text-yellow-700'
                 }`}>
                   {APPLICATION_STATUS_LABELS[existingApplication.status]}
                 </p>
                 {existingApplication.status === 'aceptada' && (
-                  <p className="text-sm text-green-600 mt-2">
-                    ¡El propietario aceptó tu solicitud! Revisa tus datos de contacto en tu perfil y coordina los detalles.
+                  <p className="text-sm text-green-700 mt-2">
+                    ¡El propietario aceptó tu solicitud! Revisá tus datos de contacto en tu perfil y coordiná los detalles.
                   </p>
                 )}
               </Card>
             ) : atFreemiumLimit ? (
               <Card className="bg-amber-50 border-amber-200 text-center space-y-3">
-                <p className="font-extrabold text-amber-800">Límite del plan gratuito</p>
+                <h2 className="font-extrabold text-amber-800">Límite del plan gratuito</h2>
                 <p className="text-sm text-amber-700">
                   Ya tenés 3 solicitudes activas. Con Premium podés enviar solicitudes ilimitadas.
                 </p>
-                <a
+                <Link
                   href="/subscription"
-                  className="inline-block bg-amber-500 hover:bg-amber-600 text-white font-extrabold px-6 py-3 rounded-2xl text-sm transition-colors"
+                  className="inline-block bg-amber-700 hover:bg-amber-800 text-white font-extrabold px-6 py-3 rounded-2xl text-sm transition-colors"
                 >
-                  Ver Plan Premium →
-                </a>
+                  Ver plan Premium <span aria-hidden="true">→</span>
+                </Link>
               </Card>
             ) : v.status === 'disponible' ? (
               <ApplyButton vehicleId={id} driverId={profile.id} ownerSplit={v.revenue_split} />
             ) : (
               <Card className="text-center bg-gray-50 border-gray-200">
-                <p className="font-bold text-calm-500">Este vehículo no está disponible actualmente</p>
+                <p className="font-bold text-calm-600">Este vehículo no está disponible actualmente</p>
               </Card>
             )}
           </div>
@@ -233,9 +244,9 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
           <Card className="bg-calm-50 border-calm-200">
             <p className="text-sm font-bold text-calm-600 text-center">Este es tu vehículo</p>
             <div className="mt-2 text-center">
-              <a href="/mis-vehiculos" className="text-calm-500 font-bold text-sm hover:underline">
-                Gestionar en Mis Vehículos →
-              </a>
+              <Link href="/mis-vehiculos" className="text-calm-600 font-bold text-sm hover:underline">
+                Gestionar en “Mis vehículos” <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </Card>
         )}

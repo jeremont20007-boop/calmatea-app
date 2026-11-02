@@ -16,12 +16,13 @@ export function SplashScreen() {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gradient-to-b from-calm-400 to-calm-600 transition-opacity duration-500"
+      aria-hidden="true"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gradient-to-b from-calm-500 to-calm-700 transition-opacity duration-500"
       style={{ opacity: fading ? 0 : 1 }}
     >
       <div className="text-center space-y-4">
         <div className="text-8xl animate-breathe">🚗</div>
-        <h1 className="text-4xl font-extrabold text-white tracking-tight">VehiLink</h1>
+        <p className="text-4xl font-extrabold text-white tracking-tight">VehiLink</p>
         <p className="text-calm-100 font-semibold text-lg">Intermediación vehicular</p>
       </div>
 

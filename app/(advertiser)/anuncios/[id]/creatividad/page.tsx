@@ -134,8 +134,8 @@ export default function SolicitarCreatividadPage() {
     setTimeout(() => router.push(`/anuncios/${id}`), 2500)
   }
 
-  if (loading) return <div className="p-4 text-center text-calm-400 text-sm pt-20">Cargando...</div>
-  if (!ad) return <div className="p-4 text-center text-calm-400 text-sm pt-20">Anuncio no encontrado.</div>
+  if (loading) return <div className="p-4 text-center text-calm-500 text-sm pt-20" role="status">Cargando…</div>
+  if (!ad) return <div className="p-4 text-center pt-20"><h1 className="text-calm-500 text-sm">Anuncio no encontrado.</h1></div>
 
   return (
     <div className="p-4 space-y-5 pb-8">
@@ -147,8 +147,8 @@ export default function SolicitarCreatividadPage() {
       </div>
 
       {success && (
-        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex gap-3">
-          <CheckCircle size={20} className="text-green-500 shrink-0" />
+        <div role="status" className="bg-green-50 border border-green-200 rounded-2xl p-4 flex gap-3">
+          <CheckCircle size={20} className="text-green-500 shrink-0" aria-hidden="true" />
           <div>
             <p className="font-bold text-green-800 text-sm">¡Solicitud enviada!</p>
             <p className="text-xs text-green-700 mt-0.5">
@@ -168,20 +168,20 @@ export default function SolicitarCreatividadPage() {
         {/* Tier selector */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-4">
           <div>
-            <h2 className="font-extrabold text-calm-700 text-lg flex items-center gap-2">
-              <Sparkles size={18} className="text-calm-500" />
+            <h2 id="tier-heading" className="font-extrabold text-calm-700 text-lg flex items-center gap-2">
+              <Sparkles size={18} className="text-calm-500" aria-hidden="true" />
               Elegí tu plan de creatividad
             </h2>
-            <p className="text-xs text-calm-400 mt-0.5">
+            <p className="text-xs text-calm-500 mt-0.5">
               Mayor nivel = más formatos disponibles para elegir.
             </p>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2" role="radiogroup" aria-labelledby="tier-heading">
             {CREATIVE_TIERS.map(t => (
               <label
                 key={t.tier}
-                className={`flex items-center justify-between p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+                className={`flex items-center justify-between p-3.5 rounded-2xl border-2 cursor-pointer transition-all has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-calm-500 ${
                   selectedTier === t.tier
                     ? 'border-calm-500 bg-calm-50'
                     : 'border-calm-100 hover:border-calm-300'
@@ -199,15 +199,17 @@ export default function SolicitarCreatividadPage() {
                   <div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm font-extrabold text-calm-800">
-                        {t.tier === 7 ? '✦ Premium' : t.label}
+                        {t.tier === 7 ? <><span aria-hidden="true">✦ </span>Premium</> : t.label}
                       </span>
                       {t.tier < 7 && (
-                        <span className="text-yellow-400 text-sm leading-none">
-                          {'★'.repeat(t.tier)}{'☆'.repeat(6 - t.tier)}
-                        </span>
+                        <>
+                          <span className="text-yellow-400 text-sm leading-none" aria-hidden="true">
+                            {'★'.repeat(t.tier)}{'☆'.repeat(6 - t.tier)}
+                          </span>
+                        </>
                       )}
                     </div>
-                    <p className="text-xs text-calm-400">
+                    <p className="text-xs text-calm-500">
                       Hasta {t.optionCount} entregables para elegir
                     </p>
                   </div>
@@ -216,7 +218,7 @@ export default function SolicitarCreatividadPage() {
                   <p className="font-extrabold text-calm-700">
                     ${t.priceARS.toLocaleString('es-AR')}
                   </p>
-                  <p className="text-[10px] text-calm-400">ARS</p>
+                  <p className="text-[10px] text-calm-500">ARS</p>
                 </div>
               </label>
             ))}
@@ -224,10 +226,10 @@ export default function SolicitarCreatividadPage() {
         </section>
 
         {/* Deliverables picker */}
-        <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-3">
+        <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-3" role="group" aria-labelledby="deliverables-heading">
           <div>
-            <h2 className="font-extrabold text-calm-700">¿Qué querés recibir?</h2>
-            <p className="text-xs text-calm-400 mt-0.5">
+            <h2 id="deliverables-heading" className="font-extrabold text-calm-700">¿Qué querés recibir?</h2>
+            <p className="text-xs text-calm-500 mt-0.5">
               Con tu plan <strong>{currentTier.tier === 7 ? 'Premium' : currentTier.label}</strong> podés elegir entre {availableOptions.length} opciones.
             </p>
           </div>
@@ -235,7 +237,7 @@ export default function SolicitarCreatividadPage() {
           {availableOptions.map(d => (
             <label
               key={d.id}
-              className={`flex items-start gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+              className={`flex items-start gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-calm-500 ${
                 selectedDeliverables.includes(d.id)
                   ? 'border-calm-500 bg-calm-50'
                   : 'border-calm-100 hover:border-calm-300'
@@ -249,7 +251,7 @@ export default function SolicitarCreatividadPage() {
               />
               <div className="min-w-0">
                 <p className="font-bold text-calm-800 text-sm">{d.label}</p>
-                <p className="text-xs text-calm-400 mt-0.5">{d.description}</p>
+                <p className="text-xs text-calm-500 mt-0.5">{d.description}</p>
               </div>
             </label>
           ))}
@@ -257,45 +259,49 @@ export default function SolicitarCreatividadPage() {
 
         {/* Notes */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-3">
-          <h2 className="font-extrabold text-calm-700">Información adicional</h2>
+          <h2 className="font-extrabold text-calm-700">
+            <label htmlFor="notes">Información adicional</label>
+          </h2>
           <textarea
+            id="notes"
+            aria-describedby="notes-count"
             value={notes}
             onChange={e => setNotes(e.target.value.slice(0, 500))}
-            placeholder="Contanos sobre tu marca, colores, estilo visual, qué querés comunicar..."
+            placeholder="Contanos sobre tu marca, colores, estilo visual, qué querés comunicar…"
             rows={4}
-            className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-300 focus:outline-none focus:border-calm-400 transition-colors text-sm resize-none"
+            className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-400 focus:outline-none focus:border-calm-500 transition-colors text-sm resize-none"
           />
-          <p className="text-xs text-calm-400">{notes.length}/500 caracteres</p>
+          <p id="notes-count" className="text-xs text-calm-500">{notes.length}/500 caracteres</p>
         </section>
 
         {/* Summary */}
         <div className="bg-calm-500 rounded-2xl p-4 text-white flex items-center justify-between">
           <div>
-            <p className="text-calm-200 text-xs font-semibold">Total del servicio</p>
+            <p className="text-calm-100 text-xs font-semibold">Total del servicio</p>
             <p className="text-3xl font-extrabold">
               ${currentTier.priceARS.toLocaleString('es-AR')}
             </p>
-            <p className="text-calm-300 text-xs mt-0.5">
+            <p className="text-calm-100 text-xs mt-0.5">
               ARS · {currentTier.tier === 7 ? 'Plan Premium' : currentTier.label}
               {selectedDeliverables.length > 0 && ` · ${selectedDeliverables.length} entregable${selectedDeliverables.length !== 1 ? 's' : ''}`}
             </p>
           </div>
-          <Sparkles size={36} className="text-calm-300" />
+          <Sparkles size={36} className="text-calm-300" aria-hidden="true" />
         </div>
 
         <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3 text-xs text-blue-700">
-          💳 El pago se coordina por separado. Al enviar esta solicitud, un asesor se comunicará con vos para completar el proceso y recibir el briefing.
+          <span aria-hidden="true">💳 </span>El pago se coordina por separado. Al enviar esta solicitud, un asesor se comunicará con vos para completar el proceso y recibir el briefing.
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+          <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
             {error}
           </div>
         )}
 
         <Button type="submit" size="lg" className="w-full" disabled={submitting || success}>
           {submitting
-            ? 'Enviando...'
+            ? 'Enviando…'
             : existing
             ? 'Actualizar solicitud'
             : 'Solicitar creatividad'}

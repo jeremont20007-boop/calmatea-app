@@ -38,11 +38,12 @@ export function TicketActions({ ticketId, currentStatus, currentResponse }: {
 
   return (
     <div className="space-y-4 bg-calm-800 rounded-2xl p-4">
-      <p className="text-xs font-extrabold text-calm-300">Respuesta del administrador</p>
+      <h2 className="text-xs font-extrabold text-calm-300">Respuesta del administrador</h2>
 
       <div>
-        <label className="block text-xs text-calm-400 font-semibold mb-1.5">Estado del ticket</label>
+        <label htmlFor="ticket-status" className="block text-xs text-calm-300 font-semibold mb-1.5">Estado del ticket</label>
         <select
+          id="ticket-status"
           value={status}
           onChange={e => setStatus(e.target.value as TicketStatus)}
           className="w-full px-3 py-2 rounded-xl bg-calm-700 text-white text-sm font-semibold border border-calm-600 focus:outline-none focus:border-calm-400"
@@ -54,22 +55,23 @@ export function TicketActions({ ticketId, currentStatus, currentResponse }: {
       </div>
 
       <div>
-        <label className="block text-xs text-calm-400 font-semibold mb-1.5">Respuesta</label>
+        <label htmlFor="ticket-response" className="block text-xs text-calm-300 font-semibold mb-1.5">Respuesta</label>
         <textarea
+          id="ticket-response"
           value={response}
           onChange={e => setResponse(e.target.value)}
-          placeholder="Respuesta al usuario..."
+          placeholder="Respuesta al usuario…"
           rows={4}
-          className="w-full px-3 py-2 rounded-xl bg-calm-700 text-white text-sm placeholder:text-calm-500 border border-calm-600 focus:outline-none focus:border-calm-400 resize-none"
+          className="w-full px-3 py-2 rounded-xl bg-calm-700 text-white text-sm placeholder:text-calm-300 border border-calm-600 focus:outline-none focus:border-calm-400 resize-none"
         />
       </div>
 
       <button
         onClick={handleSave}
         disabled={loading}
-        className="w-full py-2.5 rounded-xl bg-calm-500 text-white font-extrabold text-sm hover:bg-calm-400 transition-colors disabled:opacity-50"
+        className="w-full py-2.5 rounded-xl bg-calm-500 text-white font-extrabold text-sm hover:bg-calm-600 transition-colors disabled:opacity-50"
       >
-        {loading ? 'Guardando...' : saved ? '✓ Guardado' : 'Guardar respuesta'}
+        <span aria-live="polite">{loading ? 'Guardando…' : saved ? '✓ Guardado' : 'Guardar respuesta'}</span>
       </button>
     </div>
   )

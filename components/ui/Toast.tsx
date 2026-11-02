@@ -37,15 +37,19 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const remove = (id: string) => setToasts(prev => prev.filter(t => t.id !== id))
 
   const icons = {
-    success: <CheckCircle2 size={18} className="text-forest shrink-0" />,
-    error: <XCircle size={18} className="text-red-500 shrink-0" />,
-    info: <AlertCircle size={18} className="text-calm-400 shrink-0" />,
+    success: <CheckCircle2 size={18} className="text-forest shrink-0" aria-hidden="true" />,
+    error: <XCircle size={18} className="text-red-500 shrink-0" aria-hidden="true" />,
+    info: <AlertCircle size={18} className="text-calm-400 shrink-0" aria-hidden="true" />,
   }
 
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      <div className="fixed top-4 left-0 right-0 z-[9998] flex flex-col items-center gap-2 px-4 pointer-events-none">
+      <div
+        className="fixed top-4 left-0 right-0 z-[9998] flex flex-col items-center gap-2 px-4 pointer-events-none"
+        role="status"
+        aria-live="polite"
+      >
         {toasts.map(t => (
           <div
             key={t.id}
@@ -59,8 +63,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           >
             {icons[t.type]}
             <p className="flex-1 text-sm font-semibold text-calm-800">{t.message}</p>
-            <button onClick={() => remove(t.id)} className="text-calm-300 hover:text-calm-500">
-              <X size={16} />
+            <button
+              type="button"
+              onClick={() => remove(t.id)}
+              aria-label="Cerrar aviso"
+              className="text-calm-500 hover:text-calm-700"
+            >
+              <X size={16} aria-hidden="true" />
             </button>
           </div>
         ))}

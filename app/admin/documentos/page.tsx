@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { DRIVER_DOC_LABELS, VEHICLE_DOC_LABELS, type DriverDocType, type VehicleDocType } from '@/types'
 import { Eye } from 'lucide-react'
 import { DocReviewActions } from './DocReviewActions'
+
+export const metadata: Metadata = {
+  title: 'Revisión de documentos',
+  description: 'Documentos de conductores y vehículos pendientes de aprobación en VehiLink.',
+}
 
 export default async function AdminDocumentosPage() {
   const supabase = await createClient()
@@ -31,8 +37,8 @@ export default async function AdminDocumentosPage() {
       </div>
 
       {total === 0 && (
-        <div className="text-center py-16 text-calm-400">
-          <p className="text-4xl mb-3">✅</p>
+        <div className="text-center py-16 text-calm-500">
+          <p className="text-4xl mb-3" aria-hidden="true">✅</p>
           <p className="font-bold">No hay documentos pendientes</p>
         </div>
       )}
@@ -50,12 +56,12 @@ export default async function AdminDocumentosPage() {
                   <div>
                     <p className="font-bold text-calm-800 text-sm">{label}</p>
                     <p className="text-xs text-calm-500">{driver?.full_name}</p>
-                    <p className="text-xs text-calm-400">{new Date(doc.uploaded_at).toLocaleDateString('es-AR')}</p>
+                    <p className="text-xs text-calm-500">{new Date(doc.uploaded_at).toLocaleDateString('es-AR')}</p>
                   </div>
                   {doc.file_url && (
                     <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-1 text-xs font-bold text-calm-500 hover:text-calm-700 bg-calm-50 px-2.5 py-1.5 rounded-lg">
-                      <Eye size={12} /> Ver
+                      <Eye size={12} aria-hidden="true" /> Ver<span className="sr-only"> {label} (se abre en una pestaña nueva)</span>
                     </a>
                   )}
                 </div>
@@ -79,12 +85,12 @@ export default async function AdminDocumentosPage() {
                   <div>
                     <p className="font-bold text-calm-800 text-sm">{label}</p>
                     <p className="text-xs text-calm-500">{vehicle?.make} {vehicle?.model} {vehicle?.year}</p>
-                    <p className="text-xs text-calm-400">{vehicle?.owner?.full_name} · {new Date(doc.uploaded_at).toLocaleDateString('es-AR')}</p>
+                    <p className="text-xs text-calm-500">{vehicle?.owner?.full_name} · {new Date(doc.uploaded_at).toLocaleDateString('es-AR')}</p>
                   </div>
                   {doc.file_url && (
                     <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-1 text-xs font-bold text-calm-500 hover:text-calm-700 bg-calm-50 px-2.5 py-1.5 rounded-lg">
-                      <Eye size={12} /> Ver
+                      <Eye size={12} aria-hidden="true" /> Ver<span className="sr-only"> {label} (se abre en una pestaña nueva)</span>
                     </a>
                   )}
                 </div>

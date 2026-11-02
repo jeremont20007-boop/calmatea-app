@@ -14,7 +14,7 @@ const STATUS_COLORS: Record<string, string> = {
   abierto: 'bg-red-100 text-red-700',
   en_revision: 'bg-yellow-100 text-yellow-700',
   resuelto: 'bg-green-100 text-green-700',
-  cerrado: 'bg-gray-100 text-gray-500',
+  cerrado: 'bg-gray-100 text-gray-600',
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -85,21 +85,22 @@ export default function SoportePage() {
         {/* New ticket form */}
         <div className="bg-white rounded-3xl border border-calm-100 p-5 space-y-4">
           <div className="flex items-center gap-2">
-            <MessageSquare size={18} className="text-calm-500" />
+            <MessageSquare size={18} className="text-calm-500" aria-hidden="true" />
             <h2 className="font-extrabold text-calm-800">Nuevo ticket</h2>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-calm-600 mb-1.5">Categoría</label>
-              <div className="flex flex-wrap gap-2">
+              <p id="category-label" className="block text-xs font-semibold text-calm-600 mb-1.5">Categoría</p>
+              <div className="flex flex-wrap gap-2" role="group" aria-labelledby="category-label">
                 {CATEGORIES.map(([val, label]) => (
                   <button
                     key={val}
                     type="button"
                     onClick={() => setCategory(val)}
+                    aria-pressed={category === val}
                     className={`text-xs font-bold px-3 py-1.5 rounded-xl border-2 transition-colors ${
-                      category === val ? 'bg-calm-500 text-white border-calm-500' : 'border-calm-200 text-calm-500 hover:border-calm-400'
+                      category === val ? 'bg-calm-500 text-white border-calm-500' : 'border-calm-200 text-calm-600 hover:border-calm-400'
                     }`}
                   >
                     {label}
@@ -109,30 +110,32 @@ export default function SoportePage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-calm-600 mb-1.5">Asunto</label>
+              <label htmlFor="ticket-subject" className="block text-xs font-semibold text-calm-600 mb-1.5">Asunto</label>
               <input
+                id="ticket-subject"
                 type="text"
                 value={subject}
                 onChange={e => setSubject(e.target.value)}
                 placeholder="Describí brevemente tu consulta"
-                className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 text-calm-800 text-sm font-medium placeholder:text-calm-300 focus:outline-none focus:border-calm-400 transition-colors"
+                className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 text-calm-800 text-sm font-medium placeholder:text-calm-400 focus:outline-none focus:border-calm-500 focus:ring-2 focus:ring-calm-500/30 transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-calm-600 mb-1.5">Detalle</label>
+              <label htmlFor="ticket-message" className="block text-xs font-semibold text-calm-600 mb-1.5">Detalle</label>
               <textarea
+                id="ticket-message"
                 value={message}
                 onChange={e => setMessage(e.target.value)}
                 placeholder="Explicá con más detalle tu consulta, falla o solicitud..."
                 rows={4}
-                className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 text-calm-800 text-sm font-medium placeholder:text-calm-300 focus:outline-none focus:border-calm-400 transition-colors resize-none"
+                className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 text-calm-800 text-sm font-medium placeholder:text-calm-400 focus:outline-none focus:border-calm-500 focus:ring-2 focus:ring-calm-500/30 transition-colors resize-none"
                 required
               />
             </div>
 
-            {error && <p className="text-xs text-red-500 font-semibold">{error}</p>}
+            {error && <p role="alert" className="text-xs text-red-700 font-semibold">{error}</p>}
 
             <Button type="submit" size="md" className="w-full" disabled={loading}>
               {loading ? 'Enviando...' : 'Enviar ticket'}
@@ -152,11 +155,11 @@ export default function SoportePage() {
                     {STATUS_LABELS[t.status]}
                   </span>
                 </div>
-                <p className="text-xs text-calm-400">{new Date(t.created_at).toLocaleDateString('es-AR')}</p>
+                <p className="text-xs text-calm-500">{new Date(t.created_at).toLocaleDateString('es-AR')}</p>
                 {t.admin_response && (
                   <div className="bg-green-50 rounded-xl p-3">
                     <div className="flex items-center gap-1.5 mb-1">
-                      <CheckCircle size={12} className="text-green-500" />
+                      <CheckCircle size={12} className="text-green-600" aria-hidden="true" />
                       <p className="text-xs font-bold text-green-700">Respuesta del equipo</p>
                     </div>
                     <p className="text-sm text-green-800 leading-relaxed">{t.admin_response}</p>
@@ -167,7 +170,7 @@ export default function SoportePage() {
           </div>
         )}
 
-        <p className="text-xs text-calm-400 text-center px-4 leading-relaxed">
+        <p className="text-xs text-calm-500 text-center px-4 leading-relaxed">
           Nuestro equipo responde en 24–48 hs hábiles.
         </p>
       </div>

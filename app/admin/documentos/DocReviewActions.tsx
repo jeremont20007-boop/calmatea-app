@@ -30,7 +30,7 @@ export function DocReviewActions({ docId, table, currentStatus }: DocReviewActio
 
   if (currentStatus === 'aprobado') {
     return (
-      <span className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">
+      <span className="text-xs font-bold text-green-700 bg-green-50 px-3 py-1 rounded-full">
         ✓ Aprobado
       </span>
     )
@@ -38,7 +38,7 @@ export function DocReviewActions({ docId, table, currentStatus }: DocReviewActio
 
   if (currentStatus === 'rechazado') {
     return (
-      <span className="text-xs font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full">
+      <span className="text-xs font-bold text-red-700 bg-red-50 px-3 py-1 rounded-full">
         ✗ Rechazado
       </span>
     )
@@ -49,31 +49,35 @@ export function DocReviewActions({ docId, table, currentStatus }: DocReviewActio
       {showNotes && (
         <input
           type="text"
+          aria-label="Motivo (opcional)"
           value={notes}
           onChange={e => setNotes(e.target.value)}
           placeholder="Motivo (opcional)"
-          className="text-xs border border-calm-200 rounded-lg px-2 py-1 w-40 focus:outline-none"
+          className="text-xs border border-calm-200 rounded-lg px-2 py-1 w-40 focus:outline-none focus:border-calm-500"
         />
       )}
       <button
+        type="button"
         onClick={() => setShowNotes(!showNotes)}
-        className="text-xs text-calm-400 hover:text-calm-600 font-semibold"
+        aria-expanded={showNotes}
+        aria-label={showNotes ? 'Ocultar nota' : 'Agregar nota'}
+        className="text-xs text-calm-500 hover:text-calm-700 font-semibold"
       >
-        {showNotes ? '↑' : '+ Nota'}
+        <span aria-hidden="true">{showNotes ? '↑' : '+ Nota'}</span>
       </button>
       <button
         onClick={() => updateStatus('rechazado')}
         disabled={loading !== null}
-        className="flex items-center gap-1 text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1.5 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
+        className="flex items-center gap-1 text-xs font-bold text-red-700 bg-red-50 px-2.5 py-1.5 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
       >
-        <X size={12} /> Rechazar
+        <X size={12} aria-hidden="true" /> Rechazar
       </button>
       <button
         onClick={() => updateStatus('aprobado')}
         disabled={loading !== null}
         className="flex items-center gap-1 text-xs font-bold text-green-700 bg-green-50 px-2.5 py-1.5 rounded-lg hover:bg-green-100 transition-colors disabled:opacity-50"
       >
-        <Check size={12} /> Aprobar
+        <Check size={12} aria-hidden="true" /> Aprobar
       </button>
     </div>
   )

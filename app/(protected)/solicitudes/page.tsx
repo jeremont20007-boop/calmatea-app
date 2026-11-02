@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -6,6 +7,11 @@ import { Card } from '@/components/ui/Card'
 import { type Application, type Vehicle, type Profile, PLATFORM_LABELS, SCHEDULE_LABELS, DAYS_OF_WEEK } from '@/types'
 import { ApplicationActions } from './ApplicationActions'
 import { WithdrawButton } from './WithdrawButton'
+
+export const metadata: Metadata = {
+  title: 'Solicitudes',
+  description: 'Seguí el estado de tus solicitudes en VehiLink: pendientes, aceptadas e historial.',
+}
 
 export default async function SolicitudesPage() {
   const supabase = await createClient()
@@ -68,14 +74,14 @@ function EmptyState({ role }: { role: 'conductor' | 'propietario' }) {
     <div className="flex flex-col">
       <TopBar title="Solicitudes" showBack backHref="/dashboard" />
       <div className="text-center py-20 px-6 space-y-3">
-        <div className="text-6xl">📋</div>
-        <p className="font-extrabold text-calm-700 text-lg">
-          {role === 'propietario' ? 'Aún no tienes vehículos publicados' : 'Aún no tienes solicitudes'}
-        </p>
-        <p className="text-calm-400 text-sm">
+        <div className="text-6xl" aria-hidden="true">📋</div>
+        <h2 className="font-extrabold text-calm-700 text-lg">
+          {role === 'propietario' ? 'Aún no tenés vehículos publicados' : 'Aún no tenés solicitudes'}
+        </h2>
+        <p className="text-calm-500 text-sm">
           {role === 'propietario'
-            ? 'Publica tu primer vehículo para empezar a recibir solicitudes'
-            : 'Busca vehículos disponibles y envía tu primera solicitud'}
+            ? 'Publicá tu primer vehículo para empezar a recibir solicitudes'
+            : 'Buscá vehículos disponibles y enviá tu primera solicitud'}
         </p>
       </div>
     </div>
@@ -101,9 +107,9 @@ function PropietarioApplications({
 
         {applications.length === 0 && (
           <div className="text-center py-16 space-y-3">
-            <div className="text-6xl">📬</div>
-            <p className="font-extrabold text-calm-700">Aún no hay solicitudes</p>
-            <p className="text-calm-400 text-sm">Cuando conductores apliquen a tus vehículos, aparecerán aquí</p>
+            <div className="text-6xl" aria-hidden="true">📬</div>
+            <h2 className="font-extrabold text-calm-700">Aún no hay solicitudes</h2>
+            <p className="text-calm-500 text-sm">Cuando los conductores se postulen a tus vehículos, las solicitudes aparecerán aquí</p>
           </div>
         )}
 
@@ -111,8 +117,9 @@ function PropietarioApplications({
           <div>
             <h2 className="font-extrabold text-calm-700 mb-3 px-1 flex items-center gap-2">
               Pendientes
-              <span className="bg-warning text-white text-xs font-extrabold w-5 h-5 rounded-full flex items-center justify-center">
+              <span className="bg-warning text-calm-900 text-xs font-extrabold w-5 h-5 rounded-full flex items-center justify-center">
                 {pending.length}
+                <span className="sr-only"> solicitudes pendientes</span>
               </span>
             </h2>
             <div className="space-y-4">
@@ -150,18 +157,18 @@ function ConductorApplications({ applications }: { applications: Application[] }
 
         {applications.length === 0 && (
           <div className="text-center py-16 space-y-3">
-            <div className="text-6xl">📋</div>
-            <p className="font-extrabold text-calm-700">Aún no tienes solicitudes</p>
-            <p className="text-calm-400 text-sm">Busca vehículos disponibles y aplica al que te interese</p>
-            <a href="/vehiculos" className="inline-block bg-calm-500 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-calm-600 transition-colors mt-2">
-              Buscar vehículos →
-            </a>
+            <div className="text-6xl" aria-hidden="true">📋</div>
+            <h2 className="font-extrabold text-calm-700">Aún no tenés solicitudes</h2>
+            <p className="text-calm-500 text-sm">Buscá vehículos disponibles y postulate al que te interese</p>
+            <Link href="/vehiculos" className="inline-block bg-calm-500 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-calm-600 transition-colors mt-2">
+              Buscar vehículos <span aria-hidden="true">→</span>
+            </Link>
           </div>
         )}
 
         {accepted.length > 0 && (
           <div>
-            <h2 className="font-extrabold text-calm-700 mb-3 px-1">✅ Aceptadas</h2>
+            <h2 className="font-extrabold text-calm-700 mb-3 px-1"><span aria-hidden="true">✅</span> Aceptadas</h2>
             <div className="space-y-3">
               {accepted.map(app => (
                 <ApplicationCard key={app.id} application={app} isPropietario={false} />
@@ -172,7 +179,7 @@ function ConductorApplications({ applications }: { applications: Application[] }
 
         {pending.length > 0 && (
           <div>
-            <h2 className="font-extrabold text-calm-700 mb-3 px-1">⏳ Pendientes</h2>
+            <h2 className="font-extrabold text-calm-700 mb-3 px-1"><span aria-hidden="true">⏳</span> Pendientes</h2>
             <div className="space-y-3">
               {pending.map(app => (
                 <ApplicationCard key={app.id} application={app} isPropietario={false} />
@@ -211,8 +218,8 @@ function ApplicationCard({
   const statusStyles: Record<string, string> = {
     pendiente: 'bg-yellow-100 text-yellow-700',
     aceptada: 'bg-green-100 text-green-700',
-    rechazada: 'bg-red-100 text-red-600',
-    retirada: 'bg-gray-100 text-gray-500',
+    rechazada: 'bg-red-100 text-red-700',
+    retirada: 'bg-gray-100 text-gray-600',
   }
 
   const statusLabels: Record<string, string> = {
@@ -228,10 +235,10 @@ function ApplicationCard({
         {/* Vehicle info */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="font-extrabold text-calm-800">
+            <h3 className="font-extrabold text-calm-800">
               {vehicle?.make} {vehicle?.model} {vehicle?.year}
-            </p>
-            <p className="text-sm text-calm-400">📍 {vehicle?.city}</p>
+            </h3>
+            <p className="text-sm text-calm-500"><span aria-hidden="true">📍</span> {vehicle?.city}</p>
             {vehicle?.platforms && (
               <div className="flex flex-wrap gap-1 mt-1">
                 {vehicle.platforms.slice(0, 3).map(p => (
@@ -243,7 +250,7 @@ function ApplicationCard({
             )}
           </div>
           <div className="shrink-0">
-            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${statusStyles[application.status] || 'bg-gray-100 text-gray-500'}`}>
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${statusStyles[application.status] || 'bg-gray-100 text-gray-600'}`}>
               {statusLabels[application.status] || application.status}
             </span>
           </div>
@@ -253,7 +260,7 @@ function ApplicationCard({
         {isPropietario && driver && (
           <div className="bg-calm-50 rounded-2xl p-3 space-y-1.5">
             <p className="font-bold text-calm-800 text-sm">Conductor: {driver.full_name}</p>
-            {driver.city && <p className="text-xs text-calm-400">📍 {driver.city}</p>}
+            {driver.city && <p className="text-xs text-calm-500"><span aria-hidden="true">📍</span> {driver.city}</p>}
             {driver.experience_years && (
               <p className="text-xs text-calm-500 font-semibold">{driver.experience_years} años de experiencia</p>
             )}
@@ -261,7 +268,7 @@ function ApplicationCard({
               <p className="text-xs text-calm-500">Licencia: {driver.license_number}</p>
             )}
             {driver.phone && application.status === 'aceptada' && (
-              <p className="text-xs text-calm-600 font-semibold">📞 {driver.phone}</p>
+              <p className="text-xs text-calm-600 font-semibold"><span aria-hidden="true">📞</span> Teléfono: <a href={`tel:${driver.phone}`} className="underline">{driver.phone}</a></p>
             )}
           </div>
         )}
@@ -273,7 +280,7 @@ function ApplicationCard({
             {application.driver_offered_split && (
               <div className="flex items-center justify-between">
                 <span className="text-xs text-calm-500 font-semibold">Porcentaje ofrecido</span>
-                <span className="font-extrabold text-forest">{application.driver_offered_split}% para el conductor</span>
+                <span className="font-extrabold text-emerald-700">{application.driver_offered_split}% para el conductor</span>
               </div>
             )}
             {application.driver_schedule && (
@@ -292,10 +299,13 @@ function ApplicationCard({
                       className={`text-xs font-bold px-1.5 py-0.5 rounded-lg ${
                         application.driver_available_days!.includes(d.value)
                           ? 'bg-calm-500 text-white'
-                          : 'bg-calm-100 text-calm-300'
+                          : 'bg-calm-100 text-calm-500 line-through'
                       }`}
                     >
                       {d.label}
+                      <span className="sr-only">
+                        {application.driver_available_days!.includes(d.value) ? ' (disponible)' : ' (no disponible)'}
+                      </span>
                     </span>
                   ))}
                 </div>
@@ -315,7 +325,7 @@ function ApplicationCard({
         {/* Owner response */}
         {application.owner_response && (
           <div className="bg-blue-50 rounded-2xl p-3">
-            <p className="text-xs text-blue-500 font-semibold mb-1">Respuesta del propietario:</p>
+            <p className="text-xs text-blue-700 font-semibold mb-1">Respuesta del propietario:</p>
             <p className="text-sm text-blue-700 leading-relaxed">{application.owner_response}</p>
           </div>
         )}
@@ -325,14 +335,14 @@ function ApplicationCard({
           <div className="border-t border-calm-100 pt-2 space-y-1">
             {application.driver_offered_split && (
               <div className="flex items-center justify-between">
-                <span className="text-xs text-calm-400 font-semibold">Tu oferta</span>
+                <span className="text-xs text-calm-500 font-semibold">Tu oferta</span>
                 <span className="font-extrabold text-calm-700">{application.driver_offered_split}%</span>
               </div>
             )}
             {vehicle?.revenue_split && (
               <div className="flex items-center justify-between">
-                <span className="text-xs text-calm-400 font-semibold">Oferta del propietario</span>
-                <span className="font-extrabold text-forest">{vehicle.revenue_split}%</span>
+                <span className="text-xs text-calm-500 font-semibold">Oferta del propietario</span>
+                <span className="font-extrabold text-emerald-700">{vehicle.revenue_split}%</span>
               </div>
             )}
           </div>
@@ -356,7 +366,7 @@ function ApplicationCard({
                 href={`/calificar/${driver.id}?vehicleId=${application.vehicle_id}`}
                 className="block w-full text-center bg-calm-500 hover:bg-calm-600 text-white font-bold py-2.5 rounded-xl text-sm transition-colors"
               >
-                ⭐ Calificar conductor
+                <span aria-hidden="true">⭐</span> Calificar conductor
               </Link>
             )}
             {!isPropietario && vehicle && (vehicle as unknown as { owner?: { id: string } }).owner?.id && (
@@ -364,7 +374,7 @@ function ApplicationCard({
                 href={`/calificar/${(vehicle as unknown as { owner: { id: string } }).owner.id}?vehicleId=${application.vehicle_id}`}
                 className="block w-full text-center bg-calm-500 hover:bg-calm-600 text-white font-bold py-2.5 rounded-xl text-sm transition-colors"
               >
-                ⭐ Calificar propietario
+                <span aria-hidden="true">⭐</span> Calificar propietario
               </Link>
             )}
           </div>

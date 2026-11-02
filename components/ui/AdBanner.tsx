@@ -43,31 +43,32 @@ export function AdBanner({ isPremium = false }: { isPremium?: boolean }) {
   const hasImage = ad.mobile_image_url || ad.desktop_image_url
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-calm-200 bg-white">
+    <aside aria-label="Publicidad" className="relative rounded-2xl overflow-hidden border border-calm-200 bg-white">
       {/* Label + close */}
-      <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">
-        <span className="text-[9px] text-white/80 font-bold uppercase tracking-widest">
+      <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-full">
+        <span className="text-[9px] text-white font-bold uppercase tracking-widest">
           Publicidad
         </span>
         <button
+          type="button"
           onClick={() => setDismissed(true)}
-          className="text-white/70 hover:text-white transition-colors"
+          className="text-white/90 hover:text-white transition-colors"
           aria-label="Cerrar anuncio"
         >
-          <X size={12} />
+          <X size={12} aria-hidden="true" />
         </button>
       </div>
 
       {/* Responsive image */}
       {hasImage && (
-        <a href={ad.target_url} target="_blank" rel="noopener noreferrer" className="block">
+        <a href={ad.target_url} target="_blank" rel="noopener noreferrer" className="block" tabIndex={-1} aria-hidden="true">
           <picture>
             {ad.desktop_image_url && (
               <source media="(min-width: 640px)" srcSet={ad.desktop_image_url} />
             )}
             <img
               src={ad.mobile_image_url ?? ad.desktop_image_url ?? ''}
-              alt={ad.title}
+              alt=""
               className="w-full object-cover"
               style={{ aspectRatio: ad.mobile_image_url ? '750/300' : '1200/400' }}
             />
@@ -79,7 +80,7 @@ export function AdBanner({ isPremium = false }: { isPremium?: boolean }) {
       <div className={`flex gap-3 items-start p-3 ${hasImage ? '' : 'bg-gradient-to-br from-calm-50 to-white'}`}>
         {!hasImage && (
           <div className="w-12 h-12 rounded-xl bg-calm-100 flex items-center justify-center shrink-0">
-            <Megaphone size={20} className="text-calm-400" />
+            <Megaphone size={20} className="text-calm-400" aria-hidden="true" />
           </div>
         )}
 
@@ -89,7 +90,7 @@ export function AdBanner({ isPremium = false }: { isPremium?: boolean }) {
             <p className="text-xs text-calm-500 mt-0.5 line-clamp-2">{ad.description}</p>
           )}
           {ad.advertiser_name && (
-            <p className="text-[10px] text-calm-400 font-semibold mt-0.5">{ad.advertiser_name}</p>
+            <p className="text-[10px] text-calm-500 font-semibold mt-0.5">{ad.advertiser_name}</p>
           )}
         </div>
 
@@ -99,9 +100,10 @@ export function AdBanner({ isPremium = false }: { isPremium?: boolean }) {
           rel="noopener noreferrer"
           className="shrink-0 bg-calm-500 hover:bg-calm-600 text-white font-bold text-xs px-3 py-2 rounded-xl transition-colors whitespace-nowrap"
         >
-          {ad.cta_text} →
+          {ad.cta_text} <span aria-hidden="true">→</span>
+          <span className="sr-only"> (se abre en una pestaña nueva)</span>
         </a>
       </div>
-    </div>
+    </aside>
   )
 }

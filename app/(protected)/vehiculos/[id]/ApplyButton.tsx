@@ -35,7 +35,7 @@ export function ApplyButton({ vehicleId, driverId, ownerSplit }: ApplyButtonProp
 
   async function handleApply() {
     if (!acceptedDisclaimer) {
-      setError('Debes aceptar el acuerdo de no relación laboral para continuar.')
+      setError('Tenés que aceptar el acuerdo de no relación laboral para continuar.')
       return
     }
 
@@ -55,7 +55,7 @@ export function ApplyButton({ vehicleId, driverId, ownerSplit }: ApplyButtonProp
     })
 
     if (dbError) {
-      setError('No se pudo enviar la solicitud. Intenta de nuevo.')
+      setError('No se pudo enviar la solicitud. Intentá de nuevo.')
       setLoading(false)
       return
     }
@@ -73,22 +73,23 @@ export function ApplyButton({ vehicleId, driverId, ownerSplit }: ApplyButtonProp
 
   return (
     <div className="bg-white rounded-3xl border border-calm-200 p-5 space-y-5">
-      <h3 className="font-extrabold text-calm-800 text-lg">Enviar solicitud</h3>
+      <h2 className="font-extrabold text-calm-800 text-lg">Enviar solicitud</h2>
 
       {/* Percentage offer */}
       <div>
-        <label className="block font-bold text-calm-700 text-sm mb-2">
+        <p id="split-label" className="block font-bold text-calm-700 text-sm mb-2">
           Tu oferta de porcentaje
-        </label>
-        <p className="text-xs text-calm-400 mb-3">
-          El propietario ofrece {ownerSplit}% para el conductor. Puedes aceptar o hacer una contraoferta.
         </p>
-        <div className="flex gap-2 flex-wrap">
+        <p id="split-help" className="text-xs text-calm-500 mb-3">
+          El propietario ofrece {ownerSplit}% para el conductor. Podés aceptar o hacer una contraoferta.
+        </p>
+        <div className="flex gap-2 flex-wrap" role="group" aria-labelledby="split-label" aria-describedby="split-help">
           {SPLIT_OPTIONS.map(pct => (
             <button
               key={pct}
               type="button"
               onClick={() => setOfferedSplit(pct)}
+              aria-pressed={offeredSplit === pct}
               className={`px-4 py-2 rounded-xl font-extrabold text-sm transition-colors ${
                 offeredSplit === pct
                   ? 'bg-calm-500 text-white'
@@ -99,22 +100,23 @@ export function ApplyButton({ vehicleId, driverId, ownerSplit }: ApplyButtonProp
             </button>
           ))}
         </div>
-        <p className="text-xs text-calm-500 mt-2 font-semibold">
-          Con tu oferta: {offeredSplit}% para ti · {100 - offeredSplit}% para el propietario
+        <p className="text-xs text-calm-500 mt-2 font-semibold" aria-live="polite">
+          Con tu oferta: {offeredSplit}% para vos · {100 - offeredSplit}% para el propietario
         </p>
       </div>
 
       {/* Schedule */}
       <div>
-        <label className="block font-bold text-calm-700 text-sm mb-2">
+        <p id="apply-schedule-label" className="block font-bold text-calm-700 text-sm mb-2">
           Modalidad de trabajo
-        </label>
-        <div className="flex gap-2 flex-wrap">
+        </p>
+        <div className="flex gap-2 flex-wrap" role="group" aria-labelledby="apply-schedule-label">
           {(Object.entries(SCHEDULE_LABELS) as [ScheduleType, string][]).map(([val, label]) => (
             <button
               key={val}
               type="button"
               onClick={() => setSchedule(val)}
+              aria-pressed={schedule === val}
               className={`px-3 py-2 rounded-xl font-bold text-sm transition-colors ${
                 schedule === val
                   ? 'bg-calm-500 text-white'
@@ -129,15 +131,16 @@ export function ApplyButton({ vehicleId, driverId, ownerSplit }: ApplyButtonProp
 
       {/* Available days */}
       <div>
-        <label className="block font-bold text-calm-700 text-sm mb-2">
+        <p id="apply-days-label" className="block font-bold text-calm-700 text-sm mb-2">
           Días disponibles
-        </label>
-        <div className="flex gap-1.5 flex-wrap">
+        </p>
+        <div className="flex gap-1.5 flex-wrap" role="group" aria-labelledby="apply-days-label">
           {DAYS_OF_WEEK.map(day => (
             <button
               key={day.value}
               type="button"
               onClick={() => toggleDay(day.value)}
+              aria-pressed={selectedDays.includes(day.value)}
               className={`w-10 h-10 rounded-xl font-bold text-xs transition-colors ${
                 selectedDays.includes(day.value)
                   ? 'bg-calm-500 text-white'
@@ -149,21 +152,22 @@ export function ApplyButton({ vehicleId, driverId, ownerSplit }: ApplyButtonProp
           ))}
         </div>
         {selectedDays.length === 0 && (
-          <p className="text-xs text-calm-400 mt-1.5">Selecciona al menos un día</p>
+          <p className="text-xs text-calm-500 mt-1.5">Seleccioná al menos un día</p>
         )}
       </div>
 
       {/* Message */}
       <div>
-        <label className="block font-bold text-calm-700 text-sm mb-2">
+        <label htmlFor="apply-message" className="block font-bold text-calm-700 text-sm mb-2">
           Presentación (opcional)
         </label>
         <textarea
+          id="apply-message"
           value={message}
           onChange={e => setMessage(e.target.value)}
-          placeholder="Preséntate al propietario: experiencia, referencias, por qué eres el conductor ideal..."
+          placeholder="Presentate al propietario: experiencia, referencias, por qué sos el conductor ideal..."
           rows={4}
-          className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-300 focus:outline-none focus:border-calm-400 transition-colors text-sm resize-none"
+          className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-400 focus:outline-none focus:border-calm-500 focus:ring-2 focus:ring-calm-500/30 transition-colors text-sm resize-none"
         />
       </div>
 
@@ -172,17 +176,19 @@ export function ApplyButton({ vehicleId, driverId, ownerSplit }: ApplyButtonProp
         <button
           type="button"
           onClick={() => setShowDisclaimer(v => !v)}
+          aria-expanded={showDisclaimer}
+          aria-controls="legal-disclaimer"
           className="w-full flex items-center justify-between p-4 text-left hover:bg-calm-50 transition-colors"
         >
           <span className="font-bold text-calm-700 text-sm">
             Acuerdo de alquiler — no relación laboral
           </span>
-          {showDisclaimer ? <ChevronUp size={16} className="text-calm-400" /> : <ChevronDown size={16} className="text-calm-400" />}
+          {showDisclaimer ? <ChevronUp size={16} className="text-calm-400" aria-hidden="true" /> : <ChevronDown size={16} className="text-calm-400" aria-hidden="true" />}
         </button>
 
         {showDisclaimer && (
-          <div className="px-4 pb-4">
-            <pre className="text-xs text-calm-500 whitespace-pre-wrap leading-relaxed font-sans bg-calm-50 rounded-xl p-3 max-h-48 overflow-y-auto">
+          <div className="px-4 pb-4" id="legal-disclaimer">
+            <pre tabIndex={0} aria-label="Texto completo del acuerdo" className="text-xs text-calm-500 whitespace-pre-wrap leading-relaxed font-sans bg-calm-50 rounded-xl p-3 max-h-48 overflow-y-auto">
               {LEGAL_DISCLAIMER}
             </pre>
           </div>
@@ -202,7 +208,7 @@ export function ApplyButton({ vehicleId, driverId, ownerSplit }: ApplyButtonProp
       </div>
 
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+        <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
           {error}
         </div>
       )}

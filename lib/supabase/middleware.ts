@@ -25,8 +25,22 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const publicPaths = ['/auth/login', '/auth/register', '/']
-  const isPublic = publicPaths.some(p => request.nextUrl.pathname === p)
+  const publicPaths = [
+    '/',
+    '/auth/login',
+    '/auth/register',
+    '/auth/publicitario',
+    // Archivos para buscadores, redes sociales y la app instalable (PWA)
+    '/sitemap.xml',
+    '/robots.txt',
+    '/manifest.json',
+    '/sw.js',
+  ]
+  // Imágenes para compartir en redes (Next.js puede agregarles un sufijo)
+  const publicPrefixes = ['/opengraph-image', '/twitter-image']
+  const { pathname } = request.nextUrl
+  const isPublic =
+    publicPaths.includes(pathname) || publicPrefixes.some(p => pathname.startsWith(p))
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone()

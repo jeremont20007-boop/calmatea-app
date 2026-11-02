@@ -34,10 +34,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-calm-50 to-calm-100">
+    <main id="contenido" className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-calm-50 to-calm-100">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="text-6xl mb-3">🚗</div>
+          <div className="text-6xl mb-3" aria-hidden="true">🚗</div>
           <h1 className="text-3xl font-extrabold text-calm-800">VehiLink</h1>
           <p className="text-calm-500 mt-1 font-semibold">Intermediación vehicular de confianza</p>
         </div>
@@ -51,7 +51,7 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-calm-100" />
-            <span className="text-xs text-calm-400 font-semibold">o con email</span>
+            <span className="text-xs text-calm-500 font-semibold">o con email</span>
             <div className="flex-1 h-px bg-calm-100" />
           </div>
 
@@ -78,20 +78,20 @@ export default function LoginPage() {
             />
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+              <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
                 {error}
               </div>
             )}
 
             <Button type="submit" size="lg" className="w-full mt-2" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? 'Entrando…' : 'Entrar'}
             </Button>
           </form>
 
           <p className="text-center text-calm-500 text-sm">
-            ¿No tienes cuenta?{' '}
+            ¿No tenés cuenta?{' '}
             <Link href="/auth/register" className="font-bold text-calm-600 hover:underline">
-              Regístrate gratis
+              Registrate gratis
             </Link>
           </p>
         </div>
@@ -99,12 +99,12 @@ export default function LoginPage() {
         <p className="text-center mt-4">
           <Link
             href="/auth/publicitario"
-            className="text-xs text-calm-300 hover:text-calm-500 transition-colors"
+            className="text-xs text-calm-600 hover:text-calm-800 hover:underline transition-colors"
           >
-            Publicita aquí
+            Publicitá aquí
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   )
 }

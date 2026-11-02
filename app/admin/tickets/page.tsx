@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { TICKET_CATEGORY_LABELS, TICKET_STATUS_LABELS, type SupportTicket } from '@/types'
@@ -7,7 +8,12 @@ const STATUS_COLORS: Record<string, string> = {
   abierto: 'bg-red-100 text-red-700',
   en_revision: 'bg-yellow-100 text-yellow-700',
   resuelto: 'bg-green-100 text-green-700',
-  cerrado: 'bg-gray-100 text-gray-500',
+  cerrado: 'bg-gray-100 text-gray-600',
+}
+
+export const metadata: Metadata = {
+  title: 'Tickets de soporte',
+  description: 'Consultas de soporte de los usuarios de VehiLink, pendientes y resueltas.',
 }
 
 export default async function AdminTicketsPage() {
@@ -28,8 +34,8 @@ export default async function AdminTicketsPage() {
       <h1 className="text-xl font-extrabold text-calm-800">Tickets de soporte</h1>
 
       {list.length === 0 && (
-        <div className="text-center py-16 text-calm-400">
-          <p className="text-4xl mb-3">✅</p>
+        <div className="text-center py-16 text-calm-500">
+          <p className="text-4xl mb-3" aria-hidden="true">✅</p>
           <p className="font-bold">No hay tickets pendientes</p>
         </div>
       )}
@@ -47,8 +53,8 @@ export default async function AdminTicketsPage() {
 
       {closed.length > 0 && (
         <section>
-          <h2 className="text-sm font-extrabold text-calm-400 mb-2 px-1">Resueltos</h2>
-          <div className="space-y-2 opacity-70">
+          <h2 className="text-sm font-extrabold text-calm-500 mb-2 px-1">Resueltos</h2>
+          <div className="space-y-2 opacity-80">
             {closed.map(t => <TicketRow key={t.id} ticket={t} />)}
           </div>
         </section>
@@ -69,14 +75,14 @@ function TicketRow({ ticket }: { ticket: SupportTicket }) {
           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[ticket.status]}`}>
             {TICKET_STATUS_LABELS[ticket.status]}
           </span>
-          <span className="text-xs text-calm-400">{TICKET_CATEGORY_LABELS[ticket.category]}</span>
+          <span className="text-xs text-calm-500">{TICKET_CATEGORY_LABELS[ticket.category]}</span>
         </div>
         <p className="font-bold text-calm-800 text-sm truncate">{ticket.subject}</p>
-        <p className="text-xs text-calm-400 mt-0.5">
+        <p className="text-xs text-calm-500 mt-0.5">
           {user?.full_name} · {user?.role} · {new Date(ticket.created_at).toLocaleDateString('es-AR')}
         </p>
       </div>
-      <ChevronRight size={16} className="text-calm-300 shrink-0 ml-2" />
+      <ChevronRight size={16} className="text-calm-300 shrink-0 ml-2" aria-hidden="true" />
     </Link>
   )
 }

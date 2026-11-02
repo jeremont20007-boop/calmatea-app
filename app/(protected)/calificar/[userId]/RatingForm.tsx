@@ -79,12 +79,16 @@ export function RatingForm({
               type="button"
               onMouseEnter={() => setHovered(n)}
               onMouseLeave={() => setHovered(0)}
+              onFocus={() => setHovered(n)}
+              onBlur={() => setHovered(0)}
               onClick={() => setRating(n)}
-              aria-label={`${n} estrella${n > 1 ? 's' : ''}`}
+              aria-label={`${n} de 7 estrellas`}
+              aria-pressed={rating === n}
               className="p-0.5 transition-transform hover:scale-110 active:scale-95"
             >
               <Star
                 size={32}
+                aria-hidden="true"
                 className={`transition-colors ${n <= display ? 'fill-amber-400 text-amber-400' : 'text-calm-200'}`}
               />
             </button>
@@ -92,32 +96,33 @@ export function RatingForm({
         </div>
 
         {display > 0 && (
-          <p className="mt-3 text-sm font-extrabold text-calm-700">
+          <p className="mt-3 text-sm font-extrabold text-calm-700" aria-live="polite">
             {display === 1 ? 'Muy malo' :
              display === 2 ? 'Malo' :
              display === 3 ? 'Regular' :
              display === 4 ? 'Bueno' :
              display === 5 ? 'Muy bueno' :
              display === 6 ? 'Excelente' :
-             'Sobresaliente ⭐'}
+             'Sobresaliente'}
           </p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-calm-700 mb-1.5">
-          Comentario <span className="text-calm-400 font-normal">(opcional)</span>
+        <label htmlFor="rating-comment" className="block text-sm font-semibold text-calm-700 mb-1.5">
+          Comentario <span className="text-calm-500 font-normal">(opcional)</span>
         </label>
         <textarea
+          id="rating-comment"
           value={comment}
           onChange={e => setComment(e.target.value)}
           placeholder="Contanos tu experiencia de trabajo..."
           rows={3}
-          className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 text-calm-800 text-sm placeholder:text-calm-300 focus:outline-none focus:border-calm-400 transition-colors resize-none"
+          className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 text-calm-800 text-sm placeholder:text-calm-400 focus:outline-none focus:border-calm-500 focus:ring-2 focus:ring-calm-500/30 transition-colors resize-none"
         />
       </div>
 
-      {error && <p className="text-xs text-red-500 font-semibold">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-700 font-semibold">{error}</p>}
 
       <Button type="submit" size="lg" className="w-full" disabled={loading || rating === 0}>
         {loading ? 'Guardando...' : existingRatingId ? 'Actualizar calificación' : 'Enviar calificación'}

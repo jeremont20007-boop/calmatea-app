@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { TICKET_CATEGORY_LABELS, TICKET_STATUS_LABELS, type SupportTicket } from '@/types'
 import { TicketActions } from './TicketActions'
 import { ArrowLeft } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Detalle del ticket',
+  description: 'Consulta de soporte de un usuario de VehiLink, con su estado y la respuesta del equipo.',
+}
 
 export default async function TicketDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -23,14 +29,14 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ i
     abierto: 'bg-red-100 text-red-700',
     en_revision: 'bg-yellow-100 text-yellow-700',
     resuelto: 'bg-green-100 text-green-700',
-    cerrado: 'bg-gray-100 text-gray-500',
+    cerrado: 'bg-gray-100 text-gray-600',
   }
 
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center gap-3">
-        <Link href="/admin/tickets" className="text-calm-500 hover:text-calm-700">
-          <ArrowLeft size={20} />
+        <Link href="/admin/tickets" className="text-calm-500 hover:text-calm-700" aria-label="Volver a los tickets">
+          <ArrowLeft size={20} aria-hidden="true" />
         </Link>
         <h1 className="font-extrabold text-calm-800 text-lg">Ticket #{id.slice(0, 8)}</h1>
       </div>
@@ -53,20 +59,20 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ i
           {(t.user as unknown as { phone?: string }).phone && (
             <p className="text-xs text-calm-500">Tel: {(t.user as unknown as { phone: string }).phone}</p>
           )}
-          <p className="text-xs text-calm-400">{new Date(t.created_at).toLocaleString('es-AR')}</p>
+          <p className="text-xs text-calm-500">{new Date(t.created_at).toLocaleString('es-AR')}</p>
         </div>
       )}
 
       {/* Ticket content */}
       <div className="bg-white rounded-2xl border border-calm-200 p-4 space-y-2">
-        <p className="font-extrabold text-calm-800">{t.subject}</p>
+        <h2 className="font-extrabold text-calm-800">{t.subject}</h2>
         <p className="text-sm text-calm-600 leading-relaxed whitespace-pre-wrap">{t.message}</p>
       </div>
 
       {/* Previous response if exists */}
       {t.admin_response && (
         <div className="bg-blue-50 rounded-2xl p-3">
-          <p className="text-xs font-bold text-blue-600 mb-1">Respuesta anterior</p>
+          <h2 className="text-xs font-bold text-blue-700 mb-1">Respuesta anterior</h2>
           <p className="text-sm text-blue-800 leading-relaxed">{t.admin_response}</p>
         </div>
       )}

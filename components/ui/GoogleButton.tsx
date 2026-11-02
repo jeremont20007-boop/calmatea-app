@@ -43,9 +43,9 @@ export function GoogleButton({ label = 'Continuar con Google', role, isNew }: Go
       className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-700 font-bold text-sm hover:border-calm-400 hover:bg-calm-50 transition-colors disabled:opacity-60 disabled:pointer-events-none"
     >
       {loading ? (
-        <span className="w-5 h-5 border-2 border-calm-300 border-t-calm-600 rounded-full animate-spin" />
+        <span className="w-5 h-5 border-2 border-calm-300 border-t-calm-600 rounded-full animate-spin" aria-hidden="true" />
       ) : (
-        <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0" aria-hidden>
+        <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0" aria-hidden="true" focusable="false">
           <path
             fill="#4285F4"
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -64,7 +64,7 @@ export function GoogleButton({ label = 'Continuar con Google', role, isNew }: Go
           />
         </svg>
       )}
-      {loading ? 'Redirigiendo...' : label}
+      {loading ? 'Redirigiendo…' : label}
     </button>
   )
 }

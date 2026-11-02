@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { Card } from '@/components/ui/Card'
 import {
@@ -11,6 +12,11 @@ import { Sparkles } from 'lucide-react'
 type RequestWithRelations = CreativeRequest & {
   ad: Pick<Ad, 'id' | 'title'>
   advertiser: Pick<Advertiser, 'company_name' | 'contact_email'>
+}
+
+export const metadata: Metadata = {
+  title: 'Solicitudes de creatividad',
+  description: 'Pedidos de diseño de los anunciantes: nuevos, en producción, en revisión y entregados.',
 }
 
 export default async function AdminCreatividadPage() {
@@ -34,7 +40,7 @@ export default async function AdminCreatividadPage() {
     <div className="p-4 space-y-6">
       <div>
         <h1 className="text-xl font-extrabold text-calm-800 flex items-center gap-2">
-          <Sparkles size={20} className="text-calm-500" />
+          <Sparkles size={20} className="text-calm-500" aria-hidden="true" />
           Creatividad
         </h1>
         <p className="text-sm text-calm-500 mt-0.5">
@@ -67,8 +73,8 @@ export default async function AdminCreatividadPage() {
       )}
 
       {all.length === 0 && (
-        <div className="text-center py-16 text-calm-400 text-sm">
-          <div className="text-5xl mb-3">✦</div>
+        <div className="text-center py-16 text-calm-500 text-sm">
+          <div className="text-5xl mb-3" aria-hidden="true">✦</div>
           <p>Aún no hay solicitudes de creatividad.</p>
         </div>
       )}
@@ -82,11 +88,11 @@ function Section({
   title: string; count?: number; badge?: string; children: React.ReactNode
 }) {
   const badgeColors: Record<string, string> = {
-    yellow: 'bg-yellow-400 text-white',
-    blue:   'bg-blue-500 text-white',
-    orange: 'bg-orange-400 text-white',
-    green:  'bg-green-500 text-white',
-    gray:   'bg-calm-300 text-white',
+    yellow: 'bg-yellow-400 text-yellow-950',
+    blue:   'bg-blue-600 text-white',
+    orange: 'bg-orange-400 text-orange-950',
+    green:  'bg-green-700 text-white',
+    gray:   'bg-calm-600 text-white',
   }
   return (
     <div>
@@ -114,7 +120,7 @@ function RequestCard({ r }: { r: RequestWithRelations }) {
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="min-w-0">
-          <p className="font-extrabold text-calm-800 truncate">{r.ad?.title}</p>
+          <h3 className="font-extrabold text-calm-800 truncate">{r.ad?.title}</h3>
           <p className="text-xs text-calm-500">{r.advertiser?.company_name} · {r.advertiser?.contact_email}</p>
         </div>
         <span className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${CREATIVE_STATUS_COLORS[r.status]}`}>
@@ -126,16 +132,18 @@ function RequestCard({ r }: { r: RequestWithRelations }) {
       <div className="bg-calm-50 rounded-xl p-2.5 text-xs space-y-1">
         <div className="flex items-center justify-between">
           <span className="font-bold text-calm-700">
-            {tier?.tier === 7 ? '✦ Premium' : tier?.label}
+            {tier?.tier === 7 ? <><span aria-hidden="true">✦ </span>Premium</> : tier?.label}
             {tier && tier.tier < 7 && (
-              <span className="ml-1 text-yellow-400">{'★'.repeat(tier.tier)}</span>
+              <>
+                <span className="ml-1 text-yellow-400" aria-hidden="true">{'★'.repeat(tier.tier)}</span>
+              </>
             )}
           </span>
           <span className="font-extrabold text-calm-700">
             ${(r.price_ars ?? 0).toLocaleString('es-AR')} ARS
           </span>
         </div>
-        <p className="text-calm-400">
+        <p className="text-calm-500">
           {new Date(r.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' })}
         </p>
       </div>

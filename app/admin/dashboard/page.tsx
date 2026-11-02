@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Ticket, FileText, Users, AlertCircle } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Panel de administración',
+  description: 'Resumen de tickets abiertos, documentos pendientes, usuarios y vehículos de VehiLink.',
+}
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
@@ -19,9 +25,9 @@ export default async function AdminDashboardPage() {
 
   const stats = [
     { label: 'Tickets abiertos', value: openTickets ?? 0, href: '/admin/tickets', icon: Ticket, urgent: (openTickets ?? 0) > 0, color: 'text-red-600' },
-    { label: 'Documentos pendientes', value: pendingDocs ?? 0, href: '/admin/documentos', icon: FileText, urgent: (pendingDocs ?? 0) > 0, color: 'text-yellow-600' },
+    { label: 'Documentos pendientes', value: pendingDocs ?? 0, href: '/admin/documentos', icon: FileText, urgent: (pendingDocs ?? 0) > 0, color: 'text-yellow-700' },
     { label: 'Usuarios registrados', value: totalUsers ?? 0, href: '/admin/usuarios', icon: Users, urgent: false, color: 'text-calm-600' },
-    { label: 'Vehículos publicados', value: totalVehicles ?? 0, href: '/admin/usuarios', icon: FileText, urgent: false, color: 'text-green-600' },
+    { label: 'Vehículos publicados', value: totalVehicles ?? 0, href: '/admin/usuarios', icon: FileText, urgent: false, color: 'text-green-700' },
   ]
 
   return (
@@ -41,26 +47,26 @@ export default async function AdminDashboardPage() {
             }`}
           >
             <div className="flex items-center justify-between">
-              <Icon size={18} className={urgent ? 'text-red-500' : 'text-calm-400'} />
-              {urgent && <AlertCircle size={14} className="text-red-400" />}
+              <Icon size={18} className={urgent ? 'text-red-500' : 'text-calm-400'} aria-hidden="true" />
+              {urgent && <AlertCircle size={14} className="text-red-400" aria-label="Requiere atención" />}
             </div>
-            <p className={`text-3xl font-extrabold ${color}`}>{value}</p>
+            <p className={`text-3xl font-extrabold ${color}`}>{value.toLocaleString('es-AR')}</p>
             <p className="text-xs text-calm-500 font-semibold leading-tight">{label}</p>
           </Link>
         ))}
       </div>
 
       <div className="bg-calm-50 rounded-2xl p-4 space-y-2">
-        <p className="text-xs font-extrabold text-calm-600">Accesos rápidos</p>
+        <h2 className="text-xs font-extrabold text-calm-600">Accesos rápidos</h2>
         <div className="space-y-1">
           <Link href="/admin/tickets" className="flex items-center gap-2 text-sm text-calm-700 hover:text-calm-900 py-1.5">
-            <Ticket size={14} /> Ver todos los tickets de soporte
+            <Ticket size={14} aria-hidden="true" /> Ver todos los tickets de soporte
           </Link>
           <Link href="/admin/documentos" className="flex items-center gap-2 text-sm text-calm-700 hover:text-calm-900 py-1.5">
-            <FileText size={14} /> Revisar documentos pendientes
+            <FileText size={14} aria-hidden="true" /> Revisar documentos pendientes
           </Link>
           <Link href="/admin/usuarios" className="flex items-center gap-2 text-sm text-calm-700 hover:text-calm-900 py-1.5">
-            <Users size={14} /> Listar usuarios
+            <Users size={14} aria-hidden="true" /> Listar usuarios
           </Link>
         </div>
       </div>

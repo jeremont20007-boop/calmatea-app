@@ -11,9 +11,9 @@ interface Props {
 }
 
 const NEXT_STATUSES: Partial<Record<CreativeStatus, { status: CreativeStatus; label: string; className: string }[]>> = {
-  pending:     [{ status: 'in_progress', label: 'Iniciar producción', className: 'bg-blue-500 hover:bg-blue-600 text-white' }],
+  pending:     [{ status: 'in_progress', label: 'Iniciar producción', className: 'bg-blue-600 hover:bg-blue-700 text-white' }],
   in_progress: [
-    { status: 'delivered', label: '✓ Marcar entregado', className: 'bg-green-500 hover:bg-green-600 text-white' },
+    { status: 'delivered', label: '✓ Marcar entregado', className: 'bg-green-700 hover:bg-green-800 text-white' },
     { status: 'revision',  label: 'Enviar a revisión',  className: 'bg-orange-100 hover:bg-orange-200 text-orange-700' },
   ],
   revision:    [{ status: 'in_progress', label: 'Volver a producción', className: 'bg-blue-100 hover:bg-blue-200 text-blue-700' }],
@@ -47,7 +47,7 @@ export function CreativeStatusActions({ requestId, currentStatus }: Props) {
           disabled={loading !== null}
           className={`flex-1 py-2 font-bold text-xs rounded-xl transition-colors disabled:opacity-50 ${a.className}`}
         >
-          {loading === a.status ? '...' : a.label}
+          {loading === a.status ? '…' : a.label}
         </button>
       ))}
     </div>

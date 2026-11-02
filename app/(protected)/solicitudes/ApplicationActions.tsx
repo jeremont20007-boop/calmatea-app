@@ -30,17 +30,20 @@ export function ApplicationActions({ applicationId }: ApplicationActionsProps) {
     <div className="space-y-3 border-t border-calm-100 pt-3">
       {showResponse && (
         <textarea
+          aria-label="Mensaje para el conductor (opcional)"
           value={response}
           onChange={e => setResponse(e.target.value)}
           placeholder="Mensaje opcional para el conductor..."
           rows={3}
-          className="w-full px-3 py-2 rounded-xl border-2 border-calm-200 text-sm text-calm-800 placeholder:text-calm-300 focus:outline-none focus:border-calm-400 resize-none"
+          className="w-full px-3 py-2 rounded-xl border-2 border-calm-200 text-sm text-calm-800 placeholder:text-calm-400 focus:outline-none focus:border-calm-500 focus:ring-2 focus:ring-calm-500/30 resize-none"
         />
       )}
       <div className="flex gap-2">
         <button
+          type="button"
           onClick={() => setShowResponse(!showResponse)}
-          className="text-xs text-calm-400 hover:text-calm-600 font-semibold transition-colors"
+          aria-expanded={showResponse}
+          className="text-xs text-calm-500 hover:text-calm-700 font-semibold transition-colors"
         >
           {showResponse ? 'Ocultar mensaje' : '+ Agregar mensaje'}
         </button>
@@ -57,11 +60,11 @@ export function ApplicationActions({ applicationId }: ApplicationActionsProps) {
         </Button>
         <Button
           size="sm"
-          className="flex-1 bg-forest hover:bg-green-700"
+          className="flex-1 bg-emerald-700 hover:bg-emerald-800"
           onClick={() => updateStatus('aceptada')}
           disabled={loading !== null}
         >
-          {loading === 'accept' ? 'Aceptando...' : 'Aceptar ✓'}
+          {loading === 'accept' ? 'Aceptando...' : <>Aceptar <span aria-hidden="true">✓</span></>}
         </Button>
       </div>
     </div>

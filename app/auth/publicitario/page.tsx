@@ -82,11 +82,11 @@ export default function PublicitarioAuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-calm-50 to-calm-100">
+    <main id="contenido" className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-calm-50 to-calm-100">
       <div className="w-full max-w-sm">
         <div className="text-center mb-6">
           <div className="w-16 h-16 rounded-2xl bg-calm-500 flex items-center justify-center mx-auto mb-3">
-            <Megaphone size={32} className="text-white" />
+            <Megaphone size={32} className="text-white" aria-hidden="true" />
           </div>
           <h1 className="text-2xl font-extrabold text-calm-800">VehiLink Publicidad</h1>
           <p className="text-calm-500 mt-1 text-sm font-semibold">
@@ -95,19 +95,23 @@ export default function PublicitarioAuthPage() {
         </div>
 
         {/* Mode toggle */}
-        <div className="flex bg-calm-100 rounded-2xl p-1 mb-4">
+        <div className="flex bg-calm-100 rounded-2xl p-1 mb-4" role="group" aria-label="Elegí una opción">
           <button
+            type="button"
+            aria-pressed={mode === 'register'}
             onClick={() => { setMode('register'); setError(''); setInfo('') }}
             className={`flex-1 py-2 rounded-xl text-sm font-extrabold transition-all ${
-              mode === 'register' ? 'bg-white text-calm-700 shadow-sm' : 'text-calm-400'
+              mode === 'register' ? 'bg-white text-calm-700 shadow-sm' : 'text-calm-600'
             }`}
           >
             Registrarse
           </button>
           <button
+            type="button"
+            aria-pressed={mode === 'login'}
             onClick={() => { setMode('login'); setError(''); setInfo('') }}
             className={`flex-1 py-2 rounded-xl text-sm font-extrabold transition-all ${
-              mode === 'login' ? 'bg-white text-calm-700 shadow-sm' : 'text-calm-400'
+              mode === 'login' ? 'bg-white text-calm-700 shadow-sm' : 'text-calm-600'
             }`}
           >
             Iniciar sesión
@@ -125,6 +129,7 @@ export default function PublicitarioAuthPage() {
                 value={companyName}
                 onChange={e => setCompanyName(e.target.value)}
                 required
+                autoComplete="organization"
               />
               <Input
                 id="email"
@@ -154,6 +159,7 @@ export default function PublicitarioAuthPage() {
                 placeholder="+54 299 123 4567"
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
+                autoComplete="tel"
               />
               <Input
                 id="website"
@@ -162,24 +168,25 @@ export default function PublicitarioAuthPage() {
                 placeholder="https://miempresa.com"
                 value={website}
                 onChange={e => setWebsite(e.target.value)}
+                autoComplete="url"
               />
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+                <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
                   {error}
                 </div>
               )}
               {info && (
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 text-sm font-semibold">
+                <div role="status" className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-700 text-sm font-semibold">
                   {info}
                 </div>
               )}
 
               <Button type="submit" size="lg" className="w-full" disabled={loading}>
-                {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+                {loading ? 'Creando cuenta…' : 'Crear cuenta'}
               </Button>
 
-              <p className="text-xs text-calm-400 text-center">
+              <p className="text-xs text-calm-500 text-center">
                 Los anuncios son revisados por nuestro equipo antes de publicarse.
               </p>
             </form>
@@ -208,24 +215,24 @@ export default function PublicitarioAuthPage() {
               />
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+                <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
                   {error}
                 </div>
               )}
 
               <Button type="submit" size="lg" className="w-full" disabled={loading}>
-                {loading ? 'Entrando...' : 'Entrar'}
+                {loading ? 'Entrando…' : 'Entrar'}
               </Button>
             </form>
           )}
         </div>
 
         <p className="text-center text-sm text-calm-500 mt-4">
-          <Link href="/auth/login" className="text-calm-400 hover:underline font-semibold">
-            ← Volver al inicio de sesión
+          <Link href="/auth/login" className="text-calm-600 hover:underline font-semibold">
+            <span aria-hidden="true">←</span> Volver al inicio de sesión
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   )
 }

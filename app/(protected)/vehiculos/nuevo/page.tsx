@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Lock } from 'lucide-react'
 import { TopBar } from '@/components/layout/TopBar'
 import { NuevoVehiculoForm } from './NuevoVehiculoForm'
+
+export const metadata: Metadata = {
+  title: 'Publicar vehículo',
+  description: 'Publicá tu vehículo en VehiLink: cargá sus datos, plataformas, disponibilidad y el porcentaje que ofrecés al conductor.',
+}
 
 export default async function NuevoVehiculoPage() {
   const supabase = await createClient()
@@ -30,7 +36,7 @@ export default async function NuevoVehiculoPage() {
           <TopBar title="Publicar vehículo" showBack backHref="/mis-vehiculos" />
           <div className="p-6 space-y-5 max-w-lg mx-auto w-full">
             <div className="bg-amber-50 border-2 border-amber-200 rounded-3xl p-6 text-center space-y-4">
-              <Lock size={40} className="text-amber-500 mx-auto" />
+              <Lock size={40} className="text-amber-600 mx-auto" aria-hidden="true" />
               <h2 className="text-xl font-extrabold text-amber-800">Límite del plan gratuito</h2>
               <p className="text-sm text-amber-700">
                 Con el plan gratuito podés publicar <strong>1 vehículo</strong>. Para publicar más,
@@ -39,9 +45,9 @@ export default async function NuevoVehiculoPage() {
               <div className="space-y-3 pt-2">
                 <Link
                   href="/subscription"
-                  className="block w-full bg-amber-500 hover:bg-amber-600 text-white font-extrabold py-3.5 rounded-2xl text-sm transition-colors"
+                  className="block w-full bg-amber-700 hover:bg-amber-800 text-white font-extrabold py-3.5 rounded-2xl text-sm transition-colors"
                 >
-                  Ver Plan Premium →
+                  Ver plan Premium <span aria-hidden="true">→</span>
                 </Link>
                 <Link
                   href="/mis-vehiculos"

@@ -110,9 +110,9 @@ export default function PerfilPage() {
     return (
       <div className="flex flex-col">
         <TopBar title="Mi perfil" showBack backHref="/dashboard" />
-        <div className="p-4 space-y-4">
+        <div className="p-4 space-y-4" role="status" aria-label="Cargando perfil">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-20 bg-calm-100 rounded-3xl animate-pulse" />
+            <div key={i} className="h-20 bg-calm-100 rounded-3xl animate-pulse" aria-hidden="true" />
           ))}
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function PerfilPage() {
       <form onSubmit={handleSave} className="p-4 space-y-5 pb-8">
         {/* Avatar & role */}
         <div className="bg-white rounded-3xl p-5 border border-calm-100 flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-calm-100 flex items-center justify-center text-3xl shrink-0">
+          <div className="w-16 h-16 rounded-full bg-calm-100 flex items-center justify-center text-3xl shrink-0" aria-hidden="true">
             {profile?.role === 'conductor' ? '🧑‍💼' : '🚗'}
           </div>
           <div>
@@ -149,14 +149,14 @@ export default function PerfilPage() {
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-calm-100 flex items-center justify-center">
-                <FileText size={18} className="text-calm-500" />
+                <FileText size={18} className="text-calm-500" aria-hidden="true" />
               </div>
               <div>
                 <p className="font-extrabold text-calm-800 text-sm">Mis documentos</p>
-                <p className="text-xs text-calm-400">Licencia, DNI, antecedentes y más</p>
+                <p className="text-xs text-calm-500">Licencia, DNI, antecedentes y más</p>
               </div>
             </div>
-            <ChevronRight size={18} className="text-calm-300" />
+            <ChevronRight size={18} className="text-calm-300" aria-hidden="true" />
           </Link>
         )}
 
@@ -169,6 +169,7 @@ export default function PerfilPage() {
             value={fullName}
             onChange={e => setFullName(e.target.value)}
             required
+            autoComplete="name"
           />
           <Input
             id="city"
@@ -176,6 +177,7 @@ export default function PerfilPage() {
             placeholder="Neuquén"
             value={city}
             onChange={e => setCity(e.target.value)}
+            autoComplete="address-level2"
           />
           <Input
             id="phone"
@@ -184,6 +186,7 @@ export default function PerfilPage() {
             placeholder="+54 299 123 4567"
             value={phone}
             onChange={e => setPhone(e.target.value)}
+            autoComplete="tel"
           />
         </div>
 
@@ -211,15 +214,16 @@ export default function PerfilPage() {
 
             {/* Preferred schedule */}
             <div>
-              <label className="block text-sm font-semibold text-calm-700 mb-2">
+              <p id="schedule-label" className="block text-sm font-semibold text-calm-700 mb-2">
                 Modalidad de trabajo preferida
-              </label>
-              <div className="flex gap-2 flex-wrap">
+              </p>
+              <div className="flex gap-2 flex-wrap" role="group" aria-labelledby="schedule-label">
                 {(Object.entries(SCHEDULE_LABELS) as [ScheduleType, string][]).map(([val, label]) => (
                   <button
                     key={val}
                     type="button"
                     onClick={() => setPreferredSchedule(val)}
+                    aria-pressed={preferredSchedule === val}
                     className={`px-3 py-2 rounded-xl font-bold text-sm transition-colors ${
                       preferredSchedule === val
                         ? 'bg-calm-500 text-white'
@@ -234,15 +238,16 @@ export default function PerfilPage() {
 
             {/* Available days */}
             <div>
-              <label className="block text-sm font-semibold text-calm-700 mb-2">
+              <p id="days-label" className="block text-sm font-semibold text-calm-700 mb-2">
                 Días disponibles
-              </label>
-              <div className="flex gap-1.5 flex-wrap">
+              </p>
+              <div className="flex gap-1.5 flex-wrap" role="group" aria-labelledby="days-label">
                 {DAYS_OF_WEEK.map(day => (
                   <button
                     key={day.value}
                     type="button"
                     onClick={() => toggleDay(day.value)}
+                    aria-pressed={availableDays.includes(day.value)}
                     className={`w-10 h-10 rounded-xl font-bold text-xs transition-colors ${
                       availableDays.includes(day.value)
                         ? 'bg-calm-500 text-white'
@@ -256,28 +261,29 @@ export default function PerfilPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-calm-700 mb-1.5">
+              <label htmlFor="bio" className="block text-sm font-semibold text-calm-700 mb-1.5">
                 Presentación / Bio
               </label>
               <textarea
+                id="bio"
                 value={bio}
                 onChange={e => setBio(e.target.value)}
-                placeholder="Cuéntale a los propietarios sobre tu experiencia, tu estilo de trabajo y por qué eres el conductor ideal..."
+                placeholder="Contales a los propietarios sobre tu experiencia, tu estilo de trabajo y por qué sos el conductor ideal..."
                 rows={4}
-                className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-300 focus:outline-none focus:border-calm-400 transition-colors text-sm resize-none"
+                className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-400 focus:outline-none focus:border-calm-500 focus:ring-2 focus:ring-calm-500/30 transition-colors text-sm resize-none"
               />
             </div>
           </div>
         )}
 
         {success && (
-          <div className="p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm font-semibold">
+          <div role="status" className="p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm font-semibold">
             ✓ Cambios guardados correctamente
           </div>
         )}
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+          <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
             {error}
           </div>
         )}
@@ -289,7 +295,7 @@ export default function PerfilPage() {
         <button
           type="button"
           onClick={handleLogout}
-          className="w-full py-3 text-calm-400 font-semibold text-sm hover:text-red-500 transition-colors"
+          className="w-full py-3 text-calm-500 font-semibold text-sm hover:text-red-700 transition-colors"
         >
           Cerrar sesión
         </button>

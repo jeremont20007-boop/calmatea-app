@@ -120,7 +120,7 @@ export default function NuevoAnuncioPage() {
       return
     }
 
-    window.location.href = url
+    window.location.assign(url)
   }
 
   return (
@@ -137,8 +137,8 @@ export default function NuevoAnuncioPage() {
         {/* ── Imágenes ── */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-6">
           <div>
-            <h2 className="font-extrabold text-calm-700 text-lg mb-0.5">📸 Imágenes del anuncio</h2>
-            <p className="text-xs text-calm-400">
+            <h2 className="font-extrabold text-calm-700 text-lg mb-0.5"><span aria-hidden="true">📸 </span>Imágenes del anuncio</h2>
+            <p className="text-xs text-calm-500">
               Las imágenes aparecen según el dispositivo del usuario.
             </p>
           </div>
@@ -168,27 +168,27 @@ export default function NuevoAnuncioPage() {
               />
             </>
           ) : (
-            <div className="text-center py-8 text-calm-400 text-sm">
-              <div className="w-6 h-6 border-2 border-calm-300 border-t-calm-600 rounded-full animate-spin mx-auto mb-2" />
-              Cargando...
+            <div className="text-center py-8 text-calm-500 text-sm" role="status">
+              <div className="w-6 h-6 border-2 border-calm-300 border-t-calm-600 rounded-full animate-spin mx-auto mb-2" aria-hidden="true" />
+              Cargando…
             </div>
           )}
 
           {/* Format guide */}
           <div className="bg-calm-50 rounded-2xl p-4 space-y-2.5 text-xs">
-            <p className="font-extrabold text-calm-700">Especificaciones</p>
+            <h3 className="font-extrabold text-calm-700">Especificaciones</h3>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <p className="font-bold text-calm-600">📱 Mobile slider</p>
+                <p className="font-bold text-calm-600"><span aria-hidden="true">📱 </span>Mobile slider</p>
                 <p className="text-calm-500">750 × 300 px (ratio 5:2)</p>
-                <p className="text-calm-500">JPG o PNG · máx 2 MB</p>
-                <p className="text-calm-400 italic">Se ve en la app mobile</p>
+                <p className="text-calm-500">JPG o PNG · máx. 2 MB</p>
+                <p className="text-calm-500 italic">Se ve en la app móvil</p>
               </div>
               <div className="space-y-1">
-                <p className="font-bold text-calm-600">🖥️ Web banner</p>
+                <p className="font-bold text-calm-600"><span aria-hidden="true">🖥️ </span>Web banner</p>
                 <p className="text-calm-500">1200 × 400 px (ratio 3:1)</p>
-                <p className="text-calm-500">JPG o PNG · máx 3 MB</p>
-                <p className="text-calm-400 italic">Se ve en pantallas grandes</p>
+                <p className="text-calm-500">JPG o PNG · máx. 3 MB</p>
+                <p className="text-calm-500 italic">Se ve en pantallas grandes</p>
               </div>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function NuevoAnuncioPage() {
 
         {/* ── Contenido ── */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-4">
-          <h2 className="font-extrabold text-calm-700 text-lg">✏️ Contenido</h2>
+          <h2 className="font-extrabold text-calm-700 text-lg"><span aria-hidden="true">✏️ </span>Contenido</h2>
 
           <div>
             <Input
@@ -206,22 +206,26 @@ export default function NuevoAnuncioPage() {
               value={title}
               onChange={e => setTitle(e.target.value.slice(0, 60))}
               required
+              maxLength={60}
+              aria-describedby="title-count"
             />
-            <p className="text-xs text-calm-400 mt-1">{title.length}/60 caracteres</p>
+            <p id="title-count" className="text-xs text-calm-500 mt-1">{title.length}/60 caracteres</p>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-calm-700 mb-1.5">
-              Descripción <span className="text-calm-400 font-normal">(opcional)</span>
+            <label htmlFor="description" className="block text-sm font-semibold text-calm-700 mb-1.5">
+              Descripción <span className="text-calm-500 font-normal">(opcional)</span>
             </label>
             <textarea
+              id="description"
+              aria-describedby="description-count"
               value={description}
               onChange={e => setDescription(e.target.value.slice(0, 120))}
-              placeholder="Breve descripción de tu oferta..."
+              placeholder="Breve descripción de tu oferta…"
               rows={3}
-              className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-300 focus:outline-none focus:border-calm-400 transition-colors text-sm resize-none"
+              className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-400 focus:outline-none focus:border-calm-500 transition-colors text-sm resize-none"
             />
-            <p className="text-xs text-calm-400 mt-1">{description.length}/120 caracteres</p>
+            <p id="description-count" className="text-xs text-calm-500 mt-1">{description.length}/120 caracteres</p>
           </div>
 
           <Input
@@ -245,20 +249,20 @@ export default function NuevoAnuncioPage() {
 
         {/* ── Duración y precio ── */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-4">
-          <h2 className="font-extrabold text-calm-700 text-lg">📅 Duración de la campaña</h2>
-          <p className="text-xs text-calm-400">
+          <h2 id="duration-heading" className="font-extrabold text-calm-700 text-lg"><span aria-hidden="true">📅 </span>Duración de la campaña</h2>
+          <p className="text-xs text-calm-500">
             Precio base: ${AD_PRICE_PER_DAY_ARS.toLocaleString('es-AR')} ARS / día.
             Mayor duración = mayor descuento.
           </p>
 
-          <div className="space-y-2">
+          <div className="space-y-2" role="radiogroup" aria-labelledby="duration-heading">
             {AD_DURATION_OPTIONS.map(opt => {
               const price = calcAdPrice(opt.days)
               const active = durationDays === opt.days
               return (
                 <label
                   key={opt.days}
-                  className={`flex items-center justify-between p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+                  className={`flex items-center justify-between p-3.5 rounded-2xl border-2 cursor-pointer transition-all has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-calm-500 ${
                     active
                       ? 'border-calm-500 bg-calm-50'
                       : 'border-calm-100 hover:border-calm-300'
@@ -276,7 +280,7 @@ export default function NuevoAnuncioPage() {
                     <div>
                       <p className="font-extrabold text-calm-800 text-sm">{opt.label}</p>
                       {opt.discount > 0 && (
-                        <p className="text-xs text-green-600 font-bold">
+                        <p className="text-xs text-green-700 font-bold">
                           {(opt.discount * 100).toFixed(0)}% de descuento
                         </p>
                       )}
@@ -286,7 +290,7 @@ export default function NuevoAnuncioPage() {
                     <p className="font-extrabold text-calm-700">
                       ${price.toLocaleString('es-AR')}
                     </p>
-                    <p className="text-[10px] text-calm-400">ARS total</p>
+                    <p className="text-[10px] text-calm-500">ARS total</p>
                   </div>
                 </label>
               )
@@ -297,43 +301,43 @@ export default function NuevoAnuncioPage() {
           <div className="bg-calm-500 rounded-2xl p-4 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-calm-200 text-xs font-semibold">Total a pagar</p>
+                <p className="text-calm-100 text-xs font-semibold">Total a pagar</p>
                 <p className="text-3xl font-extrabold">
                   ${totalPrice.toLocaleString('es-AR')}
                 </p>
-                <p className="text-calm-300 text-xs mt-0.5">
+                <p className="text-calm-100 text-xs mt-0.5">
                   ARS · {durationDays} días
-                  {selectedOpt?.discount ? ` · ${(selectedOpt.discount * 100).toFixed(0)}% descuento` : ''}
+                  {selectedOpt?.discount ? ` · ${(selectedOpt.discount * 100).toFixed(0)}% de descuento` : ''}
                 </p>
               </div>
-              <CreditCard size={36} className="text-calm-300" />
+              <CreditCard size={36} className="text-calm-300" aria-hidden="true" />
             </div>
           </div>
         </section>
 
         {/* Info */}
         <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex gap-3">
-          <Info size={16} className="text-blue-500 shrink-0 mt-0.5" />
+          <Info size={16} className="text-blue-500 shrink-0 mt-0.5" aria-hidden="true" />
           <p className="text-xs text-blue-700">
             El pago se procesa vía <strong>Mercado Pago</strong>. Una vez confirmado, el anuncio
-            entra en revisión y se activa en máx. 24 hs. La campaña empieza a correr desde la
+            entra en revisión y se activa en un máximo de 24 hs. La campaña empieza a correr desde la
             aprobación.
           </p>
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+          <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
             {error}
           </div>
         )}
 
         <Button type="submit" size="lg" className="w-full" disabled={loading || !advertiserId}>
           {loading
-            ? 'Procesando...'
+            ? 'Procesando…'
             : `Pagar $${totalPrice.toLocaleString('es-AR')} ARS y publicar`}
         </Button>
 
-        <p className="text-center text-xs text-calm-400">
+        <p className="text-center text-xs text-calm-500">
           Pago seguro con Mercado Pago · Los anuncios son revisados antes de publicarse
         </p>
       </form>
