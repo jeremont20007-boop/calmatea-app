@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe/client'
+import { getStripe } from '@/lib/stripe/client'
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData()
@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(new URL('/subscription', request.url))
   }
 
-  const portalSession = await stripe.billingPortal.sessions.create({
+  const portalSession = await getStripe().billingPortal.sessions.create({
     customer: customerId,
     return_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscription`,
   })
