@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { TopBar } from '@/components/layout/TopBar'
@@ -112,7 +112,7 @@ export function NuevoVehiculoForm() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/auth/login'); return }
 

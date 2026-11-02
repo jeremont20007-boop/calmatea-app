@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 
 interface GoogleButtonProps {
   label?: string
@@ -14,7 +14,7 @@ export function GoogleButton({ label = 'Continuar con Google', role, isNew }: Go
 
   async function handleGoogleSignIn() {
     setLoading(true)
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
 
     const params = new URLSearchParams()
     if (role) params.set('role', role)

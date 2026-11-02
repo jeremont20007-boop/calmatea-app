@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { Card } from '@/components/ui/Card'
 import { Eye, ExternalLink } from 'lucide-react'
 import { AD_STATUS_LABELS, AD_STATUS_COLORS, type Ad, type Advertiser } from '@/types'
+import Image from 'next/image'
+import { canOptimizeImage } from '@/lib/images'
 import { AdApprovalActions } from './AdApprovalActions'
 
 type AdWithAdvertiser = Ad & { advertiser: Advertiser }
@@ -136,17 +138,21 @@ function AdCard({ ad, showHistory = false }: { ad: AdWithAdvertiser; showHistory
           href={ad.target_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-calm-400 hover:text-calm-600 ml-auto"
+          className="tap-target flex items-center gap-1 text-calm-400 hover:text-calm-600 ml-auto"
         >
           <ExternalLink size={11} />
           Destino
         </a>
       </div>
       {ad.mobile_image_url && (
-        <img
+        <Image
           src={ad.mobile_image_url}
           alt="Mobile preview"
-          className="mt-2 w-full rounded-xl object-cover border border-calm-100"
+          width={750}
+          height={300}
+          sizes="(min-width: 672px) 640px, 100vw"
+          unoptimized={!canOptimizeImage(ad.mobile_image_url)}
+          className="mt-2 w-full h-auto rounded-xl object-cover border border-calm-100"
           style={{ aspectRatio: '750/300' }}
         />
       )}

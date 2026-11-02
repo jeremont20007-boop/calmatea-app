@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { TopBar } from '@/components/layout/TopBar'
@@ -29,7 +29,7 @@ export default function PerfilPage() {
 
   useEffect(() => {
     async function load() {
-      const supabase = createClient()
+      const supabase = await getBrowserClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
 
@@ -67,7 +67,7 @@ export default function PerfilPage() {
     setError('')
     setSuccess(false)
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
@@ -100,7 +100,7 @@ export default function PerfilPage() {
   }
 
   async function handleLogout() {
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     await supabase.auth.signOut()
     router.push('/')
     router.refresh()

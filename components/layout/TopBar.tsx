@@ -17,7 +17,7 @@ export function TopBar({ title, showBack, backHref = '/dashboard', rightAction, 
     <header className={cn('flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-sm border-b border-calm-100 safe-top sticky top-0 z-40', className)}>
       <div className="w-10">
         {showBack && (
-          <Link href={backHref} className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-calm-100 transition-colors text-calm-600">
+          <Link href={backHref} aria-label="Volver" className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-calm-100 transition-colors text-calm-600">
             <ChevronLeft size={24} />
           </Link>
         )}
@@ -25,7 +25,7 @@ export function TopBar({ title, showBack, backHref = '/dashboard', rightAction, 
       <h1 className="text-lg font-extrabold text-calm-800">{title}</h1>
       <div className="w-10 flex justify-end">
         {rightAction || (
-          <Link href="/perfil" className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-calm-100 transition-colors text-calm-400">
+          <Link href="/perfil" aria-label="Mi perfil" className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-calm-100 transition-colors text-calm-400">
             <Settings size={20} />
           </Link>
         )}

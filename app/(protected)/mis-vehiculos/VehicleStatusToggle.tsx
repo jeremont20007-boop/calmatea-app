@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import type { VehicleStatus } from '@/types'
 
 interface VehicleStatusToggleProps {
@@ -25,7 +25,7 @@ export function VehicleStatusToggle({ vehicleId, currentStatus }: VehicleStatusT
   async function changeStatus(newStatus: VehicleStatus) {
     if (newStatus === status) { setOpen(false); return }
     setLoading(true)
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     await supabase.from('vehicles').update({ status: newStatus }).eq('id', vehicleId)
     setStatus(newStatus)
     setLoading(false)

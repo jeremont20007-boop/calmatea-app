@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { AdImageUpload } from '@/components/ui/AdImageUpload'
@@ -36,9 +36,8 @@ export default function EditarAnuncioPage() {
   const [ctaText, setCtaText] = useState('')
 
   useEffect(() => {
-    const supabase = createClient()
-
     async function load() {
+      const supabase = await getBrowserClient()
       const [{ data: adData }, { data: { user } }] = await Promise.all([
         supabase.from('ads').select('*').eq('id', id).single(),
         supabase.auth.getUser(),
@@ -85,7 +84,7 @@ export default function EditarAnuncioPage() {
     setSaving(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { error: updateError } = await supabase
       .from('ads')
       .update({

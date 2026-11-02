@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import type { TicketStatus } from '@/types'
 
 const STATUS_OPTIONS: { value: TicketStatus; label: string }[] = [
@@ -25,7 +25,7 @@ export function TicketActions({ ticketId, currentStatus, currentResponse }: {
 
   async function handleSave() {
     setLoading(true)
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     await supabase
       .from('support_tickets')
       .update({ status, admin_response: response.trim() || null })

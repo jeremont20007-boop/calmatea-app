@@ -29,7 +29,7 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ i
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-center gap-3">
-        <Link href="/admin/tickets" className="text-calm-500 hover:text-calm-700">
+        <Link href="/admin/tickets" aria-label="Volver a tickets" className="p-2 -m-2 text-calm-500 hover:text-calm-700">
           <ArrowLeft size={20} />
         </Link>
         <h1 className="font-extrabold text-calm-800 text-lg">Ticket #{id.slice(0, 8)}</h1>

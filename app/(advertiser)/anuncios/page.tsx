@@ -96,7 +96,7 @@ export default async function MisAnunciosPage() {
               </a>
               <Link
                 href={`/anuncios/${ad.id}`}
-                className="text-xs font-bold text-calm-500 hover:text-calm-700 transition-colors shrink-0"
+                className="tap-target text-xs font-bold text-calm-500 hover:text-calm-700 transition-colors shrink-0"
               >
                 Editar →
               </Link>

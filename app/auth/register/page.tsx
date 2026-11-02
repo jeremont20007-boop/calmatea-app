@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { GoogleButton } from '@/components/ui/GoogleButton'
@@ -36,7 +36,7 @@ function RegisterForm() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { error } = await supabase.auth.signUp({
       email,
       password,
