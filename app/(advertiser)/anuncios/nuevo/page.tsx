@@ -10,6 +10,7 @@ import {
   AD_DURATION_OPTIONS, AD_PRICE_PER_DAY_ARS, calcAdPrice,
 } from '@/types'
 import { Info, CreditCard } from 'lucide-react'
+import { isHttpUrl } from '@/lib/utils'
 
 // Mobile slider: 750×300 px (ratio 2.5:1)
 const MOBILE_SPEC = { width: 750, height: 300, maxMB: 2 }
@@ -56,7 +57,11 @@ export default function NuevoAnuncioPage() {
       setError('La imagen móvil (slider) es obligatoria.')
       return
     }
-    if (!targetUrl.startsWith('http')) {
+    if (!title.trim()) {
+      setError('El título es obligatorio.')
+      return
+    }
+    if (!isHttpUrl(targetUrl)) {
       setError('La URL de destino debe comenzar con http:// o https://')
       return
     }
@@ -120,7 +125,7 @@ export default function NuevoAnuncioPage() {
       return
     }
 
-    window.location.href = url
+    window.location.assign(url)
   }
 
   return (

@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe/client'
+import { getStripe } from '@/lib/stripe/client'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST() {
   try {
+    const stripe = getStripe()
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -23,7 +25,9 @@ export async function POST() {
         metadata: { user_id: user.id },
       })
       customerId = customer.id
-      await supabase
+      // Billing columns are written with the service role so that, once the
+      // proposed RLS hardening is applied, users can't edit them themselves.
+      await createAdminClient()
         .from('profiles')
         .update({ stripe_customer_id: customerId })
         .eq('user_id', user.id)

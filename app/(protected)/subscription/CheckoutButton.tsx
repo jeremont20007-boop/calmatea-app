@@ -16,7 +16,7 @@ export function CheckoutButton({ role }: CheckoutButtonProps) {
       const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
       const data = await res.json()
       if (data.url) {
-        window.location.href = data.url
+        window.location.assign(data.url)
       } else {
         setLoading(null)
         alert('Error al conectar con la pasarela de pagos. Intentá de nuevo.')

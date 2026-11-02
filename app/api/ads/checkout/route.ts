@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { AD_DURATION_OPTIONS, calcAdPrice } from '@/types'
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -7,7 +8,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { adId } = await request.json().catch(() => ({}))
-  if (!adId) return NextResponse.json({ error: 'Missing adId' }, { status: 400 })
+  if (typeof adId !== 'string' || !adId) return NextResponse.json({ error: 'Missing adId' }, { status: 400 })
 
   const { data: ad } = await supabase
     .from('ads')
@@ -24,7 +25,14 @@ export async function POST(request: Request) {
   if (ad.payment_status === 'paid') {
     return NextResponse.json({ error: 'Already paid' }, { status: 400 })
   }
-  if (!ad.total_price || ad.total_price <= 0) {
+  // Recompute the price on the server from the chosen duration. The total_price
+  // column is written by the browser, so it can't be trusted.
+  const durationDays = Number(ad.duration_days)
+  if (!AD_DURATION_OPTIONS.some(o => o.days === durationDays)) {
+    return NextResponse.json({ error: 'Invalid duration' }, { status: 400 })
+  }
+  const price = calcAdPrice(durationDays)
+  if (!price || price <= 0) {
     return NextResponse.json({ error: 'Invalid price' }, { status: 400 })
   }
 
@@ -40,9 +48,9 @@ export async function POST(request: Request) {
       items: [
         {
           title: `Publicidad VehiLink — ${ad.title}`,
-          description: `Campaña publicitaria · ${ad.duration_days} días`,
+          description: `Campaña publicitaria · ${durationDays} días`,
           quantity: 1,
-          unit_price: ad.total_price,
+          unit_price: price,
           currency_id: 'ARS',
         },
       ],

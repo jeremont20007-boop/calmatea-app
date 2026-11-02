@@ -21,6 +21,8 @@ export function InstallPWA() {
     if (isStandalone || dismissed) return
 
     if (isIOSDevice) {
+      // Reading browser-only APIs (navigator/sessionStorage) must happen after mount.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsIOS(true)
       setVisible(true)
       return

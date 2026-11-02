@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET() {
   const supabase = await createClient()
@@ -21,10 +22,18 @@ export async function GET() {
 
   const picked = eligible[Math.floor(Math.random() * eligible.length)]
 
-  await supabase
-    .from('ads')
-    .update({ current_impressions: picked.current_impressions + 1 })
-    .eq('id', picked.id)
+  // Counting impressions needs the service role: regular users can't update ads
+  // under RLS, so previously the counter never increased.
+  // NOTE: this read-then-write is not atomic; under heavy traffic a few
+  // impressions may be lost. A SQL function (rpc) would fix it — see the PR.
+  try {
+    await createAdminClient()
+      .from('ads')
+      .update({ current_impressions: picked.current_impressions + 1 })
+      .eq('id', picked.id)
+  } catch (err) {
+    console.error('Could not count ad impression', err)
+  }
 
   const advertiser = picked.advertiser as unknown as { company_name: string } | null
 
