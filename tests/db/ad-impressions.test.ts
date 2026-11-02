@@ -96,7 +96,16 @@ describe('serve_random_ad (contador de impresiones)', () => {
   it('un anunciante tampoco puede cambiar el contador a mano', async () => {
     await insertAd(A)
     await actAs(db, 'advertiser')
-    await db.query(`update ads set current_impressions = 999999 where id = $1`, [A])
+    // Un anuncio activo ni siquiera se puede editar…
+    await expect(db.query(`update ads set current_impressions = 999999 where id = $1`, [A])).rejects.toThrow(
+      /ya no se puede editar/
+    )
+    // …y en borrador el contador queda fijo
+    await actAs(db, 'sql-editor')
+    await insertAd(B, { status: `'draft'` })
+    await actAs(db, 'advertiser')
+    await db.query(`update ads set current_impressions = 999999 where id = $1`, [B])
     expect(await impressions(A)).toBe(0)
+    expect(await impressions(B)).toBe(0)
   })
 })

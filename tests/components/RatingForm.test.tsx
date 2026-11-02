@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { from, insert, resetMocks, router, updateEq } from '../mocks'
 import { RatingForm } from '@/app/(protected)/calificar/[userId]/RatingForm'
@@ -29,15 +29,15 @@ describe('RatingForm (calificación 1 a 7)', () => {
     await userEvent.type(screen.getByPlaceholderText(/Contanos/), '  Muy puntual  ')
     await userEvent.click(screen.getByRole('button', { name: 'Enviar calificación' }))
 
-    expect(from).toHaveBeenCalledWith('ratings')
-    expect(insert).toHaveBeenCalledWith({
+    await waitFor(() => expect(from).toHaveBeenCalledWith('ratings'))
+    await waitFor(() => expect(insert).toHaveBeenCalledWith({
       from_user_id: 'p1',
       to_user_id: 'p2',
       vehicle_id: 'v1',
       rating: 5,
       comment: 'Muy puntual',
-    })
-    expect(router.push).toHaveBeenCalledWith('/solicitudes')
+    }))
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/solicitudes'))
   })
 
   it('muestra error si falla el guardado', async () => {
@@ -54,7 +54,7 @@ describe('RatingForm (calificación 1 a 7)', () => {
     render(<RatingForm {...props} existingRating={4} existingComment="ok" existingRatingId="r1" />)
     await userEvent.click(screen.getByRole('button', { name: '6 estrellas' }))
     await userEvent.click(screen.getByRole('button', { name: 'Actualizar calificación' }))
-    expect(updateEq).toHaveBeenCalledWith('id', 'r1')
-    expect(router.push).toHaveBeenCalledWith('/solicitudes')
+    await waitFor(() => expect(updateEq).toHaveBeenCalledWith('id', 'r1'))
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/solicitudes'))
   })
 })

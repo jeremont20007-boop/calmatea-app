@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card'
 import { Search } from 'lucide-react'
 import { PLATFORM_LABELS, SCHEDULE_LABELS, VEHICLE_TYPE_LABELS, type Vehicle } from '@/types'
 import { AdBanner } from '@/components/ui/AdBanner'
+import { pickRandomAd } from '@/lib/ads'
 
 export default async function VehiculosPage() {
   const supabase = await createClient()
@@ -21,11 +22,16 @@ export default async function VehiculosPage() {
 
   const isPremium = profile?.plan === 'premium'
 
-  const { data: vehicles, error } = await supabase
-    .from('vehicles')
-    .select('id, make, model, year, color, city, revenue_split, platforms, schedule, status, description, vehicle_type, neuquen_only')
-    .eq('status', 'disponible')
-    .order('created_at', { ascending: false })
+  // The ad is picked on the server together with the vehicles so the banner
+  // is in the first paint (no layout jump when it loads).
+  const [{ data: vehicles, error }, initialAd] = await Promise.all([
+    supabase
+      .from('vehicles')
+      .select('id, make, model, year, color, city, revenue_split, platforms, schedule, status, description, vehicle_type, neuquen_only')
+      .eq('status', 'disponible')
+      .order('created_at', { ascending: false }),
+    isPremium ? Promise.resolve(null) : pickRandomAd().catch(() => null),
+  ])
 
   const list = (vehicles ?? []) as unknown as Vehicle[]
 
@@ -42,8 +48,8 @@ export default async function VehiculosPage() {
           </span>
         </div>
 
-        {/* Ad: free users see it on every load; premium only once per 6 hs (client-side) */}
-        {!isPremium && <AdBanner isPremium={false} />}
+        {/* Ad: free users see it on every load; premium users don't see it on this page */}
+        {!isPremium && <AdBanner isPremium={false} initialAd={initialAd} />}
 
         {list.length === 0 && !error && (
           <div className="text-center py-16 space-y-3">

@@ -3,16 +3,15 @@
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { GoogleButton } from '@/components/ui/GoogleButton'
-import type { UserRole } from '@/types'
 
 function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  // El rol inicial puede venir en la URL (?role=propietario desde la home)
+  // Initial role comes from ?role=… (e.g. links from the landing page)
   const [role, setRole] = useState<'conductor' | 'propietario'>(() =>
     searchParams.get('role') === 'propietario' ? 'propietario' : 'conductor'
   )
@@ -26,6 +25,10 @@ function RegisterForm() {
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
+    if (!fullName.trim()) {
+      setError('Ingresá tu nombre completo')
+      return
+    }
     if (password.length < 8) {
       setError('La contraseña debe tener al menos 8 caracteres')
       return
@@ -33,12 +36,12 @@ function RegisterForm() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName, role, city, phone },
+        data: { full_name: fullName.trim(), role, city: city.trim(), phone: phone.trim() },
         emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
       },
     })

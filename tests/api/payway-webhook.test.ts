@@ -90,6 +90,25 @@ describe('Webhook de PayWay (premium)', () => {
     expect(fake.updates).toHaveLength(0)
   })
 
+  it('acepta el formato anterior (?token=secreto) para pagos ya iniciados', async () => {
+    const res = await POST(
+      post(`${APP}/api/payway/webhook?token=secreto-de-prueba-1234567890`, {
+        status: 'approved',
+        metadata: { profile_id: 'perfil-1' },
+      })
+    )
+    expect(res.status).toBe(200)
+    expect(fake.updates).toHaveLength(1)
+  })
+
+  it('rechaza el formato anterior con un token equivocado', async () => {
+    const res = await POST(
+      post(`${APP}/api/payway/webhook?token=adivinando`, { status: 'approved', metadata: { profile_id: 'perfil-1' } })
+    )
+    expect(res.status).toBe(401)
+    expect(fake.updates).toHaveLength(0)
+  })
+
   it('responde error (para que PayWay reintente) si falla la base de datos', async () => {
     fake.failUpdates()
     const res = await POST(post(signedUrl(), { status: 'approved' }))

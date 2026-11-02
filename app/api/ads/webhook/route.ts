@@ -52,6 +52,7 @@ export async function POST(request: Request) {
     .update({
       payment_status: 'paid',
       status: 'pending_review',
+      total_price: expected,
       starts_at: now.toISOString(),
       ends_at: endsAt.toISOString(),
     })

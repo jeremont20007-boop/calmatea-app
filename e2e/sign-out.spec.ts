@@ -25,7 +25,7 @@ test.describe('Cerrar sesión', () => {
     await expect(page).toHaveURL(/\/auth\/login$/)
   })
 
-  test('el publicitario sale y vuelve a la página de publicitarios', async ({ page }) => {
+  test('el publicitario sale y la sesión queda cerrada', async ({ page }) => {
     await page.goto('/auth/publicitario')
     await page.getByRole('button', { name: 'Iniciar sesión' }).click()
     await page.getByLabel('Email').fill('publicidad@example.test')
@@ -35,7 +35,7 @@ test.describe('Cerrar sesión', () => {
     await expect(page.getByRole('banner').getByText('Publicidad de Prueba SRL')).toBeVisible()
 
     await page.getByRole('button', { name: 'Salir' }).click()
-    await expect(page).toHaveURL(/\/auth\/publicitario$/)
+    await expect(page).toHaveURL(/\/auth\/login$/)
 
     await page.goto('/ad-dashboard')
     await expect(page).toHaveURL(/\/auth\/login$/)

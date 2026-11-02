@@ -7,30 +7,35 @@ export async function GET(request: Request) {
   const role = searchParams.get('role')
   const isNew = searchParams.get('new') === '1'
 
-  if (code) {
-    const supabase = await createClient()
-    await supabase.auth.exchangeCodeForSession(code)
+  if (!code) {
+    return NextResponse.redirect(`${origin}/auth/login`)
+  }
 
-    // For new Google sign-ups with an explicit role, update the profile role.
-    // We check created_at < 30s to avoid changing the role of returning users
-    // who might hit this URL with stale params.
-    if (isNew && (role === 'conductor' || role === 'propietario')) {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('created_at')
-          .eq('user_id', user.id)
-          .single()
+  const supabase = await createClient()
+  const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+  if (exchangeError) {
+    return NextResponse.redirect(`${origin}/auth/login?error=auth`)
+  }
 
-        if (profile) {
-          const ageSeconds = (Date.now() - new Date(profile.created_at).getTime()) / 1000
-          if (ageSeconds < 30) {
-            await supabase
-              .from('profiles')
-              .update({ role })
-              .eq('user_id', user.id)
-          }
+  // For new Google sign-ups with an explicit role, update the profile role.
+  // We check created_at < 30s to avoid changing the role of returning users
+  // who might hit this URL with stale params.
+  if (isNew && (role === 'conductor' || role === 'propietario')) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('created_at')
+        .eq('user_id', user.id)
+        .single()
+
+      if (profile) {
+        const ageSeconds = (Date.now() - new Date(profile.created_at).getTime()) / 1000
+        if (ageSeconds < 30) {
+          await supabase
+            .from('profiles')
+            .update({ role })
+            .eq('user_id', user.id)
         }
       }
     }

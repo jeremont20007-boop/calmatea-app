@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card'
 import { Plus, Search, Bell, Car, TrendingUp } from 'lucide-react'
 import { PLATFORM_LABELS, SCHEDULE_LABELS, type Vehicle, type Application } from '@/types'
 import { AdBanner } from '@/components/ui/AdBanner'
+import { pickRandomAd, type PublicAd } from '@/lib/ads'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -23,6 +24,13 @@ export default async function DashboardPage() {
 
   const firstName = profile.full_name?.split(' ')[0] || 'Bienvenido'
   const isPropietario = profile.role === 'propietario'
+  const isPremium = profile.plan === 'premium'
+
+  // Free users always see an ad: pick it on the server (in parallel with the
+  // other queries) so the banner is part of the first paint instead of popping
+  // in later and pushing the content down. Premium users keep the client-side
+  // 6 h cooldown logic inside <AdBanner>.
+  const adPromise: Promise<PublicAd | null> | undefined = isPremium ? undefined : pickRandomAd().catch(() => null)
 
   if (isPropietario) {
     const { data: vehicles } = await supabase
@@ -42,29 +50,33 @@ export default async function DashboardPage() {
       firstName={firstName}
       vehicles={(vehicles ?? []) as unknown as Vehicle[]}
       pendingCount={pendingCount ?? 0}
-      isPremium={profile.plan === 'premium'}
+      isPremium={isPremium}
+      initialAd={adPromise ? await adPromise : undefined}
     />
   }
 
-  const { data: availableVehicles } = await supabase
-    .from('vehicles')
-    .select('id, make, model, year, city, revenue_split, platforms, schedule, status')
-    .eq('status', 'disponible')
-    .order('created_at', { ascending: false })
-    .limit(4)
-
-  const { data: myApplications } = await supabase
-    .from('applications')
-    .select('id, status, vehicle_id, vehicle:vehicles(make, model, year, city, revenue_split)')
-    .eq('driver_id', profile.id)
-    .order('created_at', { ascending: false })
-    .limit(3)
+  const [{ data: availableVehicles }, { data: myApplications }, initialAd] = await Promise.all([
+    supabase
+      .from('vehicles')
+      .select('id, make, model, year, city, revenue_split, platforms, schedule, status')
+      .eq('status', 'disponible')
+      .order('created_at', { ascending: false })
+      .limit(4),
+    supabase
+      .from('applications')
+      .select('id, status, vehicle_id, vehicle:vehicles(make, model, year, city, revenue_split)')
+      .eq('driver_id', profile.id)
+      .order('created_at', { ascending: false })
+      .limit(3),
+    adPromise,
+  ])
 
   return <ConductorDashboard
     firstName={firstName}
     vehicles={(availableVehicles ?? []) as unknown as Vehicle[]}
     applications={(myApplications ?? []) as unknown as Application[]}
-    isPremium={profile.plan === 'premium'}
+    isPremium={isPremium}
+    initialAd={initialAd}
   />
 }
 
@@ -73,11 +85,13 @@ function PropietarioDashboard({
   vehicles,
   pendingCount,
   isPremium,
+  initialAd,
 }: {
   firstName: string
   vehicles: Vehicle[]
   pendingCount: number
   isPremium: boolean
+  initialAd?: PublicAd | null
 }) {
   return (
     <div className="flex flex-col">
@@ -89,7 +103,7 @@ function PropietarioDashboard({
           <p className="text-calm-200 text-sm mt-1">Gestiona tus vehículos y conductores</p>
         </div>
 
-        <AdBanner isPremium={isPremium} />
+        <AdBanner isPremium={isPremium} initialAd={initialAd} />
 
         {/* Quick stats */}
         <div className="grid grid-cols-2 gap-3">
@@ -133,7 +147,7 @@ function PropietarioDashboard({
           <div>
             <div className="flex items-center justify-between mb-3 px-1">
               <h3 className="text-base font-extrabold text-calm-700">Mis vehículos</h3>
-              <Link href="/mis-vehiculos" className="text-xs text-calm-500 font-semibold hover:underline">Ver todos →</Link>
+              <Link href="/mis-vehiculos" className="tap-target text-xs text-calm-500 font-semibold hover:underline">Ver todos →</Link>
             </div>
             <div className="space-y-3">
               {vehicles.map(v => (
@@ -163,11 +177,13 @@ function ConductorDashboard({
   vehicles,
   applications,
   isPremium,
+  initialAd,
 }: {
   firstName: string
   vehicles: Vehicle[]
   applications: Application[]
   isPremium: boolean
+  initialAd?: PublicAd | null
 }) {
   return (
     <div className="flex flex-col">
@@ -179,7 +195,7 @@ function ConductorDashboard({
           <p className="text-calm-200 text-sm mt-1">Encuentra tu próximo vehículo</p>
         </div>
 
-        <AdBanner isPremium={isPremium} />
+        <AdBanner isPremium={isPremium} initialAd={initialAd} />
 
         {/* CTA */}
         <Link href="/vehiculos">
@@ -202,7 +218,7 @@ function ConductorDashboard({
           <div>
             <div className="flex items-center justify-between mb-3 px-1">
               <h3 className="text-base font-extrabold text-calm-700">Vehículos disponibles</h3>
-              <Link href="/vehiculos" className="text-xs text-calm-500 font-semibold hover:underline">Ver todos →</Link>
+              <Link href="/vehiculos" className="tap-target text-xs text-calm-500 font-semibold hover:underline">Ver todos →</Link>
             </div>
             <div className="space-y-3">
               {vehicles.map(v => (
@@ -219,7 +235,7 @@ function ConductorDashboard({
           <div>
             <div className="flex items-center justify-between mb-3 px-1">
               <h3 className="text-base font-extrabold text-calm-700">Mis solicitudes</h3>
-              <Link href="/solicitudes" className="text-xs text-calm-500 font-semibold hover:underline">Ver todas →</Link>
+              <Link href="/solicitudes" className="tap-target text-xs text-calm-500 font-semibold hover:underline">Ver todas →</Link>
             </div>
             <div className="space-y-2">
               {applications.map(app => (

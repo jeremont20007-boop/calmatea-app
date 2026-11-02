@@ -1,18 +1,19 @@
 import { createClient } from '@supabase/supabase-js'
 
-/**
- * Cliente de Supabase con la service role key: saltea las políticas RLS.
- *
- * SÓLO para código de servidor que actúa sin un usuario logueado (por ejemplo,
- * webhooks de pago). Nunca importarlo desde un componente de cliente.
- */
+// Server-only Supabase client that uses the service_role key and BYPASSES RLS.
+// Only import this from route handlers / server code that has already verified
+// the caller (e.g. a signed payment webhook). Never import it from a
+// 'use client' component: the key must never reach the browser.
 export function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) {
-    throw new Error('Faltan NEXT_PUBLIC_SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY')
+  if (typeof window !== 'undefined') {
+    throw new Error('createAdminClient must only be used on the server')
   }
-  return createClient(url, key, {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !serviceKey) {
+    throw new Error('Supabase service role credentials are not configured')
+  }
+  return createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
 }

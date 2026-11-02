@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import {
   CREATIVE_TIERS, CREATIVE_DELIVERABLES,
@@ -30,9 +30,8 @@ export default function SolicitarCreatividadPage() {
   const currentTier = CREATIVE_TIERS.find(t => t.tier === selectedTier)!
 
   useEffect(() => {
-    const supabase = createClient()
-
     async function load() {
+      const supabase = await getBrowserClient()
       const [{ data: adData }, { data: { user } }] = await Promise.all([
         supabase.from('ads').select('id, title, status, advertiser_id').eq('id', id).single(),
         supabase.auth.getUser(),
@@ -83,7 +82,7 @@ export default function SolicitarCreatividadPage() {
     setSubmitting(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 

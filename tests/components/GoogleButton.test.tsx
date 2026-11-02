@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { resetMocks, supabaseAuth } from '../mocks'
 import { GoogleButton } from '@/components/ui/GoogleButton'
@@ -14,12 +14,12 @@ describe('GoogleButton', () => {
     render(<GoogleButton />)
     await userEvent.click(screen.getByRole('button', { name: 'Continuar con Google' }))
 
-    expect(supabaseAuth.signInWithOAuth).toHaveBeenCalledWith(
+    await waitFor(() => expect(supabaseAuth.signInWithOAuth).toHaveBeenCalledWith(
       expect.objectContaining({
         provider: 'google',
         options: expect.objectContaining({ redirectTo: `${location.origin}/auth/callback` }),
       })
-    )
+    ))
     expect(screen.getByRole('button', { name: 'Redirigiendo...' })).toBeDisabled()
   })
 

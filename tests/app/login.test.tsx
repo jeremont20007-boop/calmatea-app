@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { resetMocks, router, supabaseAuth } from '../mocks'
 import LoginPage from '@/app/auth/login/page'
@@ -18,11 +18,11 @@ describe('Página de login', () => {
     render(<LoginPage />)
     await fillAndSubmit('juana@example.test', 'clave-123456')
 
-    expect(supabaseAuth.signInWithPassword).toHaveBeenCalledWith({
+    await waitFor(() => expect(supabaseAuth.signInWithPassword).toHaveBeenCalledWith({
       email: 'juana@example.test',
       password: 'clave-123456',
-    })
-    expect(router.push).toHaveBeenCalledWith('/dashboard')
+    }))
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/dashboard'))
   })
 
   it('muestra un error con credenciales incorrectas', async () => {

@@ -1,3 +1,6 @@
+-- NOTA: hay una propuesta de correcciones de seguridad (RLS) en
+-- supabase/propuestas/2026-11-02_endurecer_rls.sql — leer antes de usar este archivo.
+
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
@@ -483,10 +486,12 @@ create policy "Admins can manage creative requests" on creative_requests
 --   * el precio se calcule SIEMPRE en la base según la duración elegida,
 --   * un anuncio nuevo arranque siempre como borrador y pendiente de pago,
 --   * al editar sólo pueda cambiar el contenido (título, textos, imágenes, link),
+--     y sólo mientras el anuncio está en borrador o fue rechazado (igual que la app),
 --   * no pueda cambiar la duración de un anuncio ya pagado.
 -- El webhook de pagos (service role) y los admins pueden cambiar todo.
 --
--- Es seguro correrlo más de una vez.
+-- Es seguro correrlo más de una vez. Reemplaza al trigger de anuncios de
+-- supabase/propuestas/2026-11-02_endurecer_rls.sql (si ya se había corrido).
 -- IMPORTANTE: si cambiás precios, actualizalos también en types/index.ts
 -- (AD_PRICE_PER_DAY_ARS, AD_DURATION_OPTIONS, CREATIVE_TIERS). Un test lo verifica.
 
@@ -564,6 +569,13 @@ begin
   end if;
 
   -- UPDATE hecho por el anunciante
+  -- El contenido sólo se edita en borrador o si fue rechazado (igual que la app):
+  -- un anuncio aprobado no puede cambiar sin pasar de nuevo por revisión.
+  if old.status not in ('draft', 'rejected') then
+    raise exception 'Este anuncio ya no se puede editar'
+      using errcode = 'check_violation';
+  end if;
+
   if new.duration_days is distinct from old.duration_days then
     if old.payment_status <> 'pending' then
       raise exception 'No se puede cambiar la duración de un anuncio ya pagado'
@@ -591,6 +603,8 @@ end;
 $$;
 
 drop trigger if exists ads_protect_columns on ads;
+-- Versión anterior de este trigger (archivo de propuestas), ya no se usa.
+drop function if exists public.protect_ad_columns();
 create trigger ads_protect_columns
   before insert or update on ads
   for each row execute function public.protect_ads_columns();

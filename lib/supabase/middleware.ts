@@ -29,12 +29,14 @@ export async function updateSession(request: NextRequest) {
   if (!user && !isPublicPath(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
+    url.search = ''
     return NextResponse.redirect(url)
   }
 
   if (user && AUTH_ONLY_PATHS.includes(request.nextUrl.pathname)) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
+    url.search = ''
     return NextResponse.redirect(url)
   }
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { verifyPaywaySignature } from '@/lib/payments/payway'
+import { verifyLegacyPaywayToken, verifyPaywaySignature } from '@/lib/payments/payway'
 import { activatePremium } from '@/lib/payments/premium'
 
 // Aviso de PayWay cuando cambia el estado de un pago de suscripción premium.
@@ -8,10 +8,13 @@ import { activatePremium } from '@/lib/payments/premium'
 // válida el aviso se rechaza, porque cualquiera podría mandar uno falso.
 export async function POST(request: Request) {
   const url = new URL(request.url)
-  const profileId = url.searchParams.get('profile')
+  const signedProfileId = url.searchParams.get('profile')
   const signature = url.searchParams.get('sig')
+  const legacyToken = url.searchParams.get('token')
 
-  if (!profileId || !signature || !verifyPaywaySignature(profileId, signature)) {
+  const signed = !!signedProfileId && !!signature && verifyPaywaySignature(signedProfileId, signature)
+  const legacy = !signed && !!legacyToken && verifyLegacyPaywayToken(legacyToken)
+  if (!signed && !legacy) {
     return NextResponse.json({ ok: false }, { status: 401 })
   }
 
@@ -20,10 +23,18 @@ export async function POST(request: Request) {
 
   if (body.status !== 'approved') return NextResponse.json({ ok: true })
 
-  // Si el aviso trae un perfil, tiene que ser el mismo que firmamos.
   const bodyProfileId = body.metadata?.profile_id
-  if (bodyProfileId && bodyProfileId !== profileId) {
-    return NextResponse.json({ ok: false }, { status: 400 })
+  let profileId: string
+  if (signed) {
+    // Si el aviso trae un perfil, tiene que ser el mismo que firmamos.
+    if (bodyProfileId && bodyProfileId !== signedProfileId) {
+      return NextResponse.json({ ok: false }, { status: 400 })
+    }
+    profileId = signedProfileId!
+  } else {
+    // Formato anterior: el perfil viene en el aviso (que ya probó conocer el secreto).
+    if (typeof bodyProfileId !== 'string' || !bodyProfileId) return NextResponse.json({ ok: true })
+    profileId = bodyProfileId
   }
 
   const supabase = createAdminClient()

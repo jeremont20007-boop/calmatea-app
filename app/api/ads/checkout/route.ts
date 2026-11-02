@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { adId } = await request.json().catch(() => ({}))
-  if (!adId) return NextResponse.json({ error: 'Missing adId' }, { status: 400 })
+  if (typeof adId !== 'string' || !adId) return NextResponse.json({ error: 'Missing adId' }, { status: 400 })
 
   const { data: ad } = await supabase
     .from('ads')

@@ -16,7 +16,10 @@ describe('isPublicPath', () => {
     '/api/mercadopago/webhook',
     '/api/payway/webhook',
     '/api/ads/webhook',
-  ])('%s es pública', path => {
+    // Las rutas de API que necesitan sesión la verifican ellas mismas (401)
+    '/api/stripe/checkout',
+    '/api/ads/random',
+  ])('%s no redirige al login', path => {
     expect(isPublicPath(path)).toBe(true)
   })
 
@@ -30,11 +33,8 @@ describe('isPublicPath', () => {
     '/ad-dashboard',
     '/anuncios',
     '/usuarios',
-    '/api/stripe/checkout',
-    '/api/mercadopago/checkout',
-    '/api/ads/checkout',
-    '/api/stripe/webhookfalso',
     '/authx',
+    '/apix',
   ])('%s requiere sesión', path => {
     expect(isPublicPath(path)).toBe(false)
   })

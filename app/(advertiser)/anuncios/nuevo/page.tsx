@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { AdImageUpload } from '@/components/ui/AdImageUpload'
@@ -10,6 +10,7 @@ import {
   AD_DURATION_OPTIONS, AD_PRICE_PER_DAY_ARS, calcAdPrice,
 } from '@/types'
 import { Info, CreditCard } from 'lucide-react'
+import { isHttpUrl } from '@/lib/utils'
 
 // Mobile slider: 750×300 px (ratio 2.5:1)
 const MOBILE_SPEC = { width: 750, height: 300, maxMB: 2 }
@@ -37,8 +38,8 @@ export default function NuevoAnuncioPage() {
   const selectedOpt = AD_DURATION_OPTIONS.find(o => o.days === durationDays)
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
+    getBrowserClient().then(async supabase => {
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       const { data } = await supabase
         .from('advertisers')
@@ -56,7 +57,11 @@ export default function NuevoAnuncioPage() {
       setError('La imagen móvil (slider) es obligatoria.')
       return
     }
-    if (!targetUrl.startsWith('http')) {
+    if (!title.trim()) {
+      setError('El título es obligatorio.')
+      return
+    }
+    if (!isHttpUrl(targetUrl)) {
       setError('La URL de destino debe comenzar con http:// o https://')
       return
     }
@@ -64,7 +69,7 @@ export default function NuevoAnuncioPage() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/auth/publicitario'); return }
 

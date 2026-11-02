@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { resetMocks, router, setSearchParams, supabaseAuth } from '../mocks'
 import RegisterPage from '@/app/auth/register/page'
@@ -48,15 +48,15 @@ describe('Página de registro', () => {
     await userEvent.type(screen.getByLabelText('Contraseña'), 'clave-segura')
     await userEvent.click(screen.getByRole('button', { name: 'Crear cuenta como propietario' }))
 
-    expect(supabaseAuth.signUp).toHaveBeenCalledWith({
+    await waitFor(() => expect(supabaseAuth.signUp).toHaveBeenCalledWith({
       email: 'maria@example.test',
       password: 'clave-segura',
       options: {
         data: { full_name: 'María García', role: 'propietario', city: 'Neuquén', phone: '+54 299 000 0000' },
         emailRedirectTo: 'http://localhost:3000/auth/callback',
       },
-    })
-    expect(router.push).toHaveBeenCalledWith('/dashboard')
+    }))
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/dashboard'))
   })
 
   it('muestra el error que devuelve Supabase', async () => {

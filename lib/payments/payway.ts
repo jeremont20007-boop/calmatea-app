@@ -30,6 +30,19 @@ export function verifyPaywaySignature(profileId: string, signature: string): boo
   return expected.length === received.length && timingSafeEqual(expected, received)
 }
 
+/**
+ * Formato anterior de la URL de aviso (?token=<secreto>), usado por pagos
+ * iniciados antes de este cambio. Sigue exigiendo el secreto, pero no ata el
+ * aviso a un perfil: se acepta sólo para no dejar sin premium a quien ya pagó.
+ */
+export function verifyLegacyPaywayToken(token: string): boolean {
+  const secret = getSecret()
+  if (!secret) return false
+  const expected = Buffer.from(secret)
+  const received = Buffer.from(token)
+  return expected.length === received.length && timingSafeEqual(expected, received)
+}
+
 export function buildPaywayNotificationUrl(appUrl: string, profileId: string): string {
   const url = new URL('/api/payway/webhook', appUrl)
   url.searchParams.set('profile', profileId)

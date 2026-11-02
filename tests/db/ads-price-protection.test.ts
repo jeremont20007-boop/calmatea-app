@@ -124,6 +124,23 @@ describe('Anunciante editando su anuncio', () => {
     await expect(db.query(`update ads set duration_days = 90 where id = $1`, [AD_ID])).rejects.toThrow(/ya pagado/)
   })
 
+  it('NO puede editar el contenido de un anuncio ya aprobado (tiene que pasar por revisión)', async () => {
+    await as('admin')
+    await db.query(`update ads set status = 'active' where id = $1`, [AD_ID])
+    await as('advertiser')
+    await expect(db.query(`update ads set title = 'Cambiado' where id = $1`, [AD_ID])).rejects.toThrow(
+      /ya no se puede editar/
+    )
+  })
+
+  it('sí puede editar un anuncio rechazado para corregirlo', async () => {
+    await as('admin')
+    await db.query(`update ads set status = 'rejected' where id = $1`, [AD_ID])
+    await as('advertiser')
+    await db.query(`update ads set title = 'Corregido' where id = $1`, [AD_ID])
+    expect((await getAd()).title).toBe('Corregido')
+  })
+
   it('NO puede pasar el anuncio a otro anunciante', async () => {
     const other = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc'
     await as('sql-editor')
