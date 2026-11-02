@@ -1,5 +1,5 @@
 /**
- * Genera los iconos PWA de CalmaTEA usando Canvas API de Node.js
+ * Genera los iconos PWA de VehiLink usando Canvas API de Node.js
  * Ejecutar: node scripts/generate-icons.mjs
  */
 
@@ -57,13 +57,13 @@ function generateIcon(size) {
   ctx.textBaseline = 'middle'
   ctx.fillText('🌊', size / 2, size * 0.42)
 
-  // Texto "CalmaTEA" (solo en iconos grandes)
+  // Texto "VehiLink" (solo en iconos grandes)
   if (size >= 192) {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
     ctx.font = `bold ${size * 0.11}px "Arial", sans-serif`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText('CalmaTEA', size / 2, size * 0.82)
+    ctx.fillText('VehiLink', size / 2, size * 0.82)
   }
 
   return canvas.toBuffer('image/png')

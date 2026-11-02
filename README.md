@@ -4,8 +4,8 @@
 > una app de calma para niños con autismo ("CalmaTEA"). Hoy el código contiene
 > otra aplicación: **VehiLink**, una plataforma que conecta **conductores** con
 > **propietarios de vehículos** (remis, taxi y autos de Uber, Cabify, DiDi, etc.).
-> Todavía quedan restos de CalmaTEA (por ejemplo `SETUP.md`, `public/sw.js` y el
-> dominio por defecto del sitemap). Esta documentación describe lo que hace el
+> Todavía quedan algunos restos de CalmaTEA (el código de Stripe y el nombre del
+> repositorio). Esta documentación describe lo que hace el
 > código **hoy**.
 
 ## ¿Qué es?
@@ -74,8 +74,8 @@ activas**; un propietario puede publicar **1 vehículo**.
    Abrí `.env.local` y completá los valores. Qué es cada uno y de dónde
    sacarlo está en [`docs/VARIABLES.md`](docs/VARIABLES.md). Como mínimo
    necesitás las tres de Supabase y `NEXT_PUBLIC_APP_URL`.
-   (También existe un asistente, `npm run setup`, pero está desactualizado y no
-   pide las claves de Mercado Pago ni de PayWay.)
+   (También existe un asistente, `npm run setup`, que pide las claves de
+   Supabase, Mercado Pago y PayWay y arma el archivo por vos.)
 5. **Prepará la base de datos** (solo la primera vez): en Supabase → *SQL
    Editor*, pegá el contenido de `supabase/schema.sql` y ejecutalo. Después
    ejecutá también `supabase/propuestas/2026-11-02_endurecer_rls.sql`, que
@@ -129,7 +129,6 @@ tests unitarios, build y tests end-to-end.
   cómo cambiar textos, login, datos, publicación, qué hacer si algo se rompe).
 - [`docs/VARIABLES.md`](docs/VARIABLES.md): variables de entorno.
 - [`docs/GLOSARIO.md`](docs/GLOSARIO.md): glosario de términos técnicos.
-- `SETUP.md`: guía vieja de la época CalmaTEA (parcialmente desactualizada).
 
 ## Estructura de carpetas
 

@@ -49,20 +49,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Stats */}
-        <section className="grid grid-cols-3 gap-4">
-          {[
-            { value: '2,400+', label: 'Vehículos activos' },
-            { value: '8,900+', label: 'Conductores registrados' },
-            { value: '95%', label: 'Acuerdos exitosos' },
-          ].map(s => (
-            <div key={s.label} className="bg-white rounded-2xl p-4 text-center border border-calm-100 shadow-sm">
-              <p className="text-2xl font-extrabold text-calm-500">{s.value}</p>
-              <p className="text-xs text-calm-500 mt-1 font-semibold">{s.label}</p>
-            </div>
-          ))}
-        </section>
-
         {/* How it works */}
         <section className="space-y-6">
           <h2 className="text-2xl font-extrabold text-calm-800 text-center">¿Cómo funciona?</h2>

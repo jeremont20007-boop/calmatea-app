@@ -297,15 +297,11 @@ Lo que sigue pendiente:
 3. **Los anunciantes también reciben una fila en `profiles`** como
    "conductor", porque `handle_new_user` se ejecuta con todo registro nuevo
    (también en la versión del archivo de propuestas).
-4. **Restos de CalmaTEA:** `SETUP.md`, `scripts/setup-env.mjs` y el dominio
-   por defecto de `app/sitemap.xml/route.ts` (`calmatea.app`) siguen hablando
-   de CalmaTEA.
-5. **`vercel.json` usa referencias `@nombre`** (los viejos "Vercel Secrets",
-   ya discontinuados) y no incluye las variables de Mercado Pago ni PayWay.
-   Lo recomendable es cargar las variables en el panel de Vercel y quitar ese
-   bloque `env`.
-6. **Los números de la portada son inventados** (2.400 vehículos, 8.900
-   conductores, 95 %). Conviene cambiarlos o quitarlos antes de lanzar.
+4. **Restos de CalmaTEA:** queda el código de Stripe (`app/api/stripe/*`,
+   `app/api/stripe-portal`), que ninguna pantalla usa.
+5. **Cargar las variables en Vercel.** `vercel.json` ya no declara variables:
+   hay que cargarlas todas a mano en el panel de Vercel (ver
+   `docs/VARIABLES.md`).
 
 ---
 
