@@ -2,26 +2,27 @@
 
 import { useState, useEffect } from 'react'
 import { X, Megaphone } from 'lucide-react'
-
-interface AdData {
-  id: string
-  title: string
-  description?: string
-  mobile_image_url?: string
-  desktop_image_url?: string
-  target_url: string
-  cta_text: string
-  advertiser_name?: string
-}
+import { getImageProps } from 'next/image'
+import { canOptimizeImage } from '@/lib/images'
+import type { PublicAd as AdData } from '@/lib/ads'
 
 const PREMIUM_COOLDOWN_MS = 6 * 60 * 60 * 1000
 const LS_KEY = 'vl_ad_ts'
 
-export function AdBanner({ isPremium = false }: { isPremium?: boolean }) {
-  const [ad, setAd] = useState<AdData | null>(null)
+export function AdBanner({
+  isPremium = false,
+  initialAd,
+}: {
+  isPremium?: boolean
+  /** Ad already picked on the server. When provided (even as null) no client fetch is made. */
+  initialAd?: AdData | null
+}) {
+  const [ad, setAd] = useState<AdData | null>(initialAd ?? null)
   const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
+    if (initialAd !== undefined) return
+
     if (isPremium) {
       const last = localStorage.getItem(LS_KEY)
       if (last && Date.now() - parseInt(last) < PREMIUM_COOLDOWN_MS) return
@@ -36,7 +37,7 @@ export function AdBanner({ isPremium = false }: { isPremium?: boolean }) {
         }
       })
       .catch(() => {})
-  }, [isPremium])
+  }, [isPremium, initialAd])
 
   if (!ad || dismissed) return null
 
@@ -51,32 +52,22 @@ export function AdBanner({ isPremium = false }: { isPremium?: boolean }) {
         </span>
         <button
           onClick={() => setDismissed(true)}
-          className="text-white/70 hover:text-white transition-colors"
+          className="p-1.5 -m-1.5 text-white/70 hover:text-white transition-colors"
           aria-label="Cerrar anuncio"
         >
           <X size={12} />
         </button>
       </div>
 
-      {/* Responsive image */}
+      {/* Responsive image (optimized + resized by next/image for each screen) */}
       {hasImage && (
         <a href={ad.target_url} target="_blank" rel="noopener noreferrer" className="block">
-          <picture>
-            {ad.desktop_image_url && (
-              <source media="(min-width: 640px)" srcSet={ad.desktop_image_url} />
-            )}
-            <img
-              src={ad.mobile_image_url ?? ad.desktop_image_url ?? ''}
-              alt={ad.title}
-              className="w-full object-cover"
-              style={{ aspectRatio: ad.mobile_image_url ? '750/300' : '1200/400' }}
-            />
-          </picture>
+          <AdPicture ad={ad} />
         </a>
       )}
 
       {/* Content row */}
-      <div className={`flex gap-3 items-start p-3 ${hasImage ? '' : 'bg-gradient-to-br from-calm-50 to-white'}`}>
+      <div className={`flex gap-3 items-start p-3 ${hasImage ? '' : 'pt-8 bg-gradient-to-br from-calm-50 to-white'}`}>
         {!hasImage && (
           <div className="w-12 h-12 rounded-xl bg-calm-100 flex items-center justify-center shrink-0">
             <Megaphone size={20} className="text-calm-400" />
@@ -103,5 +94,40 @@ export function AdBanner({ isPremium = false }: { isPremium?: boolean }) {
         </a>
       </div>
     </div>
+  )
+}
+
+function AdPicture({ ad }: { ad: AdData }) {
+  const mobileSrc = ad.mobile_image_url ?? ad.desktop_image_url ?? ''
+  const common = { alt: ad.title, sizes: '(min-width: 640px) 512px, 100vw', loading: 'eager' as const }
+
+  const desktop = ad.desktop_image_url
+    ? getImageProps({
+        ...common,
+        src: ad.desktop_image_url,
+        width: 1200,
+        height: 400,
+        unoptimized: !canOptimizeImage(ad.desktop_image_url),
+      }).props.srcSet ?? ad.desktop_image_url
+    : null
+
+  const { props } = getImageProps({
+    ...common,
+    src: mobileSrc,
+    width: ad.mobile_image_url ? 750 : 1200,
+    height: ad.mobile_image_url ? 300 : 400,
+    unoptimized: !canOptimizeImage(mobileSrc),
+  })
+
+  return (
+    <picture>
+      {desktop && <source media="(min-width: 640px)" srcSet={desktop} sizes={common.sizes} />}
+      {/* eslint-disable-next-line jsx-a11y/alt-text -- alt comes from getImageProps */}
+      <img
+        {...props}
+        className="w-full object-cover"
+        style={{ aspectRatio: ad.mobile_image_url ? '750/300' : '1200/400', height: 'auto' }}
+      />
+    </picture>
   )
 }

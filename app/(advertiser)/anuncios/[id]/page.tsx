@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { AdImageUpload } from '@/components/ui/AdImageUpload'
-import { AD_STATUS_LABELS, AD_STATUS_COLORS, calcAdPrice, type Ad } from '@/types'
+import { AD_STATUS_LABELS, AD_STATUS_COLORS, type Ad } from '@/types'
+import { isHttpUrl } from '@/lib/utils'
 import { CreditCard, CheckCircle, Eye, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
@@ -35,9 +36,8 @@ export default function EditarAnuncioPage() {
   const [ctaText, setCtaText] = useState('')
 
   useEffect(() => {
-    const supabase = createClient()
-
     async function load() {
+      const supabase = await getBrowserClient()
       const [{ data: adData }, { data: { user } }] = await Promise.all([
         supabase.from('ads').select('*').eq('id', id).single(),
         supabase.auth.getUser(),
@@ -76,10 +76,15 @@ export default function EditarAnuncioPage() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
     if (!mobileImageUrl) { setError('La imagen móvil es obligatoria.'); return }
+    if (!title.trim()) { setError('El título es obligatorio.'); return }
+    if (!isHttpUrl(targetUrl)) {
+      setError('La URL de destino debe comenzar con http:// o https://')
+      return
+    }
     setSaving(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { error: updateError } = await supabase
       .from('ads')
       .update({
@@ -119,7 +124,7 @@ export default function EditarAnuncioPage() {
       return
     }
 
-    window.location.href = url
+    window.location.assign(url)
   }
 
   if (loading) {

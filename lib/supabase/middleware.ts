@@ -25,18 +25,30 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const publicPaths = ['/auth/login', '/auth/register', '/']
-  const isPublic = publicPaths.some(p => request.nextUrl.pathname === p)
+  const { pathname } = request.nextUrl
+
+  // Routes reachable without a session. Everything else requires login.
+  //  - /auth/*: login, registro, registro de publicitarios, callback de OAuth, logout
+  //  - /api/*: each API route checks the session itself and answers 401 (a
+  //    redirect would break payment webhooks, which never carry a session)
+  //  - SEO / PWA files that browsers and crawlers fetch anonymously
+  const publicExact = ['/', '/robots.txt', '/sitemap.xml', '/manifest.json', '/sw.js']
+  const publicPrefixes = ['/auth/', '/api/']
+  const isPublic =
+    publicExact.includes(pathname) ||
+    publicPrefixes.some(prefix => pathname.startsWith(prefix))
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
+    url.search = ''
     return NextResponse.redirect(url)
   }
 
-  if (user && (request.nextUrl.pathname === '/auth/login' || request.nextUrl.pathname === '/auth/register')) {
+  if (user && (pathname === '/auth/login' || pathname === '/auth/register')) {
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
+    url.search = ''
     return NextResponse.redirect(url)
   }
 

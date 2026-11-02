@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Megaphone } from 'lucide-react'
@@ -29,7 +29,7 @@ export default function PublicitarioAuthPage() {
     setError('')
     setInfo('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { data, error: signUpError } = await supabase.auth.signUp({ email, password })
 
     if (signUpError) {
@@ -68,7 +68,7 @@ export default function PublicitarioAuthPage() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
 
     if (loginError) {

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { TopBar } from '@/components/layout/TopBar'
 import { Button } from '@/components/ui/Button'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { TICKET_CATEGORY_LABELS, type TicketCategory, type SupportTicket } from '@/types'
 import { useEffect } from 'react'
 import { MessageSquare, CheckCircle } from 'lucide-react'
@@ -36,7 +36,7 @@ export default function SoportePage() {
 
   useEffect(() => {
     async function load() {
-      const supabase = createClient()
+      const supabase = await getBrowserClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       const { data: profile } = await supabase
@@ -61,7 +61,7 @@ export default function SoportePage() {
     }
     setLoading(true)
     setError('')
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { error: err } = await supabase
       .from('support_tickets')
       .insert({ user_id: profileId, subject: subject.trim(), message: message.trim(), category })

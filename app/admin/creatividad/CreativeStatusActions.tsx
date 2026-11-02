@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import type { CreativeStatus } from '@/types'
 
 interface Props {
@@ -29,7 +29,7 @@ export function CreativeStatusActions({ requestId, currentStatus }: Props) {
 
   async function updateStatus(newStatus: CreativeStatus) {
     setLoading(newStatus)
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     await supabase
       .from('creative_requests')
       .update({ status: newStatus, updated_at: new Date().toISOString() })

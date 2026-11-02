@@ -26,7 +26,7 @@ secretos. Las demás quedan solo en el servidor.
 |---|---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Dirección del proyecto de Supabase. Sin ella no funciona nada. | Supabase → *Project Settings* → *API* → *Project URL* | No |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave "pública" para que la app hable con Supabase respetando las reglas de seguridad (RLS). | Supabase → *Project Settings* → *API* → clave `anon` / *publishable* | No (pero no la difundas sin necesidad) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clave "maestra" que **saltea todas las reglas de seguridad**. Hoy solo la usa el webhook de Stripe. | Supabase → *Project Settings* → *API* → clave `service_role` / *secret* | **Sí, muy sensible.** Solo en Vercel y `.env.local`, nunca con `NEXT_PUBLIC_`. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clave "maestra" que **saltea todas las reglas de seguridad**. La usan los avisos de pago (Mercado Pago, PayWay, anuncios y Stripe) para activar el Premium o el anuncio. Sin ella, los pagos no se acreditan solos. | Supabase → *Project Settings* → *API* → clave `service_role` / *secret* | **Sí, muy sensible.** Solo en Vercel y `.env.local`, nunca con `NEXT_PUBLIC_`. |
 
 ### Aplicación — obligatoria
 
@@ -50,8 +50,9 @@ la manda en cada pago (`/api/mercadopago/webhook` y `/api/ads/webhook`).
 | `PAYWAY_API_KEY` | Clave para crear sesiones de pago. | Panel / contrato de PayWay | **Sí** |
 | `PAYWAY_SITE_ID` | Identificador del comercio en PayWay. | Panel de PayWay | No |
 | `PAYWAY_TEMPLATE_ID` | Plantilla del formulario de pago. | Panel de PayWay | No |
+| `PAYWAY_WEBHOOK_SECRET` | Contraseña que la app agrega a la dirección de aviso de pago, para comprobar que el aviso es legítimo. **Sin ella, el pago con PayWay queda desactivado.** | No viene de PayWay: la inventás vos (un texto largo y al azar, por ejemplo de 40 letras y números). | **Sí** |
 
-Si no se usan, el botón "Pagar con PayWay" va a mostrar un error.
+Si estas variables no están cargadas, el botón "Pagar con PayWay" va a mostrar un error.
 
 ### Stripe — heredado, hoy sin uso desde la interfaz
 
@@ -61,7 +62,7 @@ siguen existiendo.
 
 | Nombre | Para qué sirve | De dónde se saca | ¿Secreta? |
 |---|---|---|---|
-| `STRIPE_SECRET_KEY` | Clave privada de Stripe. Se lee al cargar `lib/stripe/client.ts`. | Stripe → *Developers* → *API keys* | **Sí** |
+| `STRIPE_SECRET_KEY` | Clave privada de Stripe. Solo se lee cuando se usa una ruta de Stripe; el build funciona sin ella. | Stripe → *Developers* → *API keys* | **Sí** |
 | `STRIPE_WEBHOOK_SECRET` | Verificar que los avisos vienen de Stripe. | Stripe → *Developers* → *Webhooks* → *Signing secret* | **Sí** |
 | `STRIPE_PREMIUM_PRICE_ID` | Identificador del precio del plan (`price_...`). | Stripe → *Products* | No |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clave pública de Stripe. **No se usa en el código actual.** | Stripe → *Developers* → *API keys* | No |

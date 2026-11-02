@@ -39,9 +39,11 @@ export default async function AdvertiserLayout({ children }: { children: React.R
               En revisión
             </span>
           )}
-          <Link href="/auth/login" className="text-xs text-calm-300 hover:text-white transition-colors">
-            Salir
-          </Link>
+          <form action="/auth/signout" method="post">
+            <button type="submit" className="tap-target px-2 -mx-2 text-xs text-calm-300 hover:text-white transition-colors">
+              Salir
+            </button>
+          </form>
         </div>
       </header>
 

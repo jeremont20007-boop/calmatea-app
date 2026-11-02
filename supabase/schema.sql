@@ -1,3 +1,6 @@
+-- NOTA: hay una propuesta de correcciones de seguridad (RLS) en
+-- supabase/propuestas/2026-11-02_endurecer_rls.sql — leer antes de usar este archivo.
+
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 

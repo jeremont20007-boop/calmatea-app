@@ -78,14 +78,14 @@ aprueba. Recién ahí se muestra en la app.
 | Anuncios | Aprobar, rechazar o pausar anuncios. |
 | Creatividad | Pedidos de diseño de anuncios y su estado (pendiente, en producción, entregado). |
 
-> ⚠️ Hoy el panel de administración **no funciona** por un error en cómo
-> están armadas las carpetas. Ver [Problemas conocidos](#8-problemas-conocidos).
+El panel está en `/admin/dashboard`. Si un administrador entra a `/dashboard`,
+la app lo lleva sola al panel.
 
 **Cómo hacer administrador a alguien:** en Supabase → *Table Editor* → tabla
-`profiles`, buscá a la persona y cambiá la columna `role` a `admin`. Antes,
-una sola vez, hay que permitir ese valor ejecutando en el *SQL Editor* las
-líneas que están comentadas en `supabase/schema.sql` bajo el título
-"ADMIN ROLE".
+`profiles`, buscá a la persona y cambiá la columna `role` a `admin`. Para que
+la base acepte ese valor, antes tiene que estar aplicado el archivo
+`supabase/propuestas/2026-11-02_endurecer_rls.sql` (ver sección 5). Con ese
+archivo aplicado, además, nadie puede ponerse `admin` a sí mismo desde la app.
 
 ---
 
@@ -114,7 +114,7 @@ La forma más simple, sin instalar nada:
 | Íconos de la app | `public/icons/icon-192.png` e `icon-512.png` (reemplazar por imágenes del mismo tamaño) |
 | Ícono de la pestaña del navegador | `app/favicon.ico` |
 | Colores generales (la familia de azules "calm", verde, amarillo) | `app/globals.css`, al principio |
-| Precio del plan Premium | Está repetido en **cuatro** lugares; hay que cambiarlo en todos: `app/(protected)/subscription/page.tsx`, `app/(protected)/subscription/CheckoutButton.tsx`, `app/api/mercadopago/checkout/route.ts`, `app/api/payway/checkout/route.ts` |
+| Precio del plan Premium | El precio que se **cobra** está en `lib/payments.ts`. El precio que se **muestra** está escrito aparte en `app/(protected)/subscription/page.tsx` y `app/(protected)/subscription/CheckoutButton.tsx`. Hay que cambiar los tres para que coincidan. |
 | Beneficios del plan gratis y Premium | `app/(protected)/subscription/page.tsx` |
 | Precio por día de los anuncios y descuentos por duración | `types/index.ts` (`AD_PRICE_PER_DAY_ARS`, `AD_DURATION_OPTIONS`) |
 | Planes de "creatividad" (precios y entregables) | `types/index.ts` (`CREATIVE_TIERS`, `CREATIVE_DELIVERABLES`) |
@@ -147,7 +147,10 @@ El login lo maneja **Supabase Auth**. La app nunca ve ni guarda contraseñas.
   empresa en la tabla `advertisers` con estado "pendiente" hasta que un
   administrador aprueba su primer anuncio.
 - **Quién puede ver qué:** el archivo `proxy.ts` revisa en cada visita si hay
-  sesión. Si no la hay y la página no es pública, manda al login. Si ya hay
+  sesión. Si no la hay y la página no es pública, manda al login. Son
+  públicas la portada, todo lo que empieza con `/auth/` y las rutas `/api/`
+  (cada una de esas revisa la sesión por su cuenta; así los avisos de pago de
+  Mercado Pago y PayWay pueden llegar). Si ya hay
   sesión y se entra al login, manda al inicio. Además cada sección revisa el
   rol (por ejemplo, solo propietarios pueden publicar autos).
 - **Olvidé mi contraseña:** hoy la app no tiene esa pantalla. Se puede
@@ -179,6 +182,15 @@ En Supabase → *Authentication* → *URL Configuration* hay que tener:
 
 La estructura completa está en `supabase/schema.sql`.
 
+**Importante:** además de `schema.sql` existe
+`supabase/propuestas/2026-11-02_endurecer_rls.sql`, con correcciones de
+seguridad que **no se aplican solas**. Según sus notas, con `schema.sql`
+solo, las consultas de los usuarios logueados fallan con un error
+*"infinite recursion detected in policy"*, y además cualquiera podría
+ponerse Premium o administrador. Para aplicarlo: hacé una copia de
+seguridad, pegalo en Supabase → *SQL Editor* → *Run*, y probá registro,
+login, publicar, postularse, subir documentos y pagar.
+
 ### Archivos (Storage)
 
 | Bucket | Qué guarda | Tipo |
@@ -194,7 +206,12 @@ Supabase → *Storage* (ver comentarios al final de `supabase/schema.sql`).
 Supabase tiene "reglas de acceso por fila" (RLS): cada usuario solo puede ver
 y cambiar lo suyo. Por ejemplo, un propietario solo ve los documentos de un
 conductor cuando aceptó su solicitud. Estas reglas están en
-`supabase/schema.sql`.
+`supabase/schema.sql` y en el archivo de propuestas mencionado arriba.
+
+Los avisos de pago (webhooks) usan la clave maestra de Supabase
+(`SUPABASE_SERVICE_ROLE_KEY`) para activar el Premium o el anuncio, porque
+llegan sin un usuario logueado. Por eso esa clave tiene que estar cargada en
+Vercel.
 
 **Copias de seguridad:** revisá en Supabase → *Database* → *Backups* qué
 incluye tu plan. Antes de cambios grandes, conviene exportar las tablas.
@@ -240,8 +257,9 @@ cambiás una variable, tenés que volver a publicar (*Deployments* → ⋯ →
    el proyecto no esté **pausado** (los proyectos gratis se pausan tras días
    sin uso; se reactivan con un botón).
 5. **¿Los pagos no activan el Premium?** Revisá en Mercado Pago que el pago
-   esté aprobado. Mientras tanto se puede activar a mano: en Supabase →
-   `profiles`, cambiar `plan` a `premium` para esa persona.
+   esté aprobado y en Vercel que estén cargadas `MP_ACCESS_TOKEN` y
+   `SUPABASE_SERVICE_ROLE_KEY`. Mientras tanto se puede activar a mano: en
+   Supabase → `profiles`, cambiar `plan` a `premium` para esa persona.
 6. **¿Errores raros en una pantalla?** En Vercel → *Logs* aparecen los errores
    del servidor en tiempo real.
 7. **¿Cambié una variable de entorno y se rompió?** Volvé al valor anterior
@@ -253,51 +271,43 @@ cambiás una variable, tenés que volver a publicar (*Deployments* → ⋯ →
 
 ## 8. Problemas conocidos
 
-🛠️ Detectados al revisar el código de la rama principal (noviembre 2026). Hay
-un pull request abierto (#2, "Seguridad: auth, RLS, pagos y webhooks +
-build/lint sin errores") que dice resolver varios; conviene revisarlo.
+🛠️ Estado revisado el 2 de noviembre de 2026, después de unir el PR #6
+("security review"). Ese PR ya arregló: el build que fallaba, el panel de
+administración (ahora en `/admin`), las rutas públicas de login y de avisos de
+pago, los webhooks de Mercado Pago y PayWay, el precio que podía mandar el
+navegador, la ruta `/api/stripe-portal` y el service worker de CalmaTEA.
 
-1. **El build falla, así que Vercel no puede publicar cambios.** El panel de
-   administración está en `app/(admin)/` y la carpeta entre paréntesis no
-   forma parte de la dirección: `app/(admin)/dashboard` y
-   `app/(protected)/dashboard` quedan las dos en `/dashboard`. Next.js lo
-   rechaza con *"You cannot have two parallel pages that resolve to the same
-   path"*. Además, todos los enlaces del panel apuntan a `/admin/...`, que no
-   existe. Solución probable: renombrar `app/(admin)` a `app/admin`.
-2. **Rutas que deberían ser públicas exigen sesión.** `lib/supabase/middleware.ts`
-   solo deja pasar `/`, `/auth/login` y `/auth/register`. Eso bloquea
-   `/auth/callback` (login con Google y confirmación de email),
-   `/auth/publicitario` y los avisos automáticos de pago (`/api/*/webhook`)
-   que mandan Mercado Pago y PayWay.
-3. **Los webhooks de Mercado Pago y PayWay no pueden escribir en la base.**
-   Usan el cliente normal de Supabase sin sesión, y las reglas RLS bloquean la
-   actualización. El Premium/anuncio no se activa solo tras pagar. Además el
-   webhook de PayWay no verifica que el aviso venga realmente de PayWay.
-4. **El precio de Premium con Mercado Pago lo puede mandar el navegador**
-   (`body.price` en `app/api/mercadopago/checkout/route.ts`), por lo que
-   alguien podría pagar menos.
-5. **`/api/stripe-portal` no verifica quién llama.** Recibe cualquier
-   `customerId`. Stripe no se usa desde la interfaz; conviene borrarlo o
-   protegerlo.
-6. **El rol `admin` no está permitido por defecto** en la tabla `profiles`;
-   hay que ejecutar el SQL comentado en `schema.sql` (sección "ADMIN ROLE").
-7. **Los anunciantes también reciben una fila en `profiles`** como
-   "conductor", porque el disparador `handle_new_user` se ejecuta con todo
-   registro nuevo.
-8. **Documentos:** el bucket `documents` debería ser privado, pero el código
-   usa `getPublicUrl`, que solo funciona con buckets públicos. Si es privado,
-   los enlaces a los documentos no abren; si es público, cualquiera con el
-   enlace ve DNI y antecedentes.
-9. **Restos de CalmaTEA:** `public/sw.js` intenta guardar páginas que no
-   existen (`/sounds`, `/emergency`, `/routines`), lo que puede impedir que se
-   instale el modo sin conexión; `SETUP.md`, `scripts/setup-env.mjs` y el
-   dominio por defecto de `app/sitemap.xml/route.ts` siguen hablando de
-   CalmaTEA.
-10. **`vercel.json` usa referencias `@nombre`** (los viejos "Vercel Secrets",
-    ya discontinuados). Lo recomendable es cargar las variables en el panel de
-    Vercel y quitar ese bloque `env`.
-11. **Los números de la portada son inventados** (2.400 vehículos, 8.900
-    conductores, 95 %). Conviene cambiarlos o quitarlos antes de lanzar.
+Lo que sigue pendiente:
+
+1. **Aplicar las correcciones de la base de datos.** El archivo
+   `supabase/propuestas/2026-11-02_endurecer_rls.sql` no se aplica solo. Hasta
+   que alguien lo ejecute en Supabase, siguen abiertos los problemas que
+   describe: errores de "infinite recursion", usuarios que pueden ponerse
+   Premium o admin, el panel de admin sin permiso para ver datos, etc.
+2. **PayWay necesita `PAYWAY_WEBHOOK_SECRET`.** Sin esa variable, el pago con
+   PayWay queda desactivado a propósito. Además, el aviso de PayWay todavía no
+   confirma el pago contra la API de PayWay (hay un TODO en
+   `app/api/payway/webhook/route.ts`).
+3. **Documentos:** el bucket `documents` debería ser privado, pero el código
+   (`components/ui/DocumentUpload.tsx`) usa `getPublicUrl`, que solo funciona
+   con buckets públicos. Si es privado, los enlaces a los documentos no abren.
+   Si es público, cualquiera con el enlace ve DNI y antecedentes.
+4. **Los anunciantes también reciben una fila en `profiles`** como
+   "conductor", porque `handle_new_user` se ejecuta con todo registro nuevo
+   (también en la versión del archivo de propuestas).
+5. **El administrador no tiene botón para cerrar sesión.** "← Salir" lleva a
+   `/dashboard`, que lo devuelve al panel. La ruta `/auth/signout` existe,
+   pero solo funciona desde un botón (no escribiéndola en el navegador). Hoy
+   la única salida es borrar los datos del sitio en el navegador.
+6. **Restos de CalmaTEA:** `SETUP.md`, `scripts/setup-env.mjs` y el dominio
+   por defecto de `app/sitemap.xml/route.ts` (`calmatea.app`) siguen hablando
+   de CalmaTEA.
+7. **`vercel.json` usa referencias `@nombre`** (los viejos "Vercel Secrets",
+   ya discontinuados) y no incluye las variables de Mercado Pago ni PayWay.
+   Lo recomendable es cargar las variables en el panel de Vercel y quitar ese
+   bloque `env`.
+8. **Los números de la portada son inventados** (2.400 vehículos, 8.900
+   conductores, 95 %). Conviene cambiarlos o quitarlos antes de lanzar.
 
 ---
 
@@ -310,13 +320,22 @@ build/lint sin errores") que dice resolver varios; conviene revisarlo.
   `lib/supabase/middleware.ts` (sesión y redirecciones desde `proxy.ts`).
 - Los tipos y constantes de negocio viven en `types/index.ts`.
 - Grupos de rutas: `(protected)` usa `BottomNav` según rol; `(advertiser)`
-  requiere fila en `advertisers`; `(admin)` requiere `role = 'admin'`.
+  requiere fila en `advertisers`. El panel es la carpeta normal `app/admin`
+  (no un grupo con paréntesis) y requiere `role = 'admin'`.
+- El SDK de Supabase en el navegador se carga bajo demanda
+  (`lib/supabase/lazy-client.ts`) para que la app cargue más rápido en
+  celulares.
 - Pagos: `app/api/mercadopago/*`, `app/api/payway/*`, `app/api/ads/*`
-  (Mercado Pago para anuncios), `app/api/stripe/*` (heredado).
+  (Mercado Pago para anuncios), `app/api/stripe/*` (heredado). Precios de
+  Premium del lado del servidor en `lib/payments.ts`. Los webhooks escriben
+  con `lib/supabase/admin.ts` (service role, solo servidor).
+- Stripe se crea recién al usarse (`getStripe()` en `lib/stripe/client.ts`),
+  así que el build no necesita sus claves.
 - Anuncios: `GET /api/ads/random` elige un anuncio activo al azar y suma una
   impresión; `components/ui/AdBanner.tsx` lo muestra (a usuarios Premium como
   máximo una vez cada 6 horas).
 - No hay tests automatizados. Antes de publicar: `npm run lint`,
   `npm run typecheck`, `npm run build`.
-- Cambios en la base: agregarlos a `supabase/schema.sql` y ejecutarlos a mano
-  en el SQL Editor (no hay sistema de migraciones).
+- Cambios en la base: agregarlos a `supabase/schema.sql` (o como archivo en
+  `supabase/propuestas/`) y ejecutarlos a mano en el SQL Editor. No hay
+  sistema de migraciones.

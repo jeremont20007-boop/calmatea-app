@@ -52,7 +52,7 @@ export default async function MisVehiculosPage() {
         showBack
         backHref="/dashboard"
         rightAction={
-          <Link href="/vehiculos/nuevo" className="flex items-center justify-center w-10 h-10 rounded-xl bg-calm-500 text-white hover:bg-calm-600 transition-colors">
+          <Link href="/vehiculos/nuevo" aria-label="Publicar vehículo" className="flex items-center justify-center w-10 h-10 rounded-xl bg-calm-500 text-white hover:bg-calm-600 transition-colors">
             <Plus size={20} />
           </Link>
         }
@@ -108,12 +108,12 @@ export default async function MisVehiculosPage() {
                 </p>
 
                 {/* Actions row */}
-                <div className="flex items-center gap-3 pt-2 border-t border-calm-100">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-2 border-t border-calm-100">
                   <VehicleStatusToggle vehicleId={v.id} currentStatus={v.status} />
 
                   <Link
                     href={`/solicitudes?vehiculo=${v.id}`}
-                    className="flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors relative"
+                    className="tap-target flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors relative"
                   >
                     <Users size={16} />
                     Solicitudes
@@ -126,7 +126,7 @@ export default async function MisVehiculosPage() {
 
                   <Link
                     href={`/mis-vehiculos/documentos/${v.id}`}
-                    className="flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors"
+                    className="tap-target flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors"
                   >
                     <FileText size={16} />
                     Documentos
@@ -134,7 +134,7 @@ export default async function MisVehiculosPage() {
 
                   <Link
                     href={`/vehiculos/${v.id}/editar`}
-                    className="flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors"
+                    className="tap-target flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors"
                   >
                     <Pencil size={16} />
                     Editar

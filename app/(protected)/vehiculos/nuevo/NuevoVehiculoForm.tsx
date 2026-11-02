@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { TopBar } from '@/components/layout/TopBar'
@@ -112,7 +112,7 @@ export function NuevoVehiculoForm() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/auth/login'); return }
 
@@ -405,7 +405,7 @@ export function NuevoVehiculoForm() {
         </Button>
 
         <p className="text-xs text-calm-400 text-center px-4">
-          Después de publicar podrás subir los documentos del vehículo desde "Mis Vehículos".
+          Después de publicar podrás subir los documentos del vehículo desde &quot;Mis Vehículos&quot;.
         </p>
       </form>
     </div>

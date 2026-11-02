@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { getBrowserClient } from '@/lib/supabase/lazy-client'
 import { Button } from '@/components/ui/Button'
 
 interface ApplicationActionsProps {
@@ -17,7 +17,7 @@ export function ApplicationActions({ applicationId }: ApplicationActionsProps) {
 
   async function updateStatus(status: 'aceptada' | 'rechazada') {
     setLoading(status === 'aceptada' ? 'accept' : 'reject')
-    const supabase = createClient()
+    const supabase = await getBrowserClient()
     await supabase
       .from('applications')
       .update({ status, owner_response: response.trim() || null })
@@ -40,7 +40,7 @@ export function ApplicationActions({ applicationId }: ApplicationActionsProps) {
       <div className="flex gap-2">
         <button
           onClick={() => setShowResponse(!showResponse)}
-          className="text-xs text-calm-400 hover:text-calm-600 font-semibold transition-colors"
+          className="tap-target text-xs text-calm-400 hover:text-calm-600 font-semibold transition-colors"
         >
           {showResponse ? 'Ocultar mensaje' : '+ Agregar mensaje'}
         </button>

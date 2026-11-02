@@ -74,12 +74,15 @@ activas**; un propietario puede publicar **1 vehículo**.
    Abrí `.env.local` y completá los valores. Qué es cada uno y de dónde
    sacarlo está en [`docs/VARIABLES.md`](docs/VARIABLES.md). Como mínimo
    necesitás las tres de Supabase y `NEXT_PUBLIC_APP_URL`.
-   (También existe un asistente: `npm run setup`, pero está desactualizado y no
+   (También existe un asistente, `npm run setup`, pero está desactualizado y no
    pide las claves de Mercado Pago ni de PayWay.)
 5. **Prepará la base de datos** (solo la primera vez): en Supabase → *SQL
-   Editor*, pegá el contenido de `supabase/schema.sql` y ejecutalo. Además
-   creá dos "buckets" en *Storage*: `documents` y `ads-media` (este último
-   público). Detalles en [`docs/MANUAL.md`](docs/MANUAL.md).
+   Editor*, pegá el contenido de `supabase/schema.sql` y ejecutalo. Después
+   ejecutá también `supabase/propuestas/2026-11-02_endurecer_rls.sql`, que
+   corrige reglas de seguridad (sin él, los usuarios logueados reciben
+   errores). Además creá dos "buckets" en *Storage*: `documents` y
+   `ads-media` (este último público). Detalles en
+   [`docs/MANUAL.md`](docs/MANUAL.md).
 6. **Arrancá la app:**
    ```bash
    npm run dev
@@ -96,10 +99,6 @@ Otros comandos útiles:
 | `npm run typecheck` | Revisa errores de tipos de TypeScript. |
 | `npm run icons` | Regenera los íconos de `public/icons/`. |
 
-> ⚠️ **Problema conocido:** hoy `npm run build` falla con el error *"You
-> cannot have two parallel pages that resolve to the same path"*. Lo explica la
-> sección "Problemas conocidos" del manual. Mientras eso no se arregle, Vercel
-> no puede publicar versiones nuevas.
 
 ## Documentación
 
@@ -116,13 +115,15 @@ app/                  Páginas y rutas del sitio
   page.tsx            Página de inicio (landing)
   auth/               Login, registro, registro de anunciantes y callback
   (protected)/        Páginas para conductores y propietarios logueados
-  (admin)/            Panel de administración
+  admin/              Panel de administración (direcciones /admin/...)
   (advertiser)/       Portal de anunciantes
   api/                Rutas internas: pagos, webhooks y anuncios
 components/           Piezas visuales reutilizables (botones, barra inferior…)
-lib/                  Conexión con Supabase y Stripe, utilidades
+lib/                  Conexión con Supabase y Stripe, precios de Premium
+                      (payments.ts), utilidades
 types/index.ts        Tipos de datos, textos de etiquetas, precios y cláusula legal
 supabase/schema.sql   Definición de la base de datos
+supabase/propuestas/  Correcciones de seguridad para aplicar a mano
 public/               Imágenes, íconos, manifest y service worker
 proxy.ts              Controla quién puede entrar a cada página (antes "middleware")
 ```
