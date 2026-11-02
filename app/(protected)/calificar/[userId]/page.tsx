@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
 import { Card } from '@/components/ui/Card'
 import type { Profile, Rating } from '@/types'
 import { RatingForm } from './RatingForm'
+
+export const metadata: Metadata = {
+  title: 'Calificar usuario',
+  description: 'Calificá del 1 al 7 a la persona con la que trabajaste a través de VehiLink y dejá un comentario sobre tu experiencia.',
+}
 
 export default async function CalificarPage({
   params,
@@ -98,9 +104,9 @@ export default async function CalificarPage({
         <TopBar title="Calificar" showBack backHref="/solicitudes" />
         <div className="p-4">
           <Card className="text-center py-8">
-            <p className="text-4xl mb-3">🔒</p>
-            <p className="font-extrabold text-calm-700">No podés calificar a este usuario</p>
-            <p className="text-sm text-calm-400 mt-1">
+            <p className="text-4xl mb-3" aria-hidden="true">🔒</p>
+            <h2 className="font-extrabold text-calm-700">No podés calificar a este usuario</h2>
+            <p className="text-sm text-calm-500 mt-1">
               Solo podés calificar a usuarios con los que hayas tenido una relación de trabajo aceptada.
             </p>
           </Card>
@@ -127,7 +133,7 @@ export default async function CalificarPage({
         {/* Target user info */}
         <Card className="bg-calm-50">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-calm-200 flex items-center justify-center text-2xl shrink-0">
+            <div className="w-12 h-12 rounded-full bg-calm-200 flex items-center justify-center text-2xl shrink-0" aria-hidden="true">
               {t.role === 'conductor' ? '🧑‍💼' : '🚗'}
             </div>
             <div>
@@ -149,7 +155,7 @@ export default async function CalificarPage({
           />
         </Card>
 
-        <p className="text-xs text-calm-400 text-center px-4">
+        <p className="text-xs text-calm-500 text-center px-4">
           Las calificaciones son públicas y visibles en el perfil del usuario.
           Solo podés calificar una vez por vehículo.
         </p>

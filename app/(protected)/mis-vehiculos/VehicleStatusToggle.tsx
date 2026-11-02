@@ -38,13 +38,17 @@ export function VehicleStatusToggle({ vehicleId, currentStatus }: VehicleStatusT
   return (
     <div className="relative">
       <button
+        type="button"
         onClick={() => setOpen(!open)}
         disabled={loading}
+        aria-haspopup="true"
+        aria-expanded={open}
+        aria-label={`Estado del vehículo: ${current.label}. Cambiar estado`}
         className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border-2 transition-all ${current.style}`}
       >
-        <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+        <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" aria-hidden="true" />
         {current.label}
-        <span className="opacity-60">▾</span>
+        <span className="opacity-60" aria-hidden="true">▾</span>
       </button>
 
       {open && (
@@ -52,11 +56,13 @@ export function VehicleStatusToggle({ vehicleId, currentStatus }: VehicleStatusT
           {STATUS_OPTIONS.map(opt => (
             <button
               key={opt.value}
+              type="button"
+              aria-pressed={opt.value === status}
               onClick={() => changeStatus(opt.value)}
               className={`w-full text-left px-4 py-2.5 text-xs font-bold hover:bg-calm-50 transition-colors ${opt.value === status ? 'bg-calm-50' : ''}`}
             >
               <span className={`inline-flex items-center gap-1.5 ${opt.style.split(' ').filter(c => c.startsWith('text-')).join(' ')}`}>
-                <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                <span className="w-1.5 h-1.5 rounded-full bg-current" aria-hidden="true" />
                 {opt.label}
               </span>
             </button>

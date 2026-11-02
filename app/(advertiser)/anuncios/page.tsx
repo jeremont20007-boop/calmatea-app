@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Eye, ExternalLink } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { AD_STATUS_LABELS, AD_STATUS_COLORS, type Ad } from '@/types'
+
+export const metadata: Metadata = {
+  title: 'Mis anuncios',
+  description: 'Listado de tus anuncios publicitarios en VehiLink, con su estado, impresiones y fechas de campaña.',
+}
 
 export default async function MisAnunciosPage() {
   const supabase = await createClient()
@@ -34,16 +40,16 @@ export default async function MisAnunciosPage() {
           href="/anuncios/nuevo"
           className="flex items-center gap-1.5 bg-calm-500 hover:bg-calm-600 text-white font-bold text-sm px-4 py-2 rounded-xl transition-colors"
         >
-          <Plus size={16} />
-          Nuevo
+          <Plus size={16} aria-hidden="true" />
+          Nuevo<span className="sr-only"> anuncio</span>
         </Link>
       </div>
 
       {adList.length === 0 && (
         <div className="text-center py-16 space-y-3">
-          <div className="text-5xl">📢</div>
-          <p className="font-extrabold text-calm-700">Aún no tenés anuncios</p>
-          <p className="text-calm-400 text-sm">Creá tu primer anuncio y llegá a miles de usuarios</p>
+          <div className="text-5xl" aria-hidden="true">📢</div>
+          <h2 className="font-extrabold text-calm-700">Aún no tenés anuncios</h2>
+          <p className="text-calm-500 text-sm">Creá tu primer anuncio y llegá a miles de usuarios</p>
           <Link
             href="/anuncios/nuevo"
             className="inline-block bg-calm-500 text-white font-bold px-6 py-3 rounded-2xl text-sm hover:bg-calm-600 transition-colors mt-2"
@@ -58,7 +64,7 @@ export default async function MisAnunciosPage() {
           <Card key={ad.id}>
             <div className="flex items-start justify-between gap-3 mb-3">
               <div className="min-w-0 flex-1">
-                <p className="font-extrabold text-calm-800">{ad.title}</p>
+                <h2 className="font-extrabold text-calm-800">{ad.title}</h2>
                 {ad.description && (
                   <p className="text-sm text-calm-500 mt-0.5 line-clamp-2">{ad.description}</p>
                 )}
@@ -70,11 +76,11 @@ export default async function MisAnunciosPage() {
 
             <div className="flex items-center gap-4 text-xs text-calm-500 border-t border-calm-100 pt-3">
               <span className="flex items-center gap-1">
-                <Eye size={12} />
-                {ad.current_impressions} impresiones
+                <Eye size={12} aria-hidden="true" />
+                {(ad.current_impressions ?? 0).toLocaleString('es-AR')} impresiones
               </span>
               {ad.max_impressions && (
-                <span>/ {ad.max_impressions} máx</span>
+                <span>/ {ad.max_impressions.toLocaleString('es-AR')} máx.</span>
               )}
               {ad.starts_at && (
                 <span>Desde {new Date(ad.starts_at).toLocaleDateString('es-AR')}</span>
@@ -89,16 +95,17 @@ export default async function MisAnunciosPage() {
                 href={ad.target_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-xs text-calm-400 hover:text-calm-600 transition-colors truncate max-w-[200px]"
+                className="flex items-center gap-1 text-xs text-calm-500 hover:text-calm-700 transition-colors truncate max-w-[200px]"
               >
-                <ExternalLink size={11} />
+                <ExternalLink size={11} aria-hidden="true" />
                 {ad.target_url}
+                <span className="sr-only"> (se abre en una pestaña nueva)</span>
               </a>
               <Link
                 href={`/anuncios/${ad.id}`}
                 className="text-xs font-bold text-calm-500 hover:text-calm-700 transition-colors shrink-0"
               >
-                Editar →
+                Editar<span className="sr-only"> «{ad.title}»</span> <span aria-hidden="true">→</span>
               </Link>
             </div>
           </Card>

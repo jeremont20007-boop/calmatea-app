@@ -26,24 +26,27 @@ const VEHICLE_TYPES: { value: VehicleType; label: string; sub: string }[] = [
 function DaySelector({
   selected,
   onChange,
+  labelledBy,
 }: {
   selected: string[]
   onChange: (days: string[]) => void
+  labelledBy: string
 }) {
   function toggle(day: string) {
     onChange(selected.includes(day) ? selected.filter(d => d !== day) : [...selected, day])
   }
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2" role="group" aria-labelledby={labelledBy}>
       {DAYS_OF_WEEK.map(d => (
         <button
           key={d.value}
           type="button"
           onClick={() => toggle(d.value)}
+          aria-pressed={selected.includes(d.value)}
           className={`px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all min-w-[44px] ${
             selected.includes(d.value)
               ? 'bg-calm-500 text-white border-calm-500'
-              : 'bg-white text-calm-400 border-calm-200 hover:border-calm-400'
+              : 'bg-white text-calm-600 border-calm-200 hover:border-calm-400'
           }`}
         >
           {d.label}
@@ -95,12 +98,12 @@ export function NuevoVehiculoForm() {
     e.preventDefault()
 
     if (selectedPlatforms.length === 0) {
-      setError('Selecciona al menos una plataforma')
+      setError('Seleccioná al menos una plataforma')
       return
     }
     const yearNum = parseInt(year)
     if (isNaN(yearNum) || yearNum < 2010 || yearNum > 2026) {
-      setError('Ingresa un año válido (2010–2026)')
+      setError('Ingresá un año válido (2010–2026)')
       return
     }
     const splitNum = parseInt(revenueSplit)
@@ -150,7 +153,7 @@ export function NuevoVehiculoForm() {
     })
 
     if (insertError) {
-      setError('Error al publicar el vehículo. Intenta de nuevo.')
+      setError('Error al publicar el vehículo. Intentá de nuevo.')
       setLoading(false)
       return
     }
@@ -170,7 +173,7 @@ export function NuevoVehiculoForm() {
 
         {/* ── Datos del vehículo ── */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-4">
-          <h2 className="font-extrabold text-calm-800 text-lg">🚗 Datos del vehículo</h2>
+          <h2 className="font-extrabold text-calm-800 text-lg"><span aria-hidden="true">🚗</span> Datos del vehículo</h2>
 
           <div className="grid grid-cols-2 gap-3">
             <Input id="make" label="Marca" placeholder="Toyota" value={make} onChange={e => setMake(e.target.value)} required />
@@ -186,9 +189,9 @@ export function NuevoVehiculoForm() {
 
         {/* ── Tipo de vehículo ── */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-4">
-          <h2 className="font-extrabold text-calm-800 text-lg">📋 Tipo de habilitación</h2>
+          <h2 className="font-extrabold text-calm-800 text-lg"><span aria-hidden="true">📋</span> Tipo de habilitación</h2>
 
-          <div className="space-y-2">
+          <div className="space-y-2" role="radiogroup" aria-label="Tipo de habilitación">
             {VEHICLE_TYPES.map(vt => (
               <label
                 key={vt.value}
@@ -208,7 +211,7 @@ export function NuevoVehiculoForm() {
                 />
                 <div>
                   <p className="font-extrabold text-calm-800 text-sm">{vt.label}</p>
-                  <p className="text-xs text-calm-400">{vt.sub}</p>
+                  <p className="text-xs text-calm-500">{vt.sub}</p>
                 </div>
               </label>
             ))}
@@ -226,7 +229,7 @@ export function NuevoVehiculoForm() {
                 />
                 <div>
                   <p className="font-bold text-calm-800 text-sm">¿Pertenece a una base de remis?</p>
-                  <p className="text-xs text-calm-400">El conductor deberá reportarse a la base</p>
+                  <p className="text-xs text-calm-500">El conductor deberá reportarse a la base</p>
                 </div>
               </label>
               {isInRemisBase && (
@@ -252,7 +255,7 @@ export function NuevoVehiculoForm() {
               />
               <div>
                 <p className="font-bold text-calm-800 text-sm">Habilitación solo en Neuquén</p>
-                <p className="text-xs text-calm-400">La plataforma solo está activa en la ciudad de Neuquén</p>
+                <p className="text-xs text-calm-500">La plataforma solo está activa en la ciudad de Neuquén</p>
               </div>
             </label>
           )}
@@ -260,18 +263,19 @@ export function NuevoVehiculoForm() {
 
         {/* ── Plataformas ── */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-3">
-          <h2 className="font-extrabold text-calm-800 text-lg">📱 Plataformas activas</h2>
-          <p className="text-xs text-calm-400">Selecciona en qué plataformas está registrado el vehículo</p>
-          <div className="grid grid-cols-3 gap-2">
+          <h2 className="font-extrabold text-calm-800 text-lg"><span aria-hidden="true">📱</span> Plataformas activas</h2>
+          <p id="platforms-help" className="text-xs text-calm-500">Seleccioná en qué plataformas está registrado el vehículo</p>
+          <div className="grid grid-cols-3 gap-2" role="group" aria-label="Plataformas activas" aria-describedby="platforms-help">
             {PLATFORMS.map(p => (
               <button
                 key={p}
                 type="button"
                 onClick={() => togglePlatform(p)}
+                aria-pressed={selectedPlatforms.includes(p)}
                 className={`py-2.5 px-2 rounded-xl text-sm font-bold border-2 transition-all ${
                   selectedPlatforms.includes(p)
                     ? 'bg-calm-500 text-white border-calm-500'
-                    : 'bg-white text-calm-500 border-calm-200 hover:border-calm-400'
+                    : 'bg-white text-calm-600 border-calm-200 hover:border-calm-400'
                 }`}
               >
                 {PLATFORM_LABELS[p]}
@@ -282,15 +286,15 @@ export function NuevoVehiculoForm() {
 
         {/* ── Disponibilidad del propietario para alquilar ── */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-4">
-          <h2 className="font-extrabold text-calm-800 text-lg">📅 Disponibilidad para alquiler</h2>
-          <p className="text-xs text-calm-400">
+          <h2 className="font-extrabold text-calm-800 text-lg"><span aria-hidden="true">📅</span> Disponibilidad para alquiler</h2>
+          <p className="text-xs text-calm-500">
             ¿Qué días y horarios puede el conductor usar el vehículo?
           </p>
 
           <div>
-            <p className="text-sm font-semibold text-calm-700 mb-2">Días disponibles</p>
-            <DaySelector selected={availableDays} onChange={setAvailableDays} />
-            <p className="text-xs text-calm-400 mt-2">
+            <p id="days-label" className="text-sm font-semibold text-calm-700 mb-2">Días disponibles</p>
+            <DaySelector selected={availableDays} onChange={setAvailableDays} labelledBy="days-label" />
+            <p className="text-xs text-calm-500 mt-2">
               Sin selección = flexible / a coordinar con el conductor
             </p>
           </div>
@@ -304,8 +308,8 @@ export function NuevoVehiculoForm() {
           />
 
           <div>
-            <p className="text-sm font-semibold text-calm-700 mb-2">Régimen de trabajo</p>
-            <div className="space-y-2">
+            <p id="schedule-label" className="text-sm font-semibold text-calm-700 mb-2">Régimen de trabajo</p>
+            <div className="space-y-2" role="radiogroup" aria-labelledby="schedule-label">
               {SCHEDULES.map(s => (
                 <label
                   key={s.value}
@@ -332,24 +336,26 @@ export function NuevoVehiculoForm() {
 
         {/* ── Porcentaje ofertado ── */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-4">
-          <h2 className="font-extrabold text-calm-800 text-lg">💰 Porcentaje ofertado</h2>
-          <p className="text-xs text-calm-400">
-            Define qué porcentaje de las ganancias de la plataforma recibirá el conductor. El conductor también puede contra-ofertar al enviar su solicitud.
+          <h2 className="font-extrabold text-calm-800 text-lg"><span aria-hidden="true">💰</span> Porcentaje ofertado</h2>
+          <p className="text-xs text-calm-500">
+            Definí qué porcentaje de las ganancias de la plataforma recibirá el conductor. El conductor también puede contraofertar al enviar su solicitud.
           </p>
 
-          <div className="bg-calm-50 rounded-2xl p-4 grid grid-cols-2 gap-3 text-center">
+          <div className="bg-calm-50 rounded-2xl p-4 grid grid-cols-2 gap-3 text-center" aria-live="polite">
             <div>
-              <p className="text-3xl font-extrabold text-forest">{conductorKeeps}%</p>
+              <p className="text-3xl font-extrabold text-emerald-700">{conductorKeeps}%</p>
               <p className="text-xs text-calm-500 font-semibold mt-1">para el conductor</p>
             </div>
             <div>
               <p className="text-3xl font-extrabold text-calm-500">{ownerKeeps}%</p>
-              <p className="text-xs text-calm-500 font-semibold mt-1">para ti (propietario)</p>
+              <p className="text-xs text-calm-500 font-semibold mt-1">para vos (propietario)</p>
             </div>
           </div>
 
           <input
             type="range"
+            aria-label="Porcentaje para el conductor"
+            aria-valuetext={`${conductorKeeps}% para el conductor, ${ownerKeeps}% para vos`}
             min="40"
             max="90"
             step="5"
@@ -357,21 +363,22 @@ export function NuevoVehiculoForm() {
             onChange={e => setRevenueSplit(e.target.value)}
             className="w-full accent-calm-500"
           />
-          <div className="flex justify-between text-xs text-calm-400">
-            <span>Conductor 40% / Tú 60%</span>
-            <span>Conductor 90% / Tú 10%</span>
+          <div className="flex justify-between text-xs text-calm-500" aria-hidden="true">
+            <span>Conductor 40% / Vos 60%</span>
+            <span>Conductor 90% / Vos 10%</span>
           </div>
 
-          <div className="grid grid-cols-5 gap-1.5">
+          <div className="grid grid-cols-5 gap-1.5" role="group" aria-label="Porcentajes sugeridos para el conductor">
             {[50, 55, 60, 65, 70].map(v => (
               <button
                 key={v}
                 type="button"
                 onClick={() => setRevenueSplit(String(v))}
+                aria-pressed={revenueSplit === String(v)}
                 className={`py-2 rounded-xl text-xs font-extrabold border-2 transition-all ${
                   revenueSplit === String(v)
                     ? 'bg-calm-500 text-white border-calm-500'
-                    : 'border-calm-200 text-calm-500 hover:border-calm-400'
+                    : 'border-calm-200 text-calm-600 hover:border-calm-400'
                 }`}
               >
                 {v}%
@@ -382,20 +389,21 @@ export function NuevoVehiculoForm() {
 
         {/* ── Descripción ── */}
         <section className="bg-white rounded-3xl p-5 border border-calm-100 space-y-3">
-          <h2 className="font-extrabold text-calm-800 text-lg">
-            📝 Descripción <span className="text-calm-400 font-normal text-sm">(opcional)</span>
+          <h2 id="description-label" className="font-extrabold text-calm-800 text-lg">
+            <span aria-hidden="true">📝</span> Descripción <span className="text-calm-500 font-normal text-sm">(opcional)</span>
           </h2>
           <textarea
+            aria-labelledby="description-label"
             value={description}
             onChange={e => setDescription(e.target.value)}
             placeholder="Estado del vehículo, condiciones del acuerdo, requisitos para el conductor, información adicional sobre la base o plataforma..."
             rows={4}
-            className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-300 focus:outline-none focus:border-calm-400 transition-colors text-sm resize-none"
+            className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-400 focus:outline-none focus:border-calm-500 focus:ring-2 focus:ring-calm-500/30 transition-colors text-sm resize-none"
           />
         </section>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+          <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
             {error}
           </div>
         )}
@@ -404,8 +412,8 @@ export function NuevoVehiculoForm() {
           {loading ? 'Publicando...' : 'Publicar vehículo'}
         </Button>
 
-        <p className="text-xs text-calm-400 text-center px-4">
-          Después de publicar podrás subir los documentos del vehículo desde "Mis Vehículos".
+        <p className="text-xs text-calm-500 text-center px-4">
+          Después de publicar, vas a poder subir los documentos del vehículo desde “Mis vehículos”.
         </p>
       </form>
     </div>

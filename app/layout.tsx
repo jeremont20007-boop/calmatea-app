@@ -4,6 +4,7 @@ import './globals.css'
 import { ServiceWorkerRegister } from '@/components/ui/ServiceWorkerRegister'
 import { ToastProvider } from '@/components/ui/Toast'
 import { InstallPWA } from '@/components/ui/InstallPWA'
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from '@/lib/site'
 
 const nunito = Nunito({
   subsets: ['latin'],
@@ -12,36 +13,67 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: 'VehiLink – Conectamos conductores con propietarios de vehículos',
-  description: 'La plataforma que conecta conductores con propietarios de vehículos registrados en Uber, Cabify, Beat, InDriver y más.',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    'alquiler de autos para Uber',
+    'auto para trabajar en Cabify',
+    'conductores de aplicaciones',
+    'propietarios de vehículos',
+    'remis Neuquén',
+    'intermediación vehicular',
+  ],
+  openGraph: {
+    type: 'website',
+    locale: 'es_AR',
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
   manifest: '/manifest.json',
+  icons: {
+    apple: '/icons/icon-192.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'VehiLink',
+    title: SITE_NAME,
+  },
+  formatDetection: {
+    telephone: false,
   },
   other: {
     'mobile-web-app-capable': 'yes',
   },
 }
 
+// No se bloquea el zoom: las personas con baja visión necesitan poder ampliar la pantalla.
 export const viewport: Viewport = {
   themeColor: '#4455E0',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={nunito.variable}>
-      <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-      </head>
       <body className="font-nunito bg-calm-50 min-h-screen antialiased">
+        <a
+          href="#contenido"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:text-calm-800 focus:font-bold focus:px-4 focus:py-2 focus:rounded-xl focus:shadow-lg"
+        >
+          Saltar al contenido principal
+        </a>
         <ToastProvider>
           <ServiceWorkerRegister />
           {children}

@@ -1,18 +1,19 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { GoogleButton } from '@/components/ui/GoogleButton'
-import type { UserRole } from '@/types'
 
 function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [role, setRole] = useState<'conductor' | 'propietario'>('conductor')
+  const [role, setRole] = useState<'conductor' | 'propietario'>(() =>
+    searchParams.get('role') === 'propietario' ? 'propietario' : 'conductor'
+  )
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,13 +21,6 @@ function RegisterForm() {
   const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const roleParam = searchParams.get('role')
-    if (roleParam === 'propietario' || roleParam === 'conductor') {
-      setRole(roleParam)
-    }
-  }, [searchParams])
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault()
@@ -48,7 +42,11 @@ function RegisterForm() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(
+        /already registered/i.test(error.message)
+          ? 'Ya existe una cuenta con ese correo. Iniciá sesión.'
+          : 'No pudimos crear la cuenta. Revisá los datos e intentá de nuevo.'
+      )
       setLoading(false)
       return
     }
@@ -60,42 +58,44 @@ function RegisterForm() {
   const roleLabel = role === 'conductor' ? 'conductor' : 'propietario'
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-calm-50 to-calm-100">
+    <main id="contenido" className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-calm-50 to-calm-100">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="text-6xl mb-3">🚗</div>
+          <div className="text-6xl mb-3" aria-hidden="true">🚗</div>
           <h1 className="text-3xl font-extrabold text-calm-800">VehiLink</h1>
-          <p className="text-calm-500 mt-1 font-semibold">Crea tu cuenta gratis</p>
+          <p className="text-calm-500 mt-1 font-semibold">Creá tu cuenta gratis</p>
         </div>
 
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-calm-100 space-y-5">
           {/* Role selector */}
           <div>
-            <p className="text-sm font-semibold text-calm-700 mb-3">Soy...</p>
-            <div className="grid grid-cols-2 gap-3">
+            <p id="rol-label" className="text-sm font-semibold text-calm-700 mb-3">Soy…</p>
+            <div role="group" aria-labelledby="rol-label" className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setRole('conductor')}
+                aria-pressed={role === 'conductor'}
                 className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${
                   role === 'conductor'
                     ? 'border-calm-500 bg-calm-50 text-calm-700'
-                    : 'border-calm-100 text-calm-400 hover:border-calm-300'
+                    : 'border-calm-100 text-calm-500 hover:border-calm-300'
                 }`}
               >
-                <span className="text-3xl">🧑‍💼</span>
+                <span className="text-3xl" aria-hidden="true">🧑‍💼</span>
                 <span className="font-extrabold text-sm">Conductor</span>
                 <span className="text-xs text-center leading-tight">Busco vehículo para trabajar</span>
               </button>
               <button
                 type="button"
                 onClick={() => setRole('propietario')}
+                aria-pressed={role === 'propietario'}
                 className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all ${
                   role === 'propietario'
                     ? 'border-calm-500 bg-calm-50 text-calm-700'
-                    : 'border-calm-100 text-calm-400 hover:border-calm-300'
+                    : 'border-calm-100 text-calm-500 hover:border-calm-300'
                 }`}
               >
-                <span className="text-3xl">🚗</span>
+                <span className="text-3xl" aria-hidden="true">🚗</span>
                 <span className="font-extrabold text-sm">Propietario</span>
                 <span className="text-xs text-center leading-tight">Tengo vehículo, busco conductor</span>
               </button>
@@ -112,7 +112,7 @@ function RegisterForm() {
           {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-calm-100" />
-            <span className="text-xs text-calm-400 font-semibold">o con email</span>
+            <span className="text-xs text-calm-500 font-semibold">o con email</span>
             <div className="flex-1 h-px bg-calm-100" />
           </div>
 
@@ -167,17 +167,17 @@ function RegisterForm() {
             />
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+              <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
                 {error}
               </div>
             )}
 
             <Button type="submit" size="lg" className="w-full mt-2" disabled={loading}>
-              {loading ? 'Creando cuenta...' : `Crear cuenta como ${roleLabel}`}
+              {loading ? 'Creando cuenta…' : `Crear cuenta como ${roleLabel}`}
             </Button>
           </form>
 
-          <p className="text-center text-xs text-calm-400">
+          <p className="text-center text-xs text-calm-500">
             Al registrarte aceptás nuestros términos de uso y política de privacidad.
           </p>
 
@@ -192,13 +192,13 @@ function RegisterForm() {
         <p className="text-center mt-3">
           <Link
             href="/auth/publicitario"
-            className="text-xs text-calm-300 hover:text-calm-500 transition-colors"
+            className="text-xs text-calm-600 hover:text-calm-800 hover:underline transition-colors"
           >
-            Publicita aquí
+            Publicitá aquí
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   )
 }
 

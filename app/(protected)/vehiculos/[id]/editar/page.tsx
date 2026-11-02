@@ -1,8 +1,14 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
 import { type Vehicle } from '@/types'
 import { EditVehicleForm } from './EditVehicleForm'
+
+export const metadata: Metadata = {
+  title: 'Editar vehículo',
+  description: 'Actualizá los datos, la disponibilidad y el porcentaje ofrecido de tu vehículo publicado en VehiLink.',
+}
 
 export default async function EditarVehiculoPage({
   params,

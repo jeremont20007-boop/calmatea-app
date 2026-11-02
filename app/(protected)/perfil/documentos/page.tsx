@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
@@ -15,6 +16,11 @@ const DOC_ORDER: DriverDocType[] = [
   'antecedentes_provinciales',
   'seguro_excedentes',
 ]
+
+export const metadata: Metadata = {
+  title: 'Mis documentos',
+  description: 'Cargá tu licencia, DNI y certificados de antecedentes para que los propietarios puedan verificar tu perfil de conductor.',
+}
 
 export default async function DriverDocumentosPage() {
   const supabase = await createClient()
@@ -54,14 +60,14 @@ export default async function DriverDocumentosPage() {
             : 'bg-yellow-50 border border-yellow-200'
         }`}>
           {allRequiredDone
-            ? <ShieldCheck size={22} className="text-green-600 shrink-0 mt-0.5" />
-            : <AlertTriangle size={22} className="text-yellow-600 shrink-0 mt-0.5" />
+            ? <ShieldCheck size={22} className="text-green-700 shrink-0 mt-0.5" aria-hidden="true" />
+            : <AlertTriangle size={22} className="text-yellow-700 shrink-0 mt-0.5" aria-hidden="true" />
           }
           <div>
             <p className={`font-extrabold text-sm ${allRequiredDone ? 'text-green-800' : 'text-yellow-800'}`}>
               {allRequiredDone ? 'Documentación completa' : 'Documentación incompleta'}
             </p>
-            <p className={`text-xs mt-0.5 ${allRequiredDone ? 'text-green-600' : 'text-yellow-600'}`}>
+            <p className={`text-xs mt-0.5 ${allRequiredDone ? 'text-green-700' : 'text-yellow-700'}`}>
               {allRequiredDone
                 ? 'Todos los documentos obligatorios están cargados. En revisión por el equipo.'
                 : `${uploadedRequired.length} de ${requiredDocs.length} documentos obligatorios cargados.`
@@ -73,14 +79,14 @@ export default async function DriverDocumentosPage() {
         <Card>
           <h2 className="font-extrabold text-calm-800 mb-1">¿Por qué son necesarios?</h2>
           <p className="text-xs text-calm-500 leading-relaxed">
-            Los propietarios de vehículos necesitan verificar que eres un conductor habilitado y con antecedentes limpios. Tus documentos son privados y solo se comparten con propietarios que acepten tu solicitud.
+            Los propietarios de vehículos necesitan verificar que sos un conductor habilitado y con antecedentes limpios. Tus documentos son privados y solo se comparten con propietarios que acepten tu solicitud.
           </p>
         </Card>
 
         {/* Obligatorios */}
         <div className="space-y-3">
           <h2 className="font-extrabold text-calm-700 px-1">
-            Documentos obligatorios <span className="text-red-400">*</span>
+            Documentos obligatorios <span className="text-red-700" aria-hidden="true">*</span>
           </h2>
           {DOC_ORDER.filter(t => DRIVER_DOC_LABELS[t].required).map(docType => (
             <DocumentUpload
@@ -102,8 +108,8 @@ export default async function DriverDocumentosPage() {
           <h2 className="font-extrabold text-calm-700 px-1">
             Documentos opcionales
           </h2>
-          <p className="text-xs text-calm-400 px-1">
-            Cargar estos documentos aumenta tus probabilidades de ser aceptado por propietarios de remis o vehículos habilitados.
+          <p className="text-xs text-calm-500 px-1">
+            Cargar estos documentos aumenta tus probabilidades de ser aceptado por propietarios de remises o vehículos habilitados.
           </p>
           {DOC_ORDER.filter(t => !DRIVER_DOC_LABELS[t].required).map(docType => (
             <DocumentUpload
@@ -119,7 +125,7 @@ export default async function DriverDocumentosPage() {
           ))}
         </div>
 
-        <p className="text-xs text-calm-400 text-center px-4 leading-relaxed">
+        <p className="text-xs text-calm-500 text-center px-4 leading-relaxed">
           Formato aceptado: PDF, JPG o PNG · Máximo 10 MB por archivo.<br />
           Los documentos son revisados manualmente por nuestro equipo en un plazo de 24–48 hs.
         </p>

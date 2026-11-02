@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { TopBar } from '@/components/layout/TopBar'
@@ -16,6 +17,11 @@ const DOC_ORDER: VehicleDocType[] = [
   'habilitacion_remis',
   'habilitacion_taxi',
 ]
+
+export const metadata: Metadata = {
+  title: 'Documentos del vehículo',
+  description: 'Cargá el título, la cédula verde, el seguro y las habilitaciones de tu vehículo para que el equipo de VehiLink los revise.',
+}
 
 export default async function VehicleDocumentosPage({
   params,
@@ -93,14 +99,14 @@ export default async function VehicleDocumentosPage({
             : 'bg-yellow-50 border border-yellow-200'
         }`}>
           {allRequiredDone
-            ? <ShieldCheck size={22} className="text-green-600 shrink-0 mt-0.5" />
-            : <AlertTriangle size={22} className="text-yellow-600 shrink-0 mt-0.5" />
+            ? <ShieldCheck size={22} className="text-green-700 shrink-0 mt-0.5" aria-hidden="true" />
+            : <AlertTriangle size={22} className="text-yellow-700 shrink-0 mt-0.5" aria-hidden="true" />
           }
           <div>
             <p className={`font-extrabold text-sm ${allRequiredDone ? 'text-green-800' : 'text-yellow-800'}`}>
               {allRequiredDone ? 'Documentación completa' : 'Documentación incompleta'}
             </p>
-            <p className={`text-xs mt-0.5 ${allRequiredDone ? 'text-green-600' : 'text-yellow-600'}`}>
+            <p className={`text-xs mt-0.5 ${allRequiredDone ? 'text-green-700' : 'text-yellow-700'}`}>
               {allRequiredDone
                 ? 'Todos los documentos del vehículo están en revisión.'
                 : `${uploadedRequired.length} de ${requiredDocs.length} documentos obligatorios cargados.`
@@ -112,7 +118,7 @@ export default async function VehicleDocumentosPage({
         {/* Obligatorios */}
         <div className="space-y-3">
           <h2 className="font-extrabold text-calm-700 px-1">
-            Documentos obligatorios <span className="text-red-400">*</span>
+            Documentos obligatorios <span className="text-red-700" aria-hidden="true">*</span>
           </h2>
           {requiredDocs.map(docType => (
             <DocumentUpload
@@ -148,7 +154,7 @@ export default async function VehicleDocumentosPage({
           </div>
         )}
 
-        <p className="text-xs text-calm-400 text-center px-4 leading-relaxed">
+        <p className="text-xs text-calm-500 text-center px-4 leading-relaxed">
           Los documentos son revisados en 24–48 hs. Se comparten solo con el conductor aceptado.
         </p>
       </div>

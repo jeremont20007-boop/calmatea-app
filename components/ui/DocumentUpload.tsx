@@ -37,12 +37,12 @@ export function DocumentUpload({
 
     const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
     if (!validTypes.includes(file.type)) {
-      setError('Solo se aceptan PDF, JPG o PNG')
+      setError('Solo se aceptan archivos PDF, JPG o PNG.')
       return
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      setError('El archivo no puede superar 10 MB')
+      setError('El archivo no puede superar los 10 MB.')
       return
     }
 
@@ -59,7 +59,7 @@ export function DocumentUpload({
 
     if (uploadError) {
       // If storage bucket doesn't exist yet, still save the intent
-      setError('Archivo recibido. Configura el bucket "documents" en Supabase Storage.')
+      setError('Archivo recibido. Configurá el bucket "documents" en Supabase Storage.')
       setUploading(false)
     }
 
@@ -94,7 +94,7 @@ export function DocumentUpload({
   const statusStyles: Record<string, string> = {
     pendiente: 'bg-yellow-100 text-yellow-700',
     aprobado: 'bg-green-100 text-green-700',
-    rechazado: 'bg-red-100 text-red-600',
+    rechazado: 'bg-red-100 text-red-700',
   }
 
   const statusLabels: Record<string, string> = {
@@ -113,10 +113,10 @@ export function DocumentUpload({
         uploaded ? 'bg-calm-100' : 'bg-white border-2 border-calm-200'
       }`}>
         {status === 'aprobado'
-          ? <Check size={16} className="text-green-600" />
+          ? <Check size={16} className="text-green-600" aria-hidden="true" />
           : uploaded
-          ? <FileText size={16} className="text-calm-500" />
-          : <FileText size={16} className="text-calm-300" />
+          ? <FileText size={16} className="text-calm-500" aria-hidden="true" />
+          : <FileText size={16} className="text-calm-300" aria-hidden="true" />
         }
       </div>
 
@@ -125,20 +125,25 @@ export function DocumentUpload({
         <div className="flex items-center gap-1.5 flex-wrap">
           <p className="font-bold text-calm-800 text-sm">
             {label}
-            {required && <span className="text-red-400 ml-0.5">*</span>}
+            {required && (
+              <>
+                <span className="text-red-600 ml-0.5" aria-hidden="true">*</span>
+                <span className="sr-only"> (obligatorio)</span>
+              </>
+            )}
           </p>
           {uploaded && status && (
-            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${statusStyles[status] || 'bg-gray-100 text-gray-500'}`}>
+            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${statusStyles[status] || 'bg-gray-100 text-gray-600'}`}>
               {statusLabels[status] || status}
             </span>
           )}
         </div>
         {description && (
-          <p className="text-xs text-calm-400 mt-0.5 leading-snug">{description}</p>
+          <p className="text-xs text-calm-500 mt-0.5 leading-snug">{description}</p>
         )}
         {error && (
-          <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-            <AlertCircle size={11} /> {error}
+          <p role="alert" className="text-xs text-red-700 mt-1 flex items-center gap-1">
+            <AlertCircle size={11} aria-hidden="true" /> {error}
           </p>
         )}
       </div>
@@ -150,27 +155,29 @@ export function DocumentUpload({
             href={fileUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center w-8 h-8 rounded-xl bg-calm-50 text-calm-400 hover:text-calm-600 hover:bg-calm-100 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-xl bg-calm-50 text-calm-500 hover:text-calm-700 hover:bg-calm-100 transition-colors"
             title="Ver documento"
+            aria-label={`Ver documento: ${label} (se abre en una pestaña nueva)`}
           >
-            <Eye size={14} />
+            <Eye size={14} aria-hidden="true" />
           </a>
         )}
-        <label className={uploading ? 'opacity-50 pointer-events-none' : 'cursor-pointer'}>
+        <label className={`rounded-xl has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-calm-500 has-[:focus-visible]:ring-offset-2 ${uploading ? 'opacity-50 pointer-events-none' : 'cursor-pointer'}`}>
           <input
             type="file"
             accept=".pdf,.jpg,.jpeg,.png,.webp"
             onChange={handleUpload}
             className="sr-only"
             disabled={uploading}
+            aria-label={`${uploaded ? 'Cambiar' : 'Subir'} documento: ${label}`}
           />
           <span className={`flex items-center gap-1 text-xs font-bold px-3 py-2 rounded-xl transition-colors ${
             uploaded
-              ? 'bg-calm-50 text-calm-500 hover:bg-calm-100'
+              ? 'bg-calm-50 text-calm-600 hover:bg-calm-100'
               : 'bg-calm-500 text-white hover:bg-calm-600'
           }`}>
-            <Upload size={11} />
-            {uploading ? '...' : uploaded ? 'Cambiar' : 'Subir'}
+            <Upload size={11} aria-hidden="true" />
+            {uploading ? 'Subiendo…' : uploaded ? 'Cambiar' : 'Subir'}
           </span>
         </label>
       </div>

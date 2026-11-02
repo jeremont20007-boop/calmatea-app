@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -6,6 +7,11 @@ import { Card } from '@/components/ui/Card'
 import { Plus, Users, FileText, Pencil } from 'lucide-react'
 import { PLATFORM_LABELS, SCHEDULE_LABELS, STATUS_LABELS, type Vehicle } from '@/types'
 import { VehicleStatusToggle } from './VehicleStatusToggle'
+
+export const metadata: Metadata = {
+  title: 'Mis vehículos',
+  description: 'Administrá los vehículos que publicaste en VehiLink: estado, solicitudes, documentos y edición.',
+}
 
 export default async function MisVehiculosPage() {
   const supabase = await createClient()
@@ -52,8 +58,8 @@ export default async function MisVehiculosPage() {
         showBack
         backHref="/dashboard"
         rightAction={
-          <Link href="/vehiculos/nuevo" className="flex items-center justify-center w-10 h-10 rounded-xl bg-calm-500 text-white hover:bg-calm-600 transition-colors">
-            <Plus size={20} />
+          <Link href="/vehiculos/nuevo" aria-label="Publicar vehículo" className="flex items-center justify-center w-10 h-10 rounded-xl bg-calm-500 text-white hover:bg-calm-600 transition-colors">
+            <Plus size={20} aria-hidden="true" />
           </Link>
         }
       />
@@ -61,14 +67,14 @@ export default async function MisVehiculosPage() {
       <div className="p-4 space-y-4">
         {list.length === 0 && (
           <div className="text-center py-16 space-y-4">
-            <div className="text-6xl">🚗</div>
-            <p className="font-extrabold text-calm-700 text-lg">Aún no tienes vehículos publicados</p>
-            <p className="text-calm-400 text-sm">Publica tu primer vehículo para empezar a recibir solicitudes</p>
+            <div className="text-6xl" aria-hidden="true">🚗</div>
+            <p className="font-extrabold text-calm-700 text-lg">Aún no tenés vehículos publicados</p>
+            <p className="text-calm-500 text-sm">Publicá tu primer vehículo para empezar a recibir solicitudes</p>
             <Link
               href="/vehiculos/nuevo"
               className="inline-flex items-center gap-2 bg-calm-500 text-white font-bold px-6 py-3 rounded-2xl hover:bg-calm-600 transition-colors"
             >
-              <Plus size={18} />
+              <Plus size={18} aria-hidden="true" />
               Publicar primer vehículo
             </Link>
           </div>
@@ -82,15 +88,15 @@ export default async function MisVehiculosPage() {
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 className="font-extrabold text-calm-800 text-lg">
+                    <h2 className="font-extrabold text-calm-800 text-lg">
                       {v.make} {v.model} {v.year}
-                    </h3>
+                    </h2>
                     <p className="text-calm-500 text-sm">{v.color} · {v.license_plate}</p>
-                    <p className="text-calm-400 text-sm">📍 {v.city}</p>
+                    <p className="text-calm-500 text-sm"><span aria-hidden="true">📍</span> {v.city}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-2xl font-extrabold text-forest">{v.revenue_split}%</p>
-                    <p className="text-xs text-calm-400 font-semibold">conductor</p>
+                    <p className="text-2xl font-extrabold text-emerald-700">{v.revenue_split}%</p>
+                    <p className="text-xs text-calm-500 font-semibold">conductor</p>
                   </div>
                 </div>
 
@@ -103,8 +109,8 @@ export default async function MisVehiculosPage() {
                   ))}
                 </div>
 
-                <p className="text-xs text-calm-400 font-semibold">
-                  🕐 {SCHEDULE_LABELS[v.schedule]}
+                <p className="text-xs text-calm-500 font-semibold">
+                  <span aria-hidden="true">🕐</span> {SCHEDULE_LABELS[v.schedule]}
                 </p>
 
                 {/* Actions row */}
@@ -115,11 +121,12 @@ export default async function MisVehiculosPage() {
                     href={`/solicitudes?vehiculo=${v.id}`}
                     className="flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors relative"
                   >
-                    <Users size={16} />
+                    <Users size={16} aria-hidden="true" />
                     Solicitudes
                     {pendingApps > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-warning rounded-full text-white text-xs flex items-center justify-center font-extrabold">
+                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-warning rounded-full text-calm-900 text-xs flex items-center justify-center font-extrabold">
                         {pendingApps}
+                        <span className="sr-only"> pendientes</span>
                       </span>
                     )}
                   </Link>
@@ -128,7 +135,7 @@ export default async function MisVehiculosPage() {
                     href={`/mis-vehiculos/documentos/${v.id}`}
                     className="flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors"
                   >
-                    <FileText size={16} />
+                    <FileText size={16} aria-hidden="true" />
                     Documentos
                   </Link>
 
@@ -136,7 +143,7 @@ export default async function MisVehiculosPage() {
                     href={`/vehiculos/${v.id}/editar`}
                     className="flex items-center gap-1.5 text-sm font-bold text-calm-600 hover:text-calm-800 transition-colors"
                   >
-                    <Pencil size={16} />
+                    <Pencil size={16} aria-hidden="true" />
                     Editar
                   </Link>
                 </div>
@@ -147,7 +154,7 @@ export default async function MisVehiculosPage() {
 
         {list.length > 0 && (
           <Link href="/vehiculos/nuevo" className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl border-2 border-dashed border-calm-300 text-calm-500 font-bold hover:border-calm-500 hover:text-calm-600 transition-colors">
-            <Plus size={18} />
+            <Plus size={18} aria-hidden="true" />
             Publicar otro vehículo
           </Link>
         )}

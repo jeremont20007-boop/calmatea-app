@@ -2,13 +2,14 @@ import { cn } from '@/lib/utils'
 
 export function Skeleton({ className }: { className?: string }) {
   return (
-    <div className={cn('bg-calm-100 rounded-xl animate-pulse', className)} />
+    <div aria-hidden="true" className={cn('bg-calm-100 rounded-xl animate-pulse', className)} />
   )
 }
 
 export function DashboardSkeleton() {
   return (
-    <div className="p-4 space-y-5">
+    <div className="p-4 space-y-5" role="status" aria-busy="true">
+      <span className="sr-only">Cargando…</span>
       <Skeleton className="h-28 rounded-3xl" />
       <div className="grid grid-cols-2 gap-3">
         <Skeleton className="h-28 rounded-3xl" />
@@ -24,7 +25,8 @@ export function DashboardSkeleton() {
 
 export function SoundsSkeleton() {
   return (
-    <div className="p-4 space-y-4">
+    <div className="p-4 space-y-4" role="status" aria-busy="true">
+      <span className="sr-only">Cargando…</span>
       <Skeleton className="h-14 rounded-2xl" />
       <div className="grid grid-cols-2 gap-3">
         {Array(5).fill(0).map((_, i) => <Skeleton key={i} className="h-44 rounded-3xl" />)}
@@ -35,7 +37,8 @@ export function SoundsSkeleton() {
 
 export function ParentsSkeleton() {
   return (
-    <div className="p-4 space-y-4">
+    <div className="p-4 space-y-4" role="status" aria-busy="true">
+      <span className="sr-only">Cargando…</span>
       <div className="grid grid-cols-3 gap-3">
         {Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-24 rounded-3xl" />)}
       </div>

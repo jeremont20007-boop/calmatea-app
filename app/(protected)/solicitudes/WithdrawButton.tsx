@@ -22,18 +22,20 @@ export function WithdrawButton({ applicationId }: { applicationId: string }) {
 
   if (confirming) {
     return (
-      <div className="flex gap-2 items-center pt-2 border-t border-calm-100">
+      <div className="flex gap-2 items-center pt-2 border-t border-calm-100" role="group" aria-label="Confirmar retiro de la solicitud">
         <p className="text-xs text-calm-500 font-semibold flex-1">¿Retirar solicitud?</p>
         <button
+          type="button"
           onClick={() => setConfirming(false)}
-          className="text-xs font-bold text-calm-400 px-3 py-1.5 rounded-lg hover:bg-calm-100 transition-colors"
+          className="text-xs font-bold text-calm-500 px-3 py-1.5 rounded-lg hover:bg-calm-100 transition-colors"
         >
           No
         </button>
         <button
+          type="button"
           onClick={withdraw}
           disabled={loading}
-          className="text-xs font-bold text-red-600 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 transition-colors"
+          className="text-xs font-bold text-red-700 px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 transition-colors"
         >
           {loading ? 'Retirando...' : 'Sí, retirar'}
         </button>
@@ -44,8 +46,9 @@ export function WithdrawButton({ applicationId }: { applicationId: string }) {
   return (
     <div className="pt-2 border-t border-calm-100">
       <button
+        type="button"
         onClick={() => setConfirming(true)}
-        className="text-xs font-semibold text-calm-400 hover:text-red-500 transition-colors"
+        className="text-xs font-semibold text-calm-500 hover:text-red-700 transition-colors"
       >
         Retirar solicitud
       </button>

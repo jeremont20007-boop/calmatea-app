@@ -119,14 +119,18 @@ export default function EditarAnuncioPage() {
       return
     }
 
-    window.location.href = url
+    window.location.assign(url)
   }
 
   if (loading) {
-    return <div className="p-4 text-center text-calm-400 text-sm pt-20">Cargando...</div>
+    return <div className="p-4 text-center text-calm-500 text-sm pt-20" role="status">Cargando…</div>
   }
   if (!ad) {
-    return <div className="p-4 text-center text-calm-400 text-sm pt-20">Anuncio no encontrado.</div>
+    return (
+      <div className="p-4 text-center pt-20">
+        <h1 className="text-calm-500 text-sm">Anuncio no encontrado.</h1>
+      </div>
+    )
   }
 
   return (
@@ -141,8 +145,8 @@ export default function EditarAnuncioPage() {
 
       {/* Success banner */}
       {justPaid && (
-        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex gap-3">
-          <CheckCircle size={20} className="text-green-500 shrink-0" />
+        <div role="status" className="bg-green-50 border border-green-200 rounded-2xl p-4 flex gap-3">
+          <CheckCircle size={20} className="text-green-500 shrink-0" aria-hidden="true" />
           <div>
             <p className="font-bold text-green-800 text-sm">Pago recibido</p>
             <p className="text-xs text-green-700 mt-0.5">
@@ -154,9 +158,9 @@ export default function EditarAnuncioPage() {
 
       {/* Checkout error */}
       {checkoutError && (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-2xl p-4">
           <p className="font-bold text-red-700 text-sm">Error al iniciar el pago</p>
-          <p className="text-xs text-red-600 mt-0.5">
+          <p className="text-xs text-red-700 mt-0.5">
             El anuncio fue guardado. Podés reintentar el pago abajo.
           </p>
         </div>
@@ -165,14 +169,14 @@ export default function EditarAnuncioPage() {
       {/* Stats for active/paid ads */}
       {isPaid && (
         <div className="bg-calm-50 border border-calm-200 rounded-2xl p-4 flex items-center gap-4">
-          <Eye size={20} className="text-calm-500" />
+          <Eye size={20} className="text-calm-500" aria-hidden="true" />
           <div>
-            <p className="text-2xl font-extrabold text-calm-700">{ad.current_impressions}</p>
-            <p className="text-xs text-calm-400 font-semibold">impresiones</p>
+            <p className="text-2xl font-extrabold text-calm-700">{(ad.current_impressions ?? 0).toLocaleString('es-AR')}</p>
+            <p className="text-xs text-calm-500 font-semibold">impresiones</p>
           </div>
           {ad.ends_at && (
             <div className="ml-auto text-right">
-              <p className="text-xs text-calm-400 font-semibold">Vence</p>
+              <p className="text-xs text-calm-500 font-semibold">Vence</p>
               <p className="text-sm font-bold text-calm-700">
                 {new Date(ad.ends_at).toLocaleDateString('es-AR')}
               </p>
@@ -185,10 +189,10 @@ export default function EditarAnuncioPage() {
       {needsPayment && (
         <div className="bg-calm-500 rounded-3xl p-5 text-white space-y-3">
           <div className="flex items-center gap-3">
-            <CreditCard size={24} className="text-calm-200" />
+            <CreditCard size={24} className="text-calm-200" aria-hidden="true" />
             <div>
-              <p className="font-extrabold">Falta el pago</p>
-              <p className="text-calm-200 text-xs">
+              <h2 className="font-extrabold">Falta el pago</h2>
+              <p className="text-calm-100 text-xs">
                 Duración: {ad.duration_days} días · Total: ${(ad.total_price ?? 0).toLocaleString('es-AR')} ARS
               </p>
             </div>
@@ -199,7 +203,7 @@ export default function EditarAnuncioPage() {
             className="w-full bg-white text-calm-700 font-extrabold py-3 rounded-2xl text-sm hover:bg-calm-50 transition-colors disabled:opacity-60"
           >
             {paying
-              ? 'Redirigiendo...'
+              ? 'Redirigiendo…'
               : `Pagar $${(ad.total_price ?? 0).toLocaleString('es-AR')} ARS con Mercado Pago`}
           </button>
         </div>
@@ -210,14 +214,14 @@ export default function EditarAnuncioPage() {
         href={`/anuncios/${id}/creatividad`}
         className="flex items-center gap-4 bg-gradient-to-r from-calm-600 to-calm-500 rounded-3xl p-5 text-white"
       >
-        <Sparkles size={28} className="text-calm-200 shrink-0" />
+        <Sparkles size={28} className="text-calm-200 shrink-0" aria-hidden="true" />
         <div className="flex-1 min-w-0">
           <p className="font-extrabold text-sm">¿Necesitás ayuda con el diseño?</p>
-          <p className="text-calm-200 text-xs mt-0.5">
+          <p className="text-calm-100 text-xs mt-0.5">
             Solicitá tu creatividad profesional — 7 planes disponibles desde $5.000 ARS
           </p>
         </div>
-        <span className="text-calm-200 text-lg shrink-0">→</span>
+        <span className="text-calm-200 text-lg shrink-0" aria-hidden="true">→</span>
       </Link>
 
       {/* Image preview (read-only if not editable) */}
@@ -248,7 +252,7 @@ export default function EditarAnuncioPage() {
             />
           </>
         ) : (
-          <div className="text-center py-4 text-calm-400 text-sm">Cargando...</div>
+          <div className="text-center py-4 text-calm-500 text-sm" role="status">Cargando…</div>
         )}
       </section>
 
@@ -264,16 +268,19 @@ export default function EditarAnuncioPage() {
                 value={title}
                 onChange={e => setTitle(e.target.value.slice(0, 60))}
                 required
+                maxLength={60}
+                aria-describedby="title-count"
               />
-              <p className="text-xs text-calm-400 mt-1">{title.length}/60</p>
+              <p id="title-count" className="text-xs text-calm-500 mt-1">{title.length}/60 caracteres</p>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-calm-700 mb-1.5">Descripción</label>
+              <label htmlFor="description" className="block text-sm font-semibold text-calm-700 mb-1.5">Descripción</label>
               <textarea
+                id="description"
                 value={description}
                 onChange={e => setDescription(e.target.value.slice(0, 120))}
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-300 focus:outline-none focus:border-calm-400 transition-colors text-sm resize-none"
+                className="w-full px-4 py-3 rounded-xl border-2 border-calm-200 bg-white text-calm-800 font-medium placeholder:text-calm-400 focus:outline-none focus:border-calm-500 transition-colors text-sm resize-none"
               />
             </div>
             <Input
@@ -293,13 +300,13 @@ export default function EditarAnuncioPage() {
           </section>
 
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-semibold">
+            <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-semibold">
               {error}
             </div>
           )}
 
           <Button type="submit" size="lg" className="w-full" disabled={saving}>
-            {saving ? 'Guardando...' : 'Guardar cambios'}
+            {saving ? 'Guardando…' : 'Guardar cambios'}
           </Button>
         </form>
       )}

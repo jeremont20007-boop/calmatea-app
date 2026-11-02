@@ -37,16 +37,16 @@ export function AdApprovalActions({ adId, advertiserId, currentStatus }: AdAppro
           <button
             onClick={() => updateStatus('active')}
             disabled={loading !== null}
-            className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white font-bold text-xs rounded-xl transition-colors disabled:opacity-50"
+            className="flex-1 py-2 bg-green-700 hover:bg-green-800 text-white font-bold text-xs rounded-xl transition-colors disabled:opacity-50"
           >
-            {loading === 'active' ? '...' : '✓ Aprobar'}
+            {loading === 'active' ? '…' : '✓ Aprobar'}
           </button>
           <button
             onClick={() => updateStatus('rejected')}
             disabled={loading !== null}
-            className="flex-1 py-2 bg-red-100 hover:bg-red-200 text-red-600 font-bold text-xs rounded-xl transition-colors disabled:opacity-50"
+            className="flex-1 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-bold text-xs rounded-xl transition-colors disabled:opacity-50"
           >
-            {loading === 'rejected' ? '...' : '✗ Rechazar'}
+            {loading === 'rejected' ? '…' : '✗ Rechazar'}
           </button>
         </>
       )}
@@ -54,9 +54,9 @@ export function AdApprovalActions({ adId, advertiserId, currentStatus }: AdAppro
         <button
           onClick={() => updateStatus('paused')}
           disabled={loading !== null}
-          className="flex-1 py-2 border-2 border-calm-200 text-calm-500 font-bold text-xs rounded-xl hover:border-calm-400 transition-colors disabled:opacity-50"
+          className="flex-1 py-2 border-2 border-calm-200 text-calm-600 font-bold text-xs rounded-xl hover:border-calm-400 transition-colors disabled:opacity-50"
         >
-          {loading === 'paused' ? '...' : 'Pausar'}
+          {loading === 'paused' ? '…' : 'Pausar'}
         </button>
       )}
       {currentStatus === 'paused' && (
@@ -65,7 +65,7 @@ export function AdApprovalActions({ adId, advertiserId, currentStatus }: AdAppro
           disabled={loading !== null}
           className="flex-1 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-bold text-xs rounded-xl transition-colors disabled:opacity-50"
         >
-          {loading === 'active' ? '...' : 'Reactivar'}
+          {loading === 'active' ? '…' : 'Reactivar'}
         </button>
       )}
     </div>

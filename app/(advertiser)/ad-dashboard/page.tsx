@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Megaphone, Plus, TrendingUp, Eye, CheckCircle } from 'lucide-react'
 import { Card } from '@/components/ui/Card'
 import { AD_STATUS_LABELS, AD_STATUS_COLORS, type Ad } from '@/types'
+
+export const metadata: Metadata = {
+  title: 'Panel de publicidad',
+  description: 'Resumen de tus anuncios en VehiLink: impresiones, anuncios activos y campañas en revisión.',
+}
 
 export default async function AdDashboardPage() {
   const supabase = await createClient()
@@ -33,8 +39,8 @@ export default async function AdDashboardPage() {
     <div className="p-4 space-y-5">
       {/* Header */}
       <div className="bg-gradient-to-br from-calm-600 to-calm-800 rounded-3xl p-5 text-white">
-        <p className="text-calm-300 text-sm font-semibold">Panel de publicidad</p>
-        <h2 className="text-2xl font-extrabold mt-0.5">{advertiser.company_name}</h2>
+        <h1 className="text-calm-200 text-sm font-semibold">Panel de publicidad</h1>
+        <p className="text-2xl font-extrabold mt-0.5">{advertiser.company_name}</p>
         {advertiser.status === 'pending' && (
           <p className="text-yellow-300 text-xs font-semibold mt-2 bg-yellow-400/10 px-3 py-1.5 rounded-xl inline-block">
             Cuenta en revisión — tu primer anuncio activará la cuenta
@@ -45,30 +51,30 @@ export default async function AdDashboardPage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         <Card className="text-center py-4">
-          <Eye size={20} className="text-calm-400 mx-auto mb-1" />
-          <p className="text-2xl font-extrabold text-calm-700">{totalImpressions}</p>
-          <p className="text-[10px] text-calm-400 font-semibold mt-0.5">Impresiones</p>
+          <Eye size={20} className="text-calm-400 mx-auto mb-1" aria-hidden="true" />
+          <p className="text-2xl font-extrabold text-calm-700">{totalImpressions.toLocaleString('es-AR')}</p>
+          <p className="text-[10px] text-calm-500 font-semibold mt-0.5">Impresiones</p>
         </Card>
         <Card className="text-center py-4">
-          <CheckCircle size={20} className="text-green-500 mx-auto mb-1" />
+          <CheckCircle size={20} className="text-green-500 mx-auto mb-1" aria-hidden="true" />
           <p className="text-2xl font-extrabold text-calm-700">{activeAds.length}</p>
-          <p className="text-[10px] text-calm-400 font-semibold mt-0.5">Activos</p>
+          <p className="text-[10px] text-calm-500 font-semibold mt-0.5">Activos</p>
         </Card>
         <Card className="text-center py-4">
-          <TrendingUp size={20} className="text-calm-500 mx-auto mb-1" />
+          <TrendingUp size={20} className="text-calm-500 mx-auto mb-1" aria-hidden="true" />
           <p className="text-2xl font-extrabold text-calm-700">{adList.length}</p>
-          <p className="text-[10px] text-calm-400 font-semibold mt-0.5">Total</p>
+          <p className="text-[10px] text-calm-500 font-semibold mt-0.5">Total</p>
         </Card>
       </div>
 
       {/* Quick action */}
-      <Link href="/anuncios/nuevo">
+      <Link href="/anuncios/nuevo" className="block rounded-2xl">
         <Card className="bg-calm-500 border-0 text-white hover:bg-calm-600 transition-colors">
           <div className="flex items-center gap-3 py-1">
-            <Plus size={24} />
+            <Plus size={24} aria-hidden="true" />
             <div>
               <p className="font-extrabold">Crear nuevo anuncio</p>
-              <p className="text-calm-200 text-xs">Llegá a miles de conductores y propietarios</p>
+              <p className="text-calm-100 text-xs">Llegá a miles de conductores y propietarios</p>
             </div>
           </div>
         </Card>
@@ -90,9 +96,9 @@ export default async function AdDashboardPage() {
       {adList.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-3 px-1">
-            <h3 className="font-extrabold text-calm-700">Anuncios recientes</h3>
+            <h2 className="font-extrabold text-calm-700">Anuncios recientes</h2>
             <Link href="/anuncios" className="text-xs text-calm-500 font-semibold hover:underline">
-              Ver todos →
+              Ver todos <span aria-hidden="true">→</span>
             </Link>
           </div>
           <div className="space-y-3">
@@ -101,7 +107,7 @@ export default async function AdDashboardPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-extrabold text-calm-800 text-sm truncate">{ad.title}</p>
-                    <p className="text-xs text-calm-400 mt-0.5">{ad.current_impressions} impresiones</p>
+                    <p className="text-xs text-calm-500 mt-0.5">{(ad.current_impressions ?? 0).toLocaleString('es-AR')} impresiones</p>
                   </div>
                   <span className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${AD_STATUS_COLORS[ad.status]}`}>
                     {AD_STATUS_LABELS[ad.status]}
@@ -115,24 +121,24 @@ export default async function AdDashboardPage() {
 
       {adList.length === 0 && (
         <Card className="text-center py-10 border-dashed border-2 border-calm-200">
-          <Megaphone size={36} className="text-calm-300 mx-auto mb-3" />
+          <Megaphone size={36} className="text-calm-300 mx-auto mb-3" aria-hidden="true" />
           <p className="font-extrabold text-calm-600">Aún no tenés anuncios</p>
-          <p className="text-sm text-calm-400 mt-1">Creá tu primer anuncio para empezar</p>
+          <p className="text-sm text-calm-500 mt-1">Creá tu primer anuncio para empezar</p>
         </Card>
       )}
 
       {/* Info card */}
       <Card className="bg-calm-50 border-calm-200">
-        <p className="font-bold text-calm-700 text-sm mb-2">¿Cómo funciona?</p>
+        <h2 className="font-bold text-calm-700 text-sm mb-2">¿Cómo funciona?</h2>
         <ol className="text-xs text-calm-600 space-y-1.5 list-decimal list-inside">
           <li>Creás tu anuncio con título, descripción e imagen</li>
           <li>Nuestro equipo lo revisa (generalmente en 24 hs)</li>
           <li>Una vez aprobado, tu anuncio se muestra a los usuarios</li>
           <li>Los usuarios gratuitos ven más anuncios; los Premium, menos</li>
         </ol>
-        <p className="text-xs text-calm-400 mt-3">
-          Para consultar tarifas o necesitás ayuda, contactanos en{' '}
-          <span className="font-semibold">publicidad@vehilink.com.ar</span>
+        <p className="text-xs text-calm-500 mt-3">
+          Si querés consultar tarifas o necesitás ayuda, contactanos en{' '}
+          <a href="mailto:publicidad@vehilink.com.ar" className="font-semibold underline">publicidad@vehilink.com.ar</a>
         </p>
       </Card>
     </div>

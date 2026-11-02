@@ -1,7 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { LayoutDashboard, Megaphone } from 'lucide-react'
+
+export const metadata: Metadata = {
+  // Área privada: no se indexa en buscadores.
+  robots: { index: false, follow: false },
+}
 
 const ADV_NAV = [
   { href: '/ad-dashboard', label: 'Panel', icon: LayoutDashboard },
@@ -25,10 +31,10 @@ export default async function AdvertiserLayout({ children }: { children: React.R
     <div className="flex flex-col min-h-screen max-w-lg mx-auto bg-white">
       <header className="sticky top-0 z-40 bg-calm-700 text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Megaphone size={18} />
+          <Megaphone size={18} aria-hidden="true" />
           <div>
             <p className="font-extrabold text-sm leading-tight">Publicitario</p>
-            <p className="text-calm-300 text-[10px] font-semibold truncate max-w-[180px]">
+            <p className="text-calm-200 text-[10px] font-semibold truncate max-w-[180px]">
               {advertiser.company_name}
             </p>
           </div>
@@ -39,23 +45,23 @@ export default async function AdvertiserLayout({ children }: { children: React.R
               En revisión
             </span>
           )}
-          <Link href="/auth/login" className="text-xs text-calm-300 hover:text-white transition-colors">
+          <Link href="/auth/login" className="text-xs text-calm-200 hover:text-white transition-colors">
             Salir
           </Link>
         </div>
       </header>
 
-      <main className="flex-1 pb-24">{children}</main>
+      <main id="contenido" className="flex-1 pb-24">{children}</main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-calm-700 border-t border-calm-600 z-50">
+      <nav aria-label="Navegación de publicitario" className="fixed bottom-0 left-0 right-0 bg-calm-700 border-t border-calm-600 z-50">
         <div className="max-w-lg mx-auto flex items-center justify-around px-2 py-2">
           {ADV_NAV.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
-              className="flex flex-col items-center gap-0.5 px-6 py-2 rounded-xl text-calm-300 hover:text-white transition-colors"
+              className="flex flex-col items-center gap-0.5 px-6 py-2 rounded-xl text-calm-200 hover:text-white transition-colors"
             >
-              <Icon size={20} strokeWidth={2} />
+              <Icon size={20} strokeWidth={2} aria-hidden="true" />
               <span className="text-xs font-semibold">{label}</span>
             </Link>
           ))}

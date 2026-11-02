@@ -10,6 +10,16 @@ export function Card({ children, className, onClick }: CardProps) {
   return (
     <div
       onClick={onClick}
+      {...(onClick && {
+        role: 'button',
+        tabIndex: 0,
+        onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onClick()
+          }
+        },
+      })}
       className={cn(
         'bg-white rounded-3xl p-5 shadow-sm border border-calm-100',
         onClick && 'cursor-pointer hover:shadow-md hover:border-calm-200 transition-all duration-200 active:scale-98',
