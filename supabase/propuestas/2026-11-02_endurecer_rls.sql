@@ -15,7 +15,9 @@
 --  Todo corre dentro de una transacción: si algo falla, no se aplica nada.
 --
 --  Qué arregla (resumen):
---   A. Nadie puede auto-asignarse rol "admin" ni plan "premium".
+--   A. Nadie puede auto-asignarse rol "admin" ni plan "premium". (Lo del
+--      registro lo hace supabase/migrations/20261102_advertiser_accounts.sql:
+--      correrla también.)
 --   B. Postulaciones: reglas explícitas de qué estados puede poner cada uno
 --      (el auto-aceptarse ya estaba bloqueado; ahora queda explícito).
 --   C. Nadie puede auto-aprobar sus propios documentos.
@@ -97,26 +99,9 @@ $$;
 
 -- ─── 2. ALTA DE USUARIOS: NO ACEPTAR ROL 'admin' DESDE EL REGISTRO ──────────
 -- Antes, el rol venía tal cual de los datos que manda el navegador al registrarse.
-create or replace function handle_new_user()
-returns trigger language plpgsql security definer set search_path = public as $$
-declare
-  v_role text := new.raw_user_meta_data->>'role';
-begin
-  if v_role is null or v_role not in ('conductor', 'propietario') then
-    v_role := 'conductor';
-  end if;
-
-  insert into profiles (user_id, full_name, role, city, phone)
-  values (
-    new.id,
-    left(coalesce(new.raw_user_meta_data->>'full_name', ''), 200),
-    v_role,
-    left(new.raw_user_meta_data->>'city', 100),
-    left(new.raw_user_meta_data->>'phone', 50)
-  );
-  return new;
-end;
-$$;
+-- La función handle_new_user (que además ya no le crea perfil de conductor a
+-- los anunciantes) está en supabase/migrations/20261102_advertiser_accounts.sql.
+-- Antes estaba acá: se movió para que no se pisen entre sí.
 
 -- ─── 3. PROFILES ────────────────────────────────────────────────────────────
 

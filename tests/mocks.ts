@@ -20,9 +20,11 @@ export const supabaseAuth = {
 export const insert = vi.fn()
 export const updateEq = vi.fn()
 export const upsert = vi.fn()
+export const maybeSingle = vi.fn()
 export const from = vi.fn(() => ({
   insert,
   upsert,
+  select: () => ({ eq: () => ({ maybeSingle }) }),
   update: () => ({ eq: updateEq }),
 }))
 
@@ -40,6 +42,7 @@ export function resetMocks() {
   insert.mockReset()
   updateEq.mockReset()
   upsert.mockReset()
+  maybeSingle.mockReset()
   from.mockClear()
   Object.values(storageBucket).forEach(fn => fn.mockReset())
   storageFrom.mockClear()

@@ -176,6 +176,18 @@ const server = http.createServer(async (req, res) => {
     }
     const meta = body.data ?? {}
     currentUser = fakeUser(body.email, meta)
+    // Igual que el trigger handle_new_user de la base: los anunciantes reciben
+    // su fila en "advertisers" y NO un perfil de conductor.
+    if (meta.account_type === 'advertiser') {
+      profile = null
+      advertiser = {
+        ...ADVERTISER,
+        company_name: meta.company_name || body.email.split('@')[0],
+        contact_email: body.email,
+        status: 'pending',
+      }
+      return send(res, 200, session(currentUser))
+    }
     advertiser = null
     profile = {
       ...defaultProfile(),
