@@ -11,7 +11,7 @@ const URL_ = 'http://localhost:3000/api/ads/webhook'
 const payment = (extra: Record<string, unknown> = {}) => ({
   id: 55,
   status: 'approved',
-  transaction_amount: 15000,
+  transaction_amount: 3500, // 7 días = $3.500
   currency_id: 'ARS',
   metadata: { ad_id: 'anuncio-1' },
   ...extra,
@@ -20,7 +20,7 @@ const payment = (extra: Record<string, unknown> = {}) => ({
 describe('Webhook de MercadoPago (anuncios)', () => {
   beforeEach(() => {
     fake = createFakeSupabase({
-      ads: [{ id: 'anuncio-1', duration_days: 7, total_price: 15000, payment_status: 'pending' }],
+      ads: [{ id: 'anuncio-1', duration_days: 7, total_price: 3500, payment_status: 'pending' }],
     })
     vi.spyOn(console, 'error').mockImplementation(() => {})
   })
@@ -48,9 +48,19 @@ describe('Webhook de MercadoPago (anuncios)', () => {
 
   it('un aviso repetido no reinicia las fechas de un anuncio ya pago', async () => {
     fake = createFakeSupabase({
-      ads: [{ id: 'anuncio-1', duration_days: 7, total_price: 15000, payment_status: 'paid' }],
+      ads: [{ id: 'anuncio-1', duration_days: 7, total_price: 3500, payment_status: 'paid' }],
     })
     mockMercadoPagoPayment(payment())
+    await POST(post(URL_, { type: 'payment', data: { id: '55' } }))
+    expect(fake.updates).toHaveLength(0)
+  })
+
+  it('compara contra el precio real de la duración, no contra el precio guardado', async () => {
+    // Aunque el anuncio diga total_price = 1, para 7 días hay que pagar $3.500
+    fake = createFakeSupabase({
+      ads: [{ id: 'anuncio-1', duration_days: 7, total_price: 1, payment_status: 'pending' }],
+    })
+    mockMercadoPagoPayment(payment({ transaction_amount: 1 }))
     await POST(post(URL_, { type: 'payment', data: { id: '55' } }))
     expect(fake.updates).toHaveLength(0)
   })

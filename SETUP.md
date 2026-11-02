@@ -12,6 +12,13 @@
 2. Pega el contenido de `supabase/schema.sql` y ejecuta
 3. Verifica que se crearon las tablas: `profiles`, `emotion_logs`, `sound_sessions`, `routine_progress`
 
+### Actualizaciones de la base (si ya tenías el proyecto creado)
+Los archivos de `supabase/migrations/` son cambios para aplicar **una sola vez** en una base que ya existe.
+Se pegan en el **SQL Editor** igual que el schema. Son seguros de correr más de una vez.
+
+- `20261102_protect_ad_prices.sql`: hace que el precio, el pago y el estado de los anuncios
+  (y de las solicitudes de creatividad) los decida la base de datos y no el navegador.
+
 ### Obtener las credenciales
 1. **Settings** → **API**
 2. Copia:

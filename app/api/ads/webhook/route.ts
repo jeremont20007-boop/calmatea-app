@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { fetchMercadoPagoPayment, getPaymentIdFromNotification } from '@/lib/payments/mercadopago'
+import { getAdPriceARS } from '@/lib/payments/ads'
 
 // Aviso de MercadoPago cuando cambia el estado del pago de un anuncio.
 export async function POST(request: Request) {
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
 
   const { data: ad } = await supabase
     .from('ads')
-    .select('duration_days, total_price, payment_status')
+    .select('duration_days, payment_status')
     .eq('id', adId)
     .single()
 
@@ -30,20 +31,21 @@ export async function POST(request: Request) {
   // Avisos repetidos: no volver a reiniciar las fechas de un anuncio ya pago.
   if (ad.payment_status === 'paid') return NextResponse.json({ ok: true })
 
-  if (payment.currency_id !== 'ARS' || Number(payment.transaction_amount) < Number(ad.total_price)) {
+  const expected = getAdPriceARS(ad.duration_days)
+  if (expected === null || payment.currency_id !== 'ARS' || Number(payment.transaction_amount) < expected) {
     console.error('[ads/webhook] monto o moneda no coinciden con el anuncio', {
       paymentId,
       adId,
       amount: payment.transaction_amount,
       currency: payment.currency_id,
-      expected: ad.total_price,
+      expected,
     })
     return NextResponse.json({ ok: true })
   }
 
   const now = new Date()
   const endsAt = new Date(now)
-  endsAt.setDate(endsAt.getDate() + (ad.duration_days ?? 30))
+  endsAt.setDate(endsAt.getDate() + ad.duration_days)
 
   const { error } = await supabase
     .from('ads')

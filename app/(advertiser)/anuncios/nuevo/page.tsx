@@ -92,7 +92,7 @@ export default function NuevoAnuncioPage() {
         target_url: targetUrl.trim(),
         cta_text: ctaText.trim() || 'Ver más',
         duration_days: durationDays,
-        total_price: totalPrice,
+        // El precio (total_price) lo calcula la base de datos según la duración.
         status: 'draft',
         payment_status: 'pending',
       })
